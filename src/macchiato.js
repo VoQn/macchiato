@@ -1,78 +1,76 @@
-var Macchiato = (function(){
-  var Macchiato = function(){}
-    , name, method
-    , suites = []
-    , testCount
-    , writeMsg
-    , writeLog
-    , clearLog
-    , wrapSpan
-    , check;
-  writeMsg = function( msg ){
-    var board = document.querySelector('#test-control .message');
-    board.innerHTML = msg;
+var TestView, Macchiato;
+
+TestView = (function(){
+  var TestView = function(){}, for_web, instance;
+
+  for_web = {
+    getTestCount: function(){
+      return parseInt( document.getElementById( 'test-count' ).value );
+    },
+    writeMsg: function( msg ){
+      var board = document.querySelector('#test-control .message');
+      board.innerHTML = msg;
+    },
+    writeLog: function( log, withEscape ){
+      var consoleLine = document.querySelector('#logger .log-line'),
+          str = !withEscape ? log : htmlEscape( log );
+      consoleLine.innerHTML += str + '<br>';
+    },
+    clearLog: function( ){
+      var consoleLine = document.querySelector('#logger .log-line');
+      consoleLine.innerHTML = '';
+    },
+    highlightMsg: function( isGreen, msg ){
+      var dom = '<span class="';
+      dom += ( isGreen ? 'passed' : 'failed' ) + '">';
+      dom += msg + '</span>';
+      return dom;
+    }
   };
-  writeLog = function( log, ignore ){
-    var consoleLine = document.querySelector('#logger .log-line')
-      , str = !!ignore ? log : htmlEscape( log );
-    consoleLine.innerHTML += str + '<br>';
-  };
-  clearLog = function( ){
-    var consoleLine = document.querySelector('#logger .log-line');
-    consoleLine.innerHTML = '';
-  };
-  wrapSpan = function( isGreen, msg ){
-    var dom = '<span class="';
-    dom += ( isGreen ? 'passed' : 'failed' ) + '">';
-    dom += msg + '</span>';
-    return dom;
-  };
+
+  instance = createSingleton( TestView, for_web );
+
+  return instance;
+})();
+
+Macchiato = (function(){
+  var Macchiato = function(){}, view = TestView, instance, suites = [], testCount, check;
+
   check = function( label, property ){
     var i = 0, allPassed = true, result, msg;
-    for ( ; i < testCount; i++ ){
+    while ( i++ < testCount ){
       Checker.run( property, verbose, Score );
-      if( verbose ) writeLog( Checker.lastResult() );
+      if( verbose ) view.writeLog( Checker.lastResult() );
       Seed.grow();
     }
     result = Score.evaluate();
-    msg = wrapSpan( result.ok, label + ' : ' + result.message );
+    msg = view.highlightMsg( result.ok, label + ' : ' + result.message );
     allPassed = allPassed && result.ok;
-    writeLog( msg, true );
+    view.writeLog( msg, true );
     Score.clear();
     Seed.clear();
   };
-  method = {
+
+  instance = createSingleton( Macchiato, {
     stock: function( p ){
       suites.push( p );
     },
     check: function( ){
-      var that = this
-        , i = 0
-        , l = suites.length
-        , tests
-        , name
-        , testLabel
-        , areTestsPassedAll = true
-        , msg;
-      testCount = parseInt( document.getElementById( 'test-count' ).value );
-      clearLog();
-      for ( ; i < l; i++ ){
-        tests = suites[ i ];
-        for ( name in tests ){
-          check( name, tests[ name ]);
-        }
-      }
-      if ( areTestsPassedAll )
-        msg = 'Ok, All tests succeeded!!';
-      else
-        msg = 'Oops! failed test exist...';
+      var that = this, areTestsPassedAll = true,msg;
+      testCount = view.getTestCount();
+      view.clearLog();
+
+      each( function( tests ){
+        each( function( test, label ){
+          check( label, test );
+        }, tests );
+      }, suites );
+
+      msg = areTestsPassedAll ? 'Ok, All tests succeeded!!' : 'Oops! failed test exist...';
       writeMsg( msg );
     }
-  };
-  
-  for ( name in method ){
-    Macchiato.prototype[ name ] = method[ name ];
-  }
+  });
 
-  return new Macchiato();
+  return instance;
+
 })();
