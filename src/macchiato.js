@@ -14,11 +14,9 @@ TestView = (function(){
     },
     clearMsg: function( ){
       var board = document.querySelector( '#test-control .message' );
-      each( function( node ){
-        if ( !!node ){
-          board.removeChild( node );
-        }
-      }, board.childNodes );
+      while( board.firstChild ){
+        board.removeChild( board.firstChild );
+      }
     },
     putLog: function( log, withEscape ){
       var consoleLine = document.querySelector( '#logger .log-line' ),
@@ -34,11 +32,9 @@ TestView = (function(){
     },
     clearLog: function( ){
       var consoleLine = document.querySelector( '#logger .log-line' );
-      each( function( node ){
-        if ( !!node ) {
-          consoleLine.removeChild( node );
-        }
-      }, consoleLine.childNodes );
+      while( consoleLine.firstChild ){
+        consoleLine.removeChild( consoleLine.firstChild );
+      }
     },
     highlightMsg: function( isGreen, msg, placeholder ){
       var dom = document.createElement( 'span' ),
