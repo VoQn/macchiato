@@ -21,11 +21,16 @@ h1, h2, h3, h4 {
 h1 {
   font-size: 42pt;
   line-height: 0.9;
-  text-align: center;
 }
 
 h1 > small {
   font-size: 20pt;
+}
+
+h1 > img {
+  display: inline-block;
+  width: 42pt;
+  margin-right: 12pt;
 }
 
 h1 > small:before, h1 > small:after {
@@ -36,11 +41,15 @@ h1 > small:before, h1 > small:after {
 
 h2 {
   font-size: 20pt;
-  margin: 0;
+  margin: 10px 0 9px;
 }
 
 code {
   font-family: Consolas, "Segoe UI Light", Monaco, monospace;
+}
+
+div, pre {
+  margin-bottom: 20px;
 }
 
 input[type=text] {
@@ -130,17 +139,14 @@ input[type=button]:active {
 
 pre.sample-code, div.console {
   font-family: monospace;
-  display: inline-block;
-  width: 45%;
-  vertical-align: top;
 }
 
 pre.sample-code {
-  background-color: #111;
+  background-color: #321;
   color: #fff;
   padding: 10px 20px;
   margin-top: 0;
-  border: 4px solid #fff;
+  border: 4px solid #000;
   border-radius: 8px;
   margin-right: 2px;
 }
