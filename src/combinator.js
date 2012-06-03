@@ -20,64 +20,70 @@ var Combinator = (function(){
 
   instance = createSingleton( Combinator, {
     sized: function( generateBySize ){
-      return function(){
+      var generate = function(){
         return generateBySize( Seed.getRange() );
-      }
+      };
+      return generate;
     },
     resize: function( size, generatorBySize ){
-      return function(){
+      var generate = function(){
         return generateBySize( size );
-      }
+      };
+      return generate;
     },
     choose: function( low, high ){
-      return function(){
-        var l = Math.random() * low
-          , h = Math.random() * high
-          , i = l + h
-          , r = Math.min( high, Math.max( low, i ));
+      var generate = function(){
+        var l = Math.random() * low,
+            h = Math.random() * high,
+            i = l + h,
+            r = Math.min( high, Math.max( low, i ));
         return i;
       };
+      return generate;
     },
     elements: function( list ){
       var that = this, generate;
       generate = function(){
-        var index = Math.round( that.choose( 0, list.length - 1 )() )
-          , item = list[ index ];
+        var index = Math.round( that.choose( 0, list.length - 1 )() ),
+            item = list[ index ];
         return item;
       };
       return generate;
     },
     oneOf: function( generators ){
-      var generator = this.elements( generators );
-      return generator;
+      var generate = this.elements( generators );
+      return generate;
     },
     listOf: function( generator ){
-      var that = this;
-      return that.sized(function( n ){
-          var log = Math.LOG10E * Math.log( n )
-            , length = Math.round( log ) * 10
-            , list = that.vectorOf( length, generator )();
+      var that = this, generate;
+      generate = that.sized(function( n ){
+          var log = Math.LOG10E * Math.log( n ),
+              length = Math.round( log ) * 10,
+              list = that.vectorOf( length, generator )();
           return list;
       });
+      return generate;
     },
     listOf1: function( generator ){
-      var that = this;
-      return that.sized(function( n ){
-        var log = Math.LOG10E * Math.log( n )
-          , length = Math.ceil( log ) * 10
-          , list = that.vectorOf( length, generator )();
+      var that = this, generate;
+      generate = that.sized(function( n ){
+        var log = Math.LOG10E * Math.log( n ),
+            length = Math.ceil( log ) * 10,
+            list = that.vectorOf( length, generator )();
         return list;
       });
+      return generate;
     },
     vectorOf: function( length, generator ){
-      return function(){
-        var i = 0
-          , list = [];
+      var generate = function(){
+        var i = 0,
+            list = [];
         for ( ; i < length; i++ ){
           list[ i ] = generator();
         }
         return list;
       };
+      return generate;
     }
   });
 
