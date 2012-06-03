@@ -1,0 +1,166 @@
+﻿window {
+  width: 100%;
+  height: 100%;
+  font-family: "Segoe UI Light", sans-serif;
+  font-weight: lighter;
+  font-size: 11pt;
+}
+
+body {
+  max-width: 960px;;
+  margin: 0 auto;
+  background-color: #cba;
+  background-image: -webkit-linear-gradient(#fff, #fc9 300px);
+}
+
+h1, h2, h3, h4 {
+  color: #321;
+  font-weight: lighter;
+}
+
+h1 {
+  font-size: 42pt;
+  line-height: 0.9;
+  text-align: center;
+}
+
+h1 > small {
+  font-size: 20pt;
+}
+
+h1 > small:before, h1 > small:after {
+  display: inline-block;
+  content: "-";
+  padding: 0 10pt;
+}
+
+h2 {
+  font-size: 20pt;
+  margin: 0;
+}
+
+code {
+  font-family: Consolas, "Segoe UI Light", Monaco, monospace;
+}
+
+input[type=text] {
+  box-shadow: inset 0 1px 4px #000, 0 1px #fff;
+  border: none;
+  border-radius: 3px;
+  padding: 4px;
+  padding-bottom: 2px;
+}
+
+input[type=button] {
+  font-size: 11pt;
+  font-weight: bold;
+  display: inline-block;
+  border-radius: 3px;
+  border-width: 1px;
+  padding: 5px 15px;
+  box-shadow:
+    0 -1px 0 2px rgba(51, 0, 0, 0.3)
+  , 0 1px 0 2px rgba(255, 255, 255, 0.8)
+  , inset 0 1px rgba(255, 255, 255, 0.3)
+  , inset 0 -1px rgba(255, 255, 255, 0.1);
+}
+
+input[type=button]:active {
+  box-shadow:
+    0 -1px 0 2px rgba(0, 0, 0, 0.3)
+  , 0 1px 0 2px rgba(255, 255, 255, 0.8)
+  , inset 0 1px 8px #000;
+}
+
+.primary {
+  color: #fff;
+  background-color: #a40;
+  background-image: -webkit-linear-gradient(#a40, #830 50%, #720 50%, #610);
+  background-image: -moz-linear-gradient(#a40, #830 50%, #720 50%, #610);
+  background-image: -moz-linear-gradient(#a40, #830 50%, #720 50%, #610);
+  text-shadow: 0 -1px #610;
+  border-color: #610;
+}
+
+.primary:hover {
+  background-color: #19a;
+  background-image: -webkit-linear-gradient(#c60, #a50 50%, #940 50%, #830);
+}
+
+.primary:active {
+}
+
+.primary:disabled {
+}
+
+.input-with-label {
+  display: inline-block;
+  margin-right: 5px;
+  padding: 5px;
+  padding-right: 15px;
+  border-radius: 3px;
+  text-shadow: 0 1px rgba(255, 255, 255, 0.5);
+}
+
+.input-with-label > input {
+  display: inline-block;
+  margin-right: 5px;
+}
+
+.input-with-label:active{
+  color: #fff;
+  text-shadow: 0 -1px #300;
+  box-shadow: inset 0 1px 8px #000, 0 1px #fff;
+}
+
+.input-with-label:hover {
+  background-color: #c30;
+  cursor: pointer;
+}
+
+.passed {
+  font-weight: bold;
+  color: #3f3;
+}
+
+.failed {
+  font-weight: bold;
+  color: #f33;
+}
+
+pre.sample-code, div.console {
+  font-family: monospace;
+  display: inline-block;
+  width: 45%;
+  vertical-align: top;
+}
+
+pre.sample-code {
+  background-color: #111;
+  color: #fff;
+  padding: 10px 20px;
+  margin-top: 0;
+  border: 4px solid #fff;
+  border-radius: 8px;
+  margin-right: 2px;
+}
+
+#test-count {
+  width: 3em;
+  text-align: right;
+}
+
+#logger {
+  height: 31.8em;
+  overflow-x: hidden;
+  overflow-y: auto;
+  color: #ccc;
+  background-color: #222;
+  border-radius: 5px;
+  padding: 0 20px;
+  margin-top: 4px;
+  box-shadow:
+    0 -1px 0 3px rgba(51, 0, 0, 0.3)
+  , 0 1px 0 3px rgba(255, 255, 255, 0.5)
+  , inset 0 1px 4px #000;
+}
