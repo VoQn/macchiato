@@ -14,9 +14,7 @@ TestView = (function(){
     },
     clearMsg: function( ){
       var board = document.querySelector( '#test-control .message' );
-      while( board.firstChild ){
-        board.removeChild( board.firstChild );
-      }
+      clearNode( board );
     },
     putLog: function( log, withEscape ){
       var consoleLine = document.querySelector( '#logger .log-line' ),
@@ -32,9 +30,7 @@ TestView = (function(){
     },
     clearLog: function( ){
       var consoleLine = document.querySelector( '#logger .log-line' );
-      while( consoleLine.firstChild ){
-        consoleLine.removeChild( consoleLine.firstChild );
-      }
+      clearNode( consoleLine );
     },
     highlightMsg: function( isGreen, msg, placeholder ){
       var dom = document.createElement( 'span' ),
