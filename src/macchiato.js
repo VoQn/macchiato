@@ -5,25 +5,46 @@ TestView = (function(){
 
   for_web = {
     getTestCount: function(){
-      return parseInt( document.getElementById( 'test-count' ).value );
+      return parseInt( document.getElementById( 'test-count' ).value, 10 );
     },
     writeMsg: function( msg ){
-      var board = document.querySelector('#test-control .message');
-      board.innerHTML = msg;
+      var board = document.querySelector( '#test-control .message' ),
+          textNode = document.createTextNode( msg );
+      board.appendChild( textNode );
     },
-    writeLog: function( log, withEscape ){
-      var consoleLine = document.querySelector('#logger .log-line'),
-          str = !withEscape ? log : htmlEscape( log );
-      consoleLine.innerHTML += str + '<br>';
+    clearMsg: function( ){
+      var board = document.querySelector( '#test-control .message' );
+      each( function( node ){
+        if ( !!node ){
+          board.removeChild( node );
+        }
+      }, board.childNodes );
+    },
+    putLog: function( log, withEscape ){
+      var consoleLine = document.querySelector( '#logger .log-line' ),
+          br = document.createElement('br');
+      if ( log instanceof HTMLElement ){
+        consoleLine.appendChild( log );
+      } else {
+        var str = !withEscape ? log : htmlEscape( log ),
+            textNode = document.createTextNode( str );
+        consoleLine.appendChild( textNode );
+      }
+      consoleLine.appendChild( br );
     },
     clearLog: function( ){
-      var consoleLine = document.querySelector('#logger .log-line');
-      consoleLine.innerHTML = '';
+      var consoleLine = document.querySelector( '#logger .log-line' );
+      each( function( node ){
+        if ( !!node ) {
+          consoleLine.removeChild( node );
+        }
+      }, consoleLine.childNodes );
     },
-    highlightMsg: function( isGreen, msg ){
-      var dom = '<span class="';
-      dom += ( isGreen ? 'passed' : 'failed' ) + '">';
-      dom += msg + '</span>';
+    highlightMsg: function( isGreen, msg, placeholder ){
+      var dom = document.createElement( 'span' ),
+          textNode = document.createTextNode( msg );
+      dom.setAttribute('class', ( isGreen ? 'passed' : 'failed' ));
+      dom.appendChild( textNode );
       return dom;
     }
   };
@@ -34,21 +55,22 @@ TestView = (function(){
 })();
 
 Macchiato = (function(){
-  var Macchiato = function(){}, view = TestView, instance, suites = [], testCount, check;
+  var Macchiato = function(){}, view = TestView, instance, suites = [], check;
 
   check = function( label, property ){
-    var i = 0, allPassed = true, result, msg;
-    while ( i++ < testCount ){
+    var i = 0, l = view.getTestCount(), allPassed = true, result, msg;
+    while ( i++ < l ){
       Checker.run( property, verbose, Score );
-      if( verbose ) view.writeLog( Checker.lastResult() );
+      if( verbose ) view.putLog( Checker.lastResult() );
       Seed.grow();
     }
     result = Score.evaluate();
     msg = view.highlightMsg( result.ok, label + ' : ' + result.message );
     allPassed = allPassed && result.ok;
-    view.writeLog( msg, true );
+    view.putLog( msg );
     Score.clear();
     Seed.clear();
+    return allPassed;
   };
 
   instance = createSingleton( Macchiato, {
@@ -56,18 +78,18 @@ Macchiato = (function(){
       suites.push( p );
     },
     check: function( ){
-      var that = this, areTestsPassedAll = true,msg;
-      testCount = view.getTestCount();
+      var passed = true, msg;
+      view.clearMsg();
       view.clearLog();
 
       each( function( tests ){
         each( function( test, label ){
-          check( label, test );
+          passed = passed && check( label, test );
         }, tests );
       }, suites );
 
-      msg = areTestsPassedAll ? 'Ok, All tests succeeded!!' : 'Oops! failed test exist...';
-      writeMsg( msg );
+      msg = passed ? 'Ok, All tests succeeded!!' : 'Oops! failed test exist...';
+      view.writeMsg( msg );
     }
   });
 
