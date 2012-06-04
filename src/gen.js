@@ -1,13 +1,12 @@
-var quadratic, GeneratorRefference, Generator, arbitrary;
 
-quadratic = function( a, _b, _c ){
+var quadratic = function( a, _b, _c ){
   var b = _b || 1, c = _c || 0;
   return function( x, r ){
     return a * Math.pow( x, 2 ) + b * x + c;
   };
 };
 
-GenerateRefference = (function(){
+var GenerateRefference = (function(){
   var GenerateRefference = function(){}, method, C = Combinator, instance;
 
   method = {
@@ -47,7 +46,7 @@ GenerateRefference = (function(){
   return instance;
 })();
 
-Generator = function( gs ){
+var Generator = function( gs ){
   this.generators = gs;
   return this;
 };
@@ -56,7 +55,7 @@ Generator.prototype.property = function( property ){
   return forAll( this.generators, property );
 };
 
-arbitrary = function(/* */){
+var arbitrary = function(/* */){
   var types, prepare, instance;
 
   types = Array.prototype.slice.call( arguments, 0, arguments.length );
@@ -73,3 +72,4 @@ arbitrary = function(/* */){
 
   return instance;
 };
+

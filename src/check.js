@@ -1,6 +1,5 @@
-var forAll, where, prop;
 
-forAll = function( generators, property ){
+var forAll = function( generators, property ){
   var testing = function(){
     var args, success, reason;
     args = map( function( f ){
@@ -24,7 +23,7 @@ forAll = function( generators, property ){
   return testing;
 };
 
-where = function( conditions, callback ){
+var where = function( conditions, callback ){
   var i = 0, l = conditions.length;
   while ( i < l ){
     if ( !conditions[ i ] ){
@@ -37,5 +36,5 @@ where = function( conditions, callback ){
   return callback();
 };
 
-prop = forAll;
+var prop = forAll;
 

@@ -1,7 +1,8 @@
-var TestView, Macchiato;
 
-TestView = (function(){
-  var TestView = function(){}, for_web, instance;
+var TestView = (function(){
+  var TestView = function(){},
+      for_web,
+      instance;
 
   for_web = {
     getTestCount: function(){
@@ -46,7 +47,7 @@ TestView = (function(){
   return instance;
 })();
 
-Macchiato = (function(){
+var Macchiato = (function(){
   var Macchiato = function(){}, view = TestView, instance, suites = [], check;
 
   check = function( label, property ){
