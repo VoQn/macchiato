@@ -1,10 +1,9 @@
 
 var forAll = function( generators, property ){
   var testing = function(){
-    var args, success, reason;
-    args = map( function( f ){
-      return f();
-    }, generators );
+    var args = map( force, generators ),
+        success,
+        reason;
 
     try {
       success = property.apply( property, args );
@@ -19,22 +18,24 @@ var forAll = function( generators, property ){
         reason: reason,
         arguments: args
     };
+
   };
+
   return testing;
 };
 
 var where = function( conditions, callback ){
-  var i = 0, l = conditions.length;
-  while ( i < l ){
+  var i = 0,
+      l = conditions.length;
+
+  for ( ; i < l; i++ ){
     if ( !conditions[ i ] ){
       return {
         wasSkipped: true
       };
     }
-    i++;
   }
+
   return callback();
 };
-
-var prop = forAll;
 

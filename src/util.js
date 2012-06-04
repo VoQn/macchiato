@@ -1,12 +1,20 @@
 // Utility
+
+var force = function( promise ){
+  return promise();
+};
+
 var is_list = function( obj ) {
-  var i = 0, classes = [ Array, NodeList, HTMLCollection ], l = classes.length;
-  while ( i < l ){
+  var i = 0,
+      classes = [ Array, NodeList, HTMLCollection ],
+      l = classes.length;
+
+  for ( ; i < l; i++ ){
     if ( obj instanceof classes[ i ] ){
       return true;
     }
-    i++;
   }
+
   return false;
 };
 
@@ -19,53 +27,69 @@ var is_empty = function( obj ){
 };
 
 var map = function( callback, elements ){
-  var i = 0, l, r = [], f = callback, xs = elements;
-  if ( is_list( xs ) ){
-    l = xs.length;
-    while ( i < l ){
-      r[ i ] = f( xs[ i ], i );
-      i++;
+  var i = 0,
+      l,
+      result,
+      put;
+
+  put = function( index ){
+    result[ index ] = callback( elements[ index ], index );
+  };
+
+  if ( is_list( elements ) ){
+    result = [];
+    l = elements.length;
+    for ( ; i < l; i++ ){
+      put( i );
     }
   } else {
-    r = {};
+    result = {};
     for ( i in xs ){
       if ( xs.hasOwnProperty( i ) ){
-        r[ i ] = f( xs[ i ], i );
+        put( i );
       }
     }
   }
-  return r;
+
+  return result;
 };
 
 var each = function( callback, elements ){
-  var i = 0, l, f = callback, xs = elements;
-  if ( is_list( xs ) ){
-    l = xs.length;
-    while ( i < l ){
-      f( xs[ i ] );
-      i++;
+  var i = 0,
+      l,
+      call;
+
+  call = function( index ){
+    callback( elements[ index ], index );
+  };
+
+  if ( is_list( elements ) ){
+    l = elements.length;
+    for ( ; i < l; i++ ){
+      call( i );
     }
   } else {
-    for ( i in xs ) {
-      if ( xs.hasOwnProperty( i ) ){
-        f( xs[ i ], i );
+    for ( i in elements ) {
+      if ( elements.hasOwnProperty( i ) ){
+        call( i );
       }
     }
   }
 };
 
 var filter = function( callback, elements ){
-  var i = 0, xs = elements, l = xs.length, f = callback, r = [], x, t;
+  var i = 0,
+      l = elements.length,
+      r = [],
+      x;
   for ( ; i < l; i++ ){
-    x = xs[ i ];
-    t = f( x, i );
-    if ( t ){
+    x = elements[ i ];
+    if ( callback( x, i ) ){
       r.push( x );
     }
   }
   return r;
 };
-
 
 var createSingleton = function( obj, methods ){
   obj.prototype = methods;

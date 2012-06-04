@@ -1,18 +1,16 @@
 var Checker = (function(){
-  var Checker = function(){}
-    , args = []
-    , passed = false
-    , skipped = false
-    , marks = {
-        skipped: '\u2662'
-      , passed: '\u2713'
-      , faild: '\u2718'
-    }
-    , currentLog
-    , name
-    , method;
-  
-  method = {
+  var Checker = function(){},
+      args = [],
+      passed = false,
+      skipped = false,
+      marks = {
+        skipped: '\u2662',
+        passed: '\u2713',
+        faild: '\u2718'
+    },
+      currentLog;
+
+  return createSingleton( Checker, {
     getArgs: function(){
       return args;
     },
@@ -37,16 +35,16 @@ var Checker = (function(){
       return currentLog;
     },
     log: function( verbose, score ){
-      var kind
-        , shouldView = false;
+      var kind,
+          shouldView = false;
       if ( skipped ) {
-        kind = 'skipped'
+        kind = 'skipped';
         score.countUpSkipped();
       } else if ( passed ){
-        kind = 'passed'
+        kind = 'passed';
         score.countUpPassed();
       } else {
-        kind = 'faild'
+        kind = 'faild';
         score.countUpFailure();
         shouldView = true;
       }
@@ -55,18 +53,12 @@ var Checker = (function(){
           return '"' + a + '"';
         }
         return a;
-      },args ).join(', ') + ' )';
+      }, args ).join(', ') + ' )';
       if ( verbose || shouldView ){
-        //if ( console && console.log ) console.log( currentLog );
+        if ( console && console.log ) console.log( currentLog );
       }
     }
-  };
-
-  for ( name in method ){
-    Checker.prototype[ name ] = method[ name ];
-  }
-
-  return new Checker();
+  });
 })();
 
 

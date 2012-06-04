@@ -1,12 +1,20 @@
 // Utility
+
+var force = function( promise ){
+  return promise();
+};
+
 var is_list = function( obj ) {
-  var i = 0, classes = [ Array, NodeList, HTMLCollection ], l = classes.length;
-  while ( i < l ){
+  var i = 0,
+      classes = [ Array, NodeList, HTMLCollection ],
+      l = classes.length;
+
+  for ( ; i < l; i++ ){
     if ( obj instanceof classes[ i ] ){
       return true;
     }
-    i++;
   }
+
   return false;
 };
 
@@ -19,67 +27,123 @@ var is_empty = function( obj ){
 };
 
 var map = function( callback, elements ){
-  var i = 0, l, r = [], f = callback, xs = elements;
-  if ( is_list( xs ) ){
-    l = xs.length;
-    while ( i < l ){
-      r[ i ] = f( xs[ i ], i );
-      i++;
+  var i = 0,
+      l,
+      result,
+      put;
+
+  put = function( index ){
+    result[ index ] = callback( elements[ index ], index );
+  };
+
+  if ( is_list( elements ) ){
+    result = [];
+    l = elements.length;
+    for ( ; i < l; i++ ){
+      put( i );
     }
   } else {
-    r = {};
+    result = {};
     for ( i in xs ){
       if ( xs.hasOwnProperty( i ) ){
-        r[ i ] = f( xs[ i ], i );
+        put( i );
       }
     }
   }
-  return r;
+
+  return result;
 };
 
 var each = function( callback, elements ){
-  var i = 0, l, f = callback, xs = elements;
-  if ( is_list( xs ) ){
-    l = xs.length;
-    while ( i < l ){
-      f( xs[ i ] );
-      i++;
+  var i = 0,
+      l,
+      call;
+
+  call = function( index ){
+    callback( elements[ index ], index );
+  };
+
+  if ( is_list( elements ) ){
+    l = elements.length;
+    for ( ; i < l; i++ ){
+      call( i );
     }
   } else {
-    for ( i in xs ) {
-      if ( xs.hasOwnProperty( i ) ){
-        f( xs[ i ], i );
+    for ( i in elements ) {
+      if ( elements.hasOwnProperty( i ) ){
+        call( i );
       }
     }
   }
 };
 
 var filter = function( callback, elements ){
-  var i = 0, xs = elements, l = xs.length, f = callback, r = [], x, t;
+  var i = 0,
+      l = elements.length,
+      r = [],
+      x;
   for ( ; i < l; i++ ){
-    x = xs[ i ];
-    t = f( x, i );
-    if ( t ){
+    x = elements[ i ];
+    if ( callback( x, i ) ){
       r.push( x );
     }
   }
   return r;
 };
 
-
 var createSingleton = function( obj, methods ){
   obj.prototype = methods;
   return new obj();
 };
 
+
+var forAll = function( generators, property ){
+  var testing = function(){
+    var args = map( force, generators ),
+        success,
+        reason;
+
+    try {
+      success = property.apply( property, args );
+      reason = success ? '' : 'Falsible: (' + args.join(', ') + ')';
+    } catch ( exception ) {
+      success = false;
+      reason = 'Exception occurred: ' + exception.getMessage();
+    }
+
+    return {
+        passed: success,
+        reason: reason,
+        arguments: args
+    };
+
+  };
+
+  return testing;
+};
+
+var where = function( conditions, callback ){
+  var i = 0,
+      l = conditions.length;
+
+  for ( ; i < l; i++ ){
+    if ( !conditions[ i ] ){
+      return {
+        wasSkipped: true
+      };
+    }
+  }
+
+  return callback();
+};
+
 var Score = (function(){
-  var Score = function(){}
-    , passed  = 0
-    , failure = 0
-    , skipped = 0
-    , name
-    , method;
-  method = {
+  var Score = function(){},
+      passed  = 0,
+      failure = 0,
+      skipped = 0;
+
+  return createSingleton( Score, {
     countUpSkipped: function(){
       skipped++;
     },
@@ -96,30 +160,29 @@ var Score = (function(){
     },
     get: function(){
       return {
-          passed: passed
-        , failure: failure
-        , skipped: skipped
-      }
+          passed: passed,
+          failure: failure,
+          skipped: skipped
+      };
     },
     evaluate: function(){
-      var that = this, isOk = failure == 0, hasSkippedCase = skipped > 0, msg = '';
-      msg = isOk ? '\u2713 OK, passed ' + passed : '\u2718 Failed. after ' + ( passed + skipped );
-      msg += ' tests.'
-      msg += skipped > 0 ? ' \u2662 skipped test' + skipped + ' cases' : '';
+      var score = this.get(),
+          isOk = failure === 0,
+          hasSkippedCase = skipped > 0,
+          msg = '';
+      msg = isOk ? ( '\u2713 OK, passed ' + passed ) : ( '\u2718 Failed. after ' + passed + skipped );
+      msg += ' tests.';
+      msg += skipped > 0 ? ( ' \u2662 skipped test' + skipped + ' cases' ) : '';
       return {
-          ok: isOk
-        , score: that.get()
-        , message: msg
+          ok: isOk,
+          score: score,
+          message: msg
       };
     }
-  };
-  
-  for ( name in method ){
-    Score.prototype[ name ] = method[ name ];
-  }
+  });
+})();
 
-  return new Score();
-})();var Seed = (function(){
+var Seed = (function(){
   var Seed = function(){}, value = 1, instance;
   instance = createSingleton( Seed, {
     getRange: function(){
@@ -135,6 +198,7 @@ var Score = (function(){
   });
   return instance;
 })();
+
 
 var Combinator = (function(){
   var Combinator = function(){}, instance;
@@ -211,6 +275,7 @@ var Combinator = (function(){
   return instance;
 })();
 
+
 var quadratic = function( a, _b, _c ){
   var b = _b || 1, c = _c || 0;
   return function( x, r ){
@@ -286,20 +351,18 @@ var arbitrary = function(/* */){
 };
 
 var Checker = (function(){
-  var Checker = function(){}
-    , args = []
-    , passed = false
-    , skipped = false
-    , marks = {
-        skipped: '\u2662'
-      , passed: '\u2713'
-      , faild: '\u2718'
-    }
-    , currentLog
-    , name
-    , method;
-  
-  method = {
+  var Checker = function(){},
+      args = [],
+      passed = false,
+      skipped = false,
+      marks = {
+        skipped: '\u2662',
+        passed: '\u2713',
+        faild: '\u2718'
+    },
+      currentLog;
+
+  return createSingleton( Checker, {
     getArgs: function(){
       return args;
     },
@@ -324,16 +387,16 @@ var Checker = (function(){
       return currentLog;
     },
     log: function( verbose, score ){
-      var kind
-        , shouldView = false;
+      var kind,
+          shouldView = false;
       if ( skipped ) {
-        kind = 'skipped'
+        kind = 'skipped';
         score.countUpSkipped();
       } else if ( passed ){
-        kind = 'passed'
+        kind = 'passed';
         score.countUpPassed();
       } else {
-        kind = 'faild'
+        kind = 'faild';
         score.countUpFailure();
         shouldView = true;
       }
@@ -342,61 +405,15 @@ var Checker = (function(){
           return '"' + a + '"';
         }
         return a;
-      },args ).join(', ') + ' )';
+      }, args ).join(', ') + ' )';
       if ( verbose || shouldView ){
-        //if ( console && console.log ) console.log( currentLog );
+        if ( console && console.log ) console.log( currentLog );
       }
     }
-  };
-
-  for ( name in method ){
-    Checker.prototype[ name ] = method[ name ];
-  }
-
-  return new Checker();
+  });
 })();
 
 
-
-
-var forAll = function( generators, property ){
-  var testing = function(){
-    var args, success, reason;
-    args = map( function( f ){
-      return f();
-    }, generators );
-
-    try {
-      success = property.apply( property, args );
-      reason = success ? '' : 'Falsible: (' + args.join(', ') + ')';
-    } catch ( exception ) {
-      success = false;
-      reason = 'Exception occurred: ' + exception.getMessage();
-    }
-
-    return {
-        passed: success,
-        reason: reason,
-        arguments: args
-    };
-  };
-  return testing;
-};
-
-var where = function( conditions, callback ){
-  var i = 0, l = conditions.length;
-  while ( i < l ){
-    if ( !conditions[ i ] ){
-      return {
-        wasSkipped: true
-      };
-    }
-    i++;
-  }
-  return callback();
-};
-
-var prop = forAll;
 
 
 var TestView = (function(){

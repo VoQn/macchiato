@@ -1,19 +1,3 @@
-var Seed = (function(){
-  var Seed = function(){}, value = 1, instance;
-  instance = createSingleton( Seed, {
-    getRange: function(){
-      var mx = Math.pow( 2, ( Math.round( value / 1.5 )) );
-      return Math.round( Math.random() * mx );
-    },
-    grow: function(){
-      value++;
-    },
-    clear: function(){
-      value = 0;
-    }
-  });
-  return instance;
-})();
 
 var Combinator = (function(){
   var Combinator = function(){}, instance;
@@ -89,3 +73,4 @@ var Combinator = (function(){
 
   return instance;
 })();
+
