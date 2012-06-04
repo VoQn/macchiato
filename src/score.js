@@ -1,11 +1,10 @@
 var Score = (function(){
-  var Score = function(){}
-    , passed  = 0
-    , failure = 0
-    , skipped = 0
-    , name
-    , method;
-  method = {
+  var Score = function(){},
+      passed  = 0,
+      failure = 0,
+      skipped = 0;
+
+  return createSingleton( Score, {
     countUpSkipped: function(){
       skipped++;
     },
@@ -22,27 +21,24 @@ var Score = (function(){
     },
     get: function(){
       return {
-          passed: passed
-        , failure: failure
-        , skipped: skipped
-      }
+          passed: passed,
+          failure: failure,
+          skipped: skipped
+      };
     },
     evaluate: function(){
-      var that = this, isOk = failure == 0, hasSkippedCase = skipped > 0, msg = '';
-      msg = isOk ? '\u2713 OK, passed ' + passed : '\u2718 Failed. after ' + ( passed + skipped );
-      msg += ' tests.'
-      msg += skipped > 0 ? ' \u2662 skipped test' + skipped + ' cases' : '';
+      var score = this.get(),
+          isOk = failure === 0,
+          hasSkippedCase = skipped > 0,
+          msg = '';
+      msg = isOk ? ( '\u2713 OK, passed ' + passed ) : ( '\u2718 Failed. after ' + passed + skipped );
+      msg += ' tests.';
+      msg += skipped > 0 ? ( ' \u2662 skipped test' + skipped + ' cases' ) : '';
       return {
-          ok: isOk
-        , score: that.get()
-        , message: msg
+          ok: isOk,
+          score: score,
+          message: msg
       };
     }
-  };
-  
-  for ( name in method ){
-    Score.prototype[ name ] = method[ name ];
-  }
-
-  return new Score();
+  });
 })();
