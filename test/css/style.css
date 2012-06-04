@@ -1,4 +1,21 @@
-﻿window {
+﻿/* font style */
+h1, header nav h4 {
+  font-family: 'Meddon', cursive;
+}
+
+h1 > small, h2, h3, h4, header nav a, p, .caution, #test-control {
+  font-family: 'Artifika', serif;
+}
+
+
+html, body {
+  margin: 0;
+  padding: 0;
+
+}
+
+
+html {
   width: 100%;
   height: 100%;
   font-family: "Segoe UI Light", sans-serif;
@@ -7,29 +24,48 @@
 }
 
 body {
-  max-width: 960px;;
-  margin: 0 auto;
-  background-color: #cba;
-  background-image: -webkit-linear-gradient(#fff, #fc9 300px);
+  background-color: #fc9;
+  background-image: -webkit-linear-gradient(#fff, #fc9 300px, #fc9);
+  background-repeat: no-repeat;
 }
 
-h1, h2, h3, h4 {
-  color: #321;
-  font-weight: lighter;
+header, article, footer > div {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+h2, h3, h4 {
+  color: #963;
 }
 
 h1 {
+  color: #630;
+  margin-top: 0;
+  padding-top: 1.5em;
   font-size: 42pt;
   line-height: 0.9;
 }
 
-h1 > small {
+h1:after {
+  content: 'dummy';
+  font-size: 0;
+  padding-bottom: 10px;
+  color: transparent;
+  display: block;
+  box-shadow: 0 1px rgba( 51, 0, 0, 0.5 ), 0 2px #fff;
+}
+
+h1 > small, h2 {
   font-size: 20pt;
+}
+
+small {
+  color: #963;
 }
 
 h1 > img {
   display: inline-block;
-  width: 42pt;
+  width: 44pt;
   margin-right: 12pt;
 }
 
@@ -40,16 +76,81 @@ h1 > small:before, h1 > small:after {
 }
 
 h2 {
-  font-size: 20pt;
-  margin: 10px 0 9px;
+  margin: 16pt 0 9pt;
 }
 
 code {
-  font-family: Consolas, "Segoe UI Light", Monaco, monospace;
+  font-family: Consolas, Monaco, monospace;
 }
 
-div, pre {
-  margin-bottom: 20px;
+header {
+  position: relative;
+}
+
+header nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  margin: 0;
+  padding: 10px;
+  background-image: -webkit-linear-gradient(#210, #630);
+  background-image: linear-gradient(#210, #630);
+  width: 100%;
+  border-bottom: 1px solid #963;
+  box-shadow: 0 0 6px 3px rgba(0,0,0,0.5);
+}
+
+header h4, header nav ul {
+  position: relative;
+  display: inline-block;
+  margin: 0;
+  color: #630;
+}
+
+header nav li {
+  display: inline-block;
+  padding-right: 20px;
+  margin-right: 5px;
+}
+
+header a {
+  color: #c96;
+  text-decoration: none;
+}
+
+footer {
+  margin-top: 40px;
+  padding-bottom: 20px;
+  background-color: #210;
+  background-image: -webkit-linear-gradient( #630, #210 100px, #210);
+  color: #963;
+}
+
+footer h4 {
+  padding-bottom: 6pt;
+  border-bottom: 1px solid #630;
+  color: #963;
+}
+
+footer a {
+  color: #fc9;
+  text-decoration: none;
+}
+
+footer nav {
+  display: inline-block;
+  vertical-align: top;
+  min-width: 280px;
+  margin-right: 10px;
+}
+
+footer nav ul {
+  list-style: none;
+  padding: 0;
+}
+
+footer {
+  box-shadow: 0 -1px #963, 0 -2px #630;
 }
 
 input[type=text] {
@@ -79,6 +180,43 @@ input[type=button]:active {
     0 -1px 0 2px rgba(0, 0, 0, 0.3)
   , 0 1px 0 2px rgba(255, 255, 255, 0.8)
   , inset 0 1px 8px #000;
+}
+
+.caution {
+  background-color: #fc0;
+  color: #000;
+  font-weight: bold;
+  border: 4px solid #000;
+  border-radius: 8px;
+  padding: 5px;
+}
+
+.caution > h2 {
+  background-color: #000;
+  color: #fc0;
+  margin: 0;
+  border-radius: 4px;
+}
+
+.caution > h2:before {
+  content: '⚠';
+  display: inline-block;
+  font-size: 20pt;
+  margin: 0pt 5pt;
+}
+
+.caution > p {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.caution a:link {
+  color: #330;
+
+}
+
+.caution a:visited {
+  color: #660;
 }
 
 .primary {
@@ -145,7 +283,7 @@ pre.sample-code {
   background-color: #321;
   color: #fff;
   padding: 10px 20px;
-  margin-top: 0;
+  margin: 0;
   border: 4px solid #000;
   border-radius: 8px;
   margin-right: 2px;
@@ -156,8 +294,52 @@ pre.sample-code {
   text-align: right;
 }
 
+#test-control {
+  position: relative;
+}
+
+.test-result {
+  margin: 0 0 0 15px;
+  padding: 0;
+  top: 20px;
+  display: inline-block;
+  position: absolute;
+}
+
+#test-control .message {
+  position: relative;
+  background-color: #fff;
+  padding: 8px 12px 10px 10px;
+  border: 1px solid #c96;
+  border-radius: 4px;
+}
+
+#test-control .message:before {
+  position: absolute;
+  left: -11px;
+  content: "";
+  display: inline-block;
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-right: 11px solid #c96;
+  border-bottom: 10px solid transparent;
+}
+
+#test-control .message:after {
+  position: absolute;
+  left: -10px;
+  content: "";
+  display: inline-block;
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-right: 10px solid #fff;
+  border-bottom: 10px solid transparent;
+}
+
 #logger {
-  height: 31.8em;
+  height: 10em;
   overflow-x: hidden;
   overflow-y: auto;
   color: #ccc;

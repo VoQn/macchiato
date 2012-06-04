@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Macchiato.js - Functional Property Testing for JavaScript -</title>
+    <title>Macchiato.js - QDD for JavaScript -</title>
     <link href="img/favicon.ico" rel="shortcut icon" type="image/x-icon">
+    <link href='http://fonts.googleapis.com/css?family=Artifika|Meddon' rel='stylesheet' type='text/css'>
     <link href="css/style.css" rel="stylesheet" type="text/css">
     <link href="css/syntax.css" rel="stylesheet" type="text/css">
-    <!-- <script src="script/rainbow-custom.min.js" type="text/javascript"></script> -->
+    <script src="script/rainbow-custom.min.js" type="text/javascript"></script>
     <script src="../src/util.js" type="text/javascript"></script>
     <script src="../src/score.js" type="text/javascript"></script>
     <script src="../src/combinator.js" type="text/javascript"></script>
@@ -16,22 +17,45 @@
     <script src="../src/macchiato.js" type="text/javascript"></script>
     <!-- example test cases -->
     <script src="../example/test_web.js" type="text/javascript"></script>
+    <script type="text/javascript">
+      add_on_load( setInternalAnchorBehavior('header-nav') );
+    </script>
   </head>
-  <body>
-    <h1><img src="img/macchiato.png" alt="logo image">Macchiato.js<br><small>Functional Property Testing for JavaScript</small></h1>
+  <body id="top">
+    <header>
+     <nav id="header-nav">
+      <h4>Macchiato.js</h4>
+      <ul>
+        <li><a href="#top">Top</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="http://github.com/VoQn/Macchiato">Repository</a></li>
+      </ul>
+     </nav>
+    <h1><img src="img/macchiato.png" alt="logo image">Macchiato.js<br><small>Qualitative Driven Development for JavaScript</small></h1></header>
+    <article>
+    <div class="caution">
+      <h2>CAUTION</h2>
+      <p>This project is under development now.<br>Sorry to keep you waiting.</p>
+      <p>Please see <a href="https://github.com/VoQn/macchiato/issues/milestones">GitHub Milestones</a></p>
+    </div>
+    <section id="about">
+      <h2>What's "Macchiato"? What's "QDD"?</h2>
+      <p><i>Macchiato</i> is a testing framework for JavaScript, inspired by <i>QuickCheck</i>, a similar library for <i>Haskell</i> programs.</p>
+      <p></p>
+    </section>
     <h2>Example</h2>
     <div>
         <pre class="sample-code"><code data-language="javascript">Macchiato.stock({
   'number x, y =&gt; x + y == y + x' :
-    prop( arbitrary( 'number', 'number' ), function( x, y ){ 
+    arbitrary( 'number', 'number' ).property( function( x, y ){ 
       return x + y == y + x;
     }),
   'string str =&gt; str == true' :
-    prop( arbitrary( 'string' ), function( str ){
+    arbitrary( 'string' ).property( function( str ){
       return !!str;
     }),
   'integer x, y =&gt; div(x, y) * y + (x % y) == x' :
-    prop( arbitrary( 'integer', 'integer' ), function( x, y ){
+    arbitrary( 'integer', 'integer' ).property( function( x, y ){
       return where( [ y != 0 ], function( x, y ){
         var n = Math.floor( x / y ), d = Math.floor( x % y );
         return n * y + d == x;
@@ -39,7 +63,6 @@
     })
 });</code></pre>
     </div>
-    <h2>try test</h2>
     <form id="test-control">
       <div>
         <p class="input-with-label" onclick="document.getElementById('test-count').focus()">
@@ -49,11 +72,36 @@
           <input id="verbose" type="checkbox" onclick="setVerbose()">verbose
         </p>
         <input type="button" class="primary" value="Run Test" onclick="Macchiato.check()">
-        <span class="message"></span>
+        <p class="test-result"><span class="message">Let's Try!</span></p>
       </div>
     </form>
     <div id="logger" class="console">
       <p class='log-line'></p>
     </div>
+    </article>
+    <footer>
+      <div id="footer-high">
+        <nav>
+          <h4>Macchiato.js</h4>
+          <ul>
+            <li>About</li>
+            <li>Sample</li>
+            <li>API Refference</li>
+            <li><a href="http://github.com/VoQn/Macchiato">Repository</a></li>
+          </ul>
+        </nav>
+        <nav>
+          <h4>Other Projects</h4>
+          <ul>
+            <li><a href="http://github.com/yaakaito/NLTQuickCheck">yaakaito/NLTQuickCheck</a></li>
+            <li><a href="http://github.com/VoQn/ZeroFixFramework">VoQn/ZeroFixFramework</a></li>
+            <li><a href="http://rosylilly.github.com/QueenCheck">rosililly/QueenCheck</a>
+          </ul>
+        </nav>
+      </div>
+      <div id="footer-low">
+        <p>&copy;2012 VoQn all rights reseaved<p>
+      </div>
+    </footer>
   </body>
 </html>

@@ -1,7 +1,5 @@
 // Utility
-var is_list, is_empty, map, each, createSingleton;
-
-is_list = function( obj ) {
+var is_list = function( obj ) {
   var i = 0, classes = [ Array, NodeList, HTMLCollection ], l = classes.length;
   while ( i < l ){
     if ( obj instanceof classes[ i ] ){
@@ -12,7 +10,7 @@ is_list = function( obj ) {
   return false;
 };
 
-is_empty = function( obj ){
+var is_empty = function( obj ){
   var _;
   for ( _ in obj ){
     return false;
@@ -20,7 +18,7 @@ is_empty = function( obj ){
   return true;
 };
 
-map = function( callback, elements ){
+var map = function( callback, elements ){
   var i = 0, l, r = [], f = callback, xs = elements;
   if ( is_list( xs ) ){
     l = xs.length;
@@ -39,7 +37,7 @@ map = function( callback, elements ){
   return r;
 };
 
-each = function( callback, elements ){
+var each = function( callback, elements ){
   var i = 0, l, f = callback, xs = elements;
   if ( is_list( xs ) ){
     l = xs.length;
@@ -56,7 +54,21 @@ each = function( callback, elements ){
   }
 };
 
-createSingleton = function( obj, methods ){
+var filter = function( callback, elements ){
+  var i = 0, xs = elements, l = xs.length, f = callback, r = [], x, t;
+  for ( ; i < l; i++ ){
+    x = xs[ i ];
+    t = f( x, i );
+    if ( t ){
+      r.push( x );
+    }
+  }
+  return r;
+};
+
+
+var createSingleton = function( obj, methods ){
   obj.prototype = methods;
   return new obj();
 };
+

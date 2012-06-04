@@ -28,11 +28,11 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.87"
-     inkscape:cx="164.39394"
-     inkscape:cy="148.24191"
+     inkscape:zoom="2.14"
+     inkscape:cx="170.21536"
+     inkscape:cy="115.91172"
      inkscape:document-units="px"
-     inkscape:current-layer="layer3"
+     inkscape:current-layer="layer2"
      showgrid="true"
      inkscape:window-width="1243"
      inkscape:window-height="756"
@@ -73,7 +73,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -277,11 +277,11 @@
      inkscape:groupmode="layer"
      id="layer2"
      inkscape:label="Type"
-     style="opacity:1;display:inline"
+     style="display:inline"
      sodipodi:insensitive="true">
     <path
        style="fill:#ffffff;stroke:#ffffff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 40,130 c 0,-15 20,-50 60,-50 11,0 20,9 20,20 0,20 -40,90 -20,90 20,0 20,-110 60,-110 11,0 20,9 20,20 0,20 -40,90 -20,90 20,0 20,-110 60,-110 11,0 20,9 20,20 0,20 -25,80 -25,90 0,9 6,15 15,15 20,0 30,-30 30,-45 0,31 -24,60 -60,60 -11,0 -20,-9 -20,-20 0,-20 40,-90 20,-90 -20,0 -20,110 -60,110 -11,0 -20,-9 -20,-20 0,-20 40,-90 20,-90 -20,0 -20,110 -60,110 -11,0 -20,-9 -20,-20 0,-20 47,-105 10,-105 -8,0 -15,7 -15,15 0,8 5,13.74219 5,20 0,5 -3.75,10 -10,10 -5,0 -10,-5 -10,-10 z"
+       d="m 40,130 c 0,-15 20,-50 60,-50 11,0 20,9 20,20 0,20 -40,90 -20,90 20,0 20,-110 60,-110 11,0 20,9 20,20 0,20 -40,90 -20,90 20,0 20,-110 60,-110 11,0 20,9 20,20 0,20 -25,80 -25,90 0,9 6,15 15,15 15,0 25,-23 29,-35 -6,30 -30,50 -60,50 -11,0 -19,-9 -19,-20 0,-20 40,-90 20,-90 -20,0 -20,110 -60,110 -11,0 -20,-9 -20,-20 0,-20 40,-90 20,-90 -20,0 -20,110 -60,110 -11,0 -20,-9 -20,-20 0,-20 47,-105 10,-105 -8,0 -15,7 -15,15 0,8 5,13.74219 5,20 0,5 -3.75,10 -10,10 -5,0 -10,-5 -10,-10 z"
        id="path3008"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="scczcczccsccsczcszcccsscs" />

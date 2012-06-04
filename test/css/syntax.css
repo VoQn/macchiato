@@ -29,15 +29,16 @@ pre .storage {
 
 /* This includes regexes */
 pre .string {
-    color: #fd3;
+  color: #fd3;
+  font-style: italic;
 }
 
 pre .keyword, pre .selector {
-    color: #f60;
+  color: #f60;
 }
 
 pre .inherited-class {
-    font-style: italic;
+  font-style: italic;
 }
 
 pre .entity {
@@ -50,4 +51,16 @@ pre .support {
 
 pre .variable.class {
   color: #FF8000;
+}
+
+pre .function.call {
+  color: #9c6;
+}
+
+pre .keyword.operator {
+  color: #c96;
+}
+
+pre .class.object {
+  color: #cf9;
 }
