@@ -1,4 +1,4 @@
-var quadratic, Generator, arbitrary;
+var quadratic, GeneratorRefference, Generator, arbitrary;
 
 quadratic = function( a, _b, _c ){
   var b = _b || 1, c = _c || 0;
@@ -7,8 +7,8 @@ quadratic = function( a, _b, _c ){
   };
 };
 
-Generator = (function(){
-  var Generator = function(){}, method, C = Combinator, instance;
+GenerateRefference = (function(){
+  var GenerateRefference = function(){}, method, C = Combinator, instance;
 
   method = {
     bool: function( ){
@@ -27,8 +27,8 @@ Generator = (function(){
         return Math.round( n ) / Math.round( d );
     }),
     charator: function(){
-      var g = C.oneOf( [ C.choose( 0, 127 ), C.choose( 0, 255 ) ] )(),
-          c = String.fromCharCode( g() );
+      var g = C.oneOf( [ C.choose( 0, 127 ), C.choose( 0xe000, 0xfffd ), C.choose( 0x10000, 0x10ffff ) ] )(),
+          c = String.fromCharCode( Math.round( g() ) );
       return c;
     }
   };
@@ -42,21 +42,34 @@ Generator = (function(){
     return str;
   };
 
-  instance = createSingleton( Generator, method );
+  instance = createSingleton( GenerateRefference, method );
 
   return instance;
 })();
 
+Generator = function( gs ){
+  this.generators = gs;
+  return this;
+};
+
+Generator.prototype.property = function( property ){
+  return forAll( this.generators, property );
+};
+
 arbitrary = function(/* */){
-  var types, gen;
+  var types, prepare, instance;
+
   types = Array.prototype.slice.call( arguments, 0, arguments.length );
-  gen = function( t ){
+
+  prepare = function( t ){
     var test = /\[\s+([a-z]+)\s+\]/.exec( t );
     if ( test ){
       return elements( Generator[ test[ 1 ] ] );
     }
-    return Generator[ t ];
+    return GenerateRefference[ t ];
   };
 
-  return map( gen, types );
+  instance = new Generator( map( prepare, types ) );
+
+  return instance;
 };
