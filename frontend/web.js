@@ -31,10 +31,17 @@ var clearNode = function( node ){
 };
 
 var htmlEscape = (function(){
-  var map = {"<":"&lt;", ">":"&gt;", "&":"&amp;", "'":"&#39;","\"": "&quot;"}
-    , replaceStr = function( s ){ return map[ s ]; };
+  var map = {
+    "<":"&lt;",
+    ">":"&gt;",
+    "&":"&amp;",
+    "'":"&#39;",
+    "\"": "&quot;"
+  };
   return function( str ){
-    return str.replace( /<|>|&|'|"/g, replaceStr );
+    return str.replace( /<|>|&|'|"/g, function( s ){
+      return map[ s ];
+    } );
   };
 })();
 
@@ -80,6 +87,7 @@ var setInternalAnchorBehavior = function( header_tool_bar_id ){
         return scrollWithAdjust( anchor, header_tool_bar_id );
       };
     }, internalAnchors );
+
     return this;
   };
   return ready;
