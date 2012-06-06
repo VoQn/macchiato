@@ -4,7 +4,7 @@ var Score = (function(){
       failure = 0,
       skipped = 0;
 
-  return createSingleton( Score, {
+  createSingleton( Score, {
     countUpSkipped: function(){
       skipped++;
     },
@@ -41,4 +41,6 @@ var Score = (function(){
       };
     }
   });
+
+  return new Score();
 })();

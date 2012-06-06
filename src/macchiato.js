@@ -19,73 +19,84 @@ var TestView = (function(){
     },
     putLog: function( log, withEscape ){
       var consoleLine = document.querySelector( '#logger .log-line' ),
-          br = document.createElement('br');
-      if ( log instanceof HTMLElement ){
-        consoleLine.appendChild( log );
-      } else {
-        var str = !withEscape ? log : htmlEscape( log ),
-            textNode = document.createTextNode( str );
-        consoleLine.appendChild( textNode );
-      }
-      consoleLine.appendChild( br );
+          str = !withEscape ? log : htmlEscape( log );
+      consoleLine.innerHTML += str;
     },
     clearLog: function( ){
       var consoleLine = document.querySelector( '#logger .log-line' );
-      clearNode( consoleLine );
+      consoleLine.innerHTML = '';
     },
-    highlightMsg: function( isGreen, msg, placeholder ){
-      var dom = document.createElement( 'span' ),
-          textNode = document.createTextNode( msg );
-      dom.setAttribute('class', ( isGreen ? 'passed' : 'failed' ));
-      dom.appendChild( textNode );
-      return dom;
+    highlightMsg: function( isGreen, msg ){
+      return '<span class="' + ( isGreen ? 'passed' : 'failed' ) + '">' + msg + '</span><br>';
     }
   };
 
-  instance = createSingleton( TestView, for_web );
+  createSingleton( TestView, for_web );
 
-  return instance;
+  return new TestView();
 })();
 
 var Macchiato = (function(){
-  var Macchiato = function(){}, view = TestView, instance, suites = [], check;
+  var Macchiato = function(){},
+      view = TestView,
+      suites = [];
 
-  check = function( label, property ){
-    var i = 0, l = view.getTestCount(), allPassed = true, result, msg;
-    while ( i++ < l ){
+  var check = function( label, property ){
+    var i = 0,
+        l = view.getTestCount(),
+        allPassed = true,
+        result,
+        msg = '';
+    for ( ; i < l; i++ ){
       Checker.run( property, verbose, Score );
-      if( verbose ) view.putLog( Checker.lastResult() );
+      if( verbose ) {
+        msg += Checker.lastResult() + '<br>';
+      }
       Seed.grow();
     }
     result = Score.evaluate();
-    msg = view.highlightMsg( result.ok, label + ' : ' + result.message );
+    msg += view.highlightMsg( result.ok, label + ' : ' + result.message );
     allPassed = allPassed && result.ok;
-    view.putLog( msg );
     Score.clear();
     Seed.clear();
-    return allPassed;
+    return {
+      passed: allPassed,
+      message: msg
+    };
   };
 
-  instance = createSingleton( Macchiato, {
+  createSingleton( Macchiato, {
     stock: function( p ){
       suites.push( p );
     },
     check: function( ){
-      var passed = true, msg;
+      var passed = true,
+          i = 0,
+          l = suites.length,
+          log = '',
+          msg = '',
+          test,
+          label,
+          result;
+
       view.clearMsg();
       view.clearLog();
 
-      each( function( tests ){
-        each( function( test, label ){
-          passed = passed && check( label, test );
-        }, tests );
-      }, suites );
+      for ( ; i < l; i++){
+        for ( label in suites[ i ] ){
+          test = suites[ i ][ label ];
+          result = check( label, test );
+          passed = passed && result.passed;
+          log += result.message;
+        }
+      }
 
       msg = passed ? 'Ok, All tests succeeded!!' : 'Oops! failed test exist...';
+      view.putLog( log );
       view.writeMsg( msg );
     }
   });
 
-  return instance;
+  return new Macchiato();
 
 })();

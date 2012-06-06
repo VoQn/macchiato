@@ -2,7 +2,7 @@
 var Combinator = (function(){
   var Combinator = function(){}, instance;
 
-  instance = createSingleton( Combinator, {
+  createSingleton( Combinator, {
     sized: function( generateBySize ){
       var generate = function(){
         return generateBySize( Seed.getRange() );
@@ -71,6 +71,6 @@ var Combinator = (function(){
     }
   });
 
-  return instance;
+  return new Combinator();
 })();
 

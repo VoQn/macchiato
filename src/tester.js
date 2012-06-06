@@ -10,7 +10,7 @@ var Checker = (function(){
     },
       currentLog;
 
-  return createSingleton( Checker, {
+  createSingleton( Checker, {
     getArgs: function(){
       return args;
     },
@@ -59,7 +59,6 @@ var Checker = (function(){
       }
     }
   });
+  return new Checker();
 })();
-
-
 

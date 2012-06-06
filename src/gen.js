@@ -7,7 +7,9 @@ var quadratic = function( a, _b, _c ){
 };
 
 var GenerateRefference = (function(){
-  var GenerateRefference = function(){}, method, C = Combinator, instance;
+  var GenerateRefference = function(){},
+      method,
+      C = Combinator;
 
   method = {
     bool: function( ){
@@ -41,9 +43,9 @@ var GenerateRefference = (function(){
     return str;
   };
 
-  instance = createSingleton( GenerateRefference, method );
+  createSingleton( GenerateRefference, method );
 
-  return instance;
+  return new GenerateRefference();
 })();
 
 var Generator = function( gs ){
