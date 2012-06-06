@@ -1,16 +1,27 @@
 // Utility
 
+/**
+ * @param {function() : Object} promise
+ * @return {Object}
+ */
 var force = function( promise ){
   return promise();
 };
 
-var is_list = function( obj ) {
-  var i = 0,
-      classes = [ Array, NodeList, HTMLCollection ],
-      l = classes.length;
+/**
+ * @param {!Object} object
+ * @return {boolean} parameter is kind of list or not
+ */
+var is_list = function( object ) {
+  /** @type {string|number} */
+  var i = 0;
+  /** @type {Array} */
+  var classes = [ Array, NodeList, HTMLCollection ];
+  /** @type {number} */
+  var l = classes.length;
 
   for ( ; i < l; i++ ){
-    if ( obj instanceof classes[ i ] ){
+    if ( object instanceof classes[ i ] ){
       return true;
     }
   }
@@ -18,7 +29,12 @@ var is_list = function( obj ) {
   return false;
 };
 
-var is_empty = function( obj ){
+/**
+ * @param {!Object} object
+ * @return {boolean} parameter is empty or not
+ */
+var is_empty = function( object ){
+  /** @type {string} */
   var _;
   for ( _ in obj ){
     return false;
@@ -26,26 +42,35 @@ var is_empty = function( obj ){
   return true;
 };
 
+/**
+ * @param {function(Object, (string|number)=)} callback
+ * @param {!Array|!Object} elements
+ * @return {!Array|!Object} new array or object
+ */
 var map = function( callback, elements ){
-  var i = 0,
-      l,
-      result,
-      put;
+  /** @type {string|number} */
+  var i = 0;
 
-  put = function( index ){
+  /** @type {Array|Object} */
+  var result = [];
+
+  /**
+   * @param {string|number} index of elements
+   */
+  var put = function( index ){
     result[ index ] = callback( elements[ index ], index );
   };
 
   if ( is_list( elements ) ){
-    result = [];
-    l = elements.length;
+    /** @type {number} */
+    var l = elements.length;
     for ( ; i < l; i++ ){
       put( i );
     }
   } else {
     result = {};
-    for ( i in xs ){
-      if ( xs.hasOwnProperty( i ) ){
+    for ( i in elements ){
+      if ( elements.hasOwnProperty( i ) ){
         put( i );
       }
     }
@@ -54,17 +79,23 @@ var map = function( callback, elements ){
   return result;
 };
 
+/**
+ * @param {function(Object, (string|number)=)} callback
+ * @param {!Array|!Object} elements
+ */
 var each = function( callback, elements ){
-  var i = 0,
-      l,
-      call;
-
-  call = function( index ){
+  /** @type {string|number} */
+  var i = 0;
+  /**
+   * @param {string|number} index of elements
+   */
+  var call = function( index ){
     callback( elements[ index ], index );
   };
 
   if ( is_list( elements ) ){
-    l = elements.length;
+    /** @type {number} */
+    var l = elements.length;
     for ( ; i < l; i++ ){
       call( i );
     }
@@ -77,54 +108,98 @@ var each = function( callback, elements ){
   }
 };
 
+/**
+ * @param {function(Object, number=): boolean} callback
+ * @param {!Array} elements
+ * @return {!Array} new array list
+ */
 var filter = function( callback, elements ){
-  var i = 0,
-      l = elements.length,
-      r = [],
-      x;
+  /** @type {number} */
+  var i = 0;
+  /** @type {number} */
+  var l = elements.length;
+  /** @type {!Array} */
+  var result = [];
+  /** @type {Object} */
+  var x;
   for ( ; i < l; i++ ){
     x = elements[ i ];
     if ( callback( x, i ) ){
-      r.push( x );
+      result.push( x );
     }
   }
-  return r;
+  return result;
 };
 
-var createSingleton = function( obj, methods ){
-  obj.prototype = methods;
-  return new obj();
+/**
+ * @param {!Object} object
+ * @param {!Object} methods
+ * @return {!Object} class instance
+ */
+var createSingleton = function( object, methods ){
+  object.prototype = methods;
 };
 
 
+/**
+ * @param {{passed: boolean, reason: string, arguments: Array}} stub
+ * @constructor
+ */
+var Result = function( stub ){
+  this.passed = stub.passed;
+  this.reason = stub.reason;
+  this.arguments = stub.arguments;
+  return this;
+};
+
+/**
+ * @param {Array.<function(): Object>} generators
+ * @param {function(...[Object]): (boolean|Object)} property
+ * @return {function(): Result} test promise
+ */
 var forAll = function( generators, property ){
+  /** @return {Result} */
   var testing = function(){
-    var args = map( force, generators ),
-        success,
-        reason;
+
+    /** @type {Array} */
+    var args = map( force, generators );
+
+    /** @type {boolean} */
+    var success;
+
+    /** @type {string} */
+    var reason;
 
     try {
       success = property.apply( property, args );
       reason = success ? '' : 'Falsible: (' + args.join(', ') + ')';
     } catch ( exception ) {
       success = false;
-      reason = 'Exception occurred: ' + exception.getMessage();
+      reason = 'Exception occurred: ' + exception;
     }
 
-    return {
+    return new Result({
         passed: success,
         reason: reason,
         arguments: args
-    };
+    });
 
   };
 
   return testing;
 };
 
+/**
+ * @param {Array.<boolean>} conditions
+ * @param {function(): boolean} callback
+ * @return {{wasSkipped: boolean}|boolean} result of test
+ */
 var where = function( conditions, callback ){
-  var i = 0,
-      l = conditions.length;
+  /** @type {number} */
+  var i = 0;
+
+  /** @type {number} */
+  var l = conditions.length;
 
   for ( ; i < l; i++ ){
     if ( !conditions[ i ] ){
@@ -143,7 +218,7 @@ var Score = (function(){
       failure = 0,
       skipped = 0;
 
-  return createSingleton( Score, {
+  createSingleton( Score, {
     countUpSkipped: function(){
       skipped++;
     },
@@ -180,11 +255,13 @@ var Score = (function(){
       };
     }
   });
+
+  return new Score();
 })();
 
 var Seed = (function(){
   var Seed = function(){}, value = 1, instance;
-  instance = createSingleton( Seed, {
+  createSingleton( Seed, {
     getRange: function(){
       var mx = Math.pow( 2, ( Math.round( value / 1.5 )) );
       return Math.round( Math.random() * mx );
@@ -196,14 +273,14 @@ var Seed = (function(){
       value = 0;
     }
   });
-  return instance;
+  return new Seed();
 })();
 
 
 var Combinator = (function(){
   var Combinator = function(){}, instance;
 
-  instance = createSingleton( Combinator, {
+  createSingleton( Combinator, {
     sized: function( generateBySize ){
       var generate = function(){
         return generateBySize( Seed.getRange() );
@@ -272,7 +349,7 @@ var Combinator = (function(){
     }
   });
 
-  return instance;
+  return new Combinator();
 })();
 
 
@@ -284,7 +361,9 @@ var quadratic = function( a, _b, _c ){
 };
 
 var GenerateRefference = (function(){
-  var GenerateRefference = function(){}, method, C = Combinator, instance;
+  var GenerateRefference = function(){},
+      method,
+      C = Combinator;
 
   method = {
     bool: function( ){
@@ -318,9 +397,9 @@ var GenerateRefference = (function(){
     return str;
   };
 
-  instance = createSingleton( GenerateRefference, method );
+  createSingleton( GenerateRefference, method );
 
-  return instance;
+  return new GenerateRefference();
 })();
 
 var Generator = function( gs ){
@@ -362,7 +441,7 @@ var Checker = (function(){
     },
       currentLog;
 
-  return createSingleton( Checker, {
+  createSingleton( Checker, {
     getArgs: function(){
       return args;
     },
@@ -411,9 +490,8 @@ var Checker = (function(){
       }
     }
   });
+  return new Checker();
 })();
-
-
 
 
 var TestView = (function(){
@@ -436,73 +514,84 @@ var TestView = (function(){
     },
     putLog: function( log, withEscape ){
       var consoleLine = document.querySelector( '#logger .log-line' ),
-          br = document.createElement('br');
-      if ( log instanceof HTMLElement ){
-        consoleLine.appendChild( log );
-      } else {
-        var str = !withEscape ? log : htmlEscape( log ),
-            textNode = document.createTextNode( str );
-        consoleLine.appendChild( textNode );
-      }
-      consoleLine.appendChild( br );
+          str = !withEscape ? log : htmlEscape( log );
+      consoleLine.innerHTML += str;
     },
     clearLog: function( ){
       var consoleLine = document.querySelector( '#logger .log-line' );
-      clearNode( consoleLine );
+      consoleLine.innerHTML = '';
     },
-    highlightMsg: function( isGreen, msg, placeholder ){
-      var dom = document.createElement( 'span' ),
-          textNode = document.createTextNode( msg );
-      dom.setAttribute('class', ( isGreen ? 'passed' : 'failed' ));
-      dom.appendChild( textNode );
-      return dom;
+    highlightMsg: function( isGreen, msg ){
+      return '<span class="' + ( isGreen ? 'passed' : 'failed' ) + '">' + msg + '</span><br>';
     }
   };
 
-  instance = createSingleton( TestView, for_web );
+  createSingleton( TestView, for_web );
 
-  return instance;
+  return new TestView();
 })();
 
 var Macchiato = (function(){
-  var Macchiato = function(){}, view = TestView, instance, suites = [], check;
+  var Macchiato = function(){},
+      view = TestView,
+      suites = [];
 
-  check = function( label, property ){
-    var i = 0, l = view.getTestCount(), allPassed = true, result, msg;
-    while ( i++ < l ){
+  var check = function( label, property ){
+    var i = 0,
+        l = view.getTestCount(),
+        allPassed = true,
+        result,
+        msg = '';
+    for ( ; i < l; i++ ){
       Checker.run( property, verbose, Score );
-      if( verbose ) view.putLog( Checker.lastResult() );
+      if( verbose ) {
+        msg += Checker.lastResult() + '<br>';
+      }
       Seed.grow();
     }
     result = Score.evaluate();
-    msg = view.highlightMsg( result.ok, label + ' : ' + result.message );
+    msg += view.highlightMsg( result.ok, label + ' : ' + result.message );
     allPassed = allPassed && result.ok;
-    view.putLog( msg );
     Score.clear();
     Seed.clear();
-    return allPassed;
+    return {
+      passed: allPassed,
+      message: msg
+    };
   };
 
-  instance = createSingleton( Macchiato, {
+  createSingleton( Macchiato, {
     stock: function( p ){
       suites.push( p );
     },
     check: function( ){
-      var passed = true, msg;
+      var passed = true,
+          i = 0,
+          l = suites.length,
+          log = '',
+          msg = '',
+          test,
+          label,
+          result;
+
       view.clearMsg();
       view.clearLog();
 
-      each( function( tests ){
-        each( function( test, label ){
-          passed = passed && check( label, test );
-        }, tests );
-      }, suites );
+      for ( ; i < l; i++){
+        for ( label in suites[ i ] ){
+          test = suites[ i ][ label ];
+          result = check( label, test );
+          passed = passed && result.passed;
+          log += result.message;
+        }
+      }
 
       msg = passed ? 'Ok, All tests succeeded!!' : 'Oops! failed test exist...';
+      view.putLog( log );
       view.writeMsg( msg );
     }
   });
 
-  return instance;
+  return new Macchiato();
 
 })();
