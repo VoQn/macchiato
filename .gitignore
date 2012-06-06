@@ -1,0 +1,11 @@
+
+# OS
+.DS_Store
+thumb.db
+
+# Temp/Swap file
+*.*~
+.*\.swp
+
+# Distribution files ( use Make )
+dist/*
