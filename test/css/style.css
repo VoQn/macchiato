@@ -29,6 +29,7 @@ body {
   background-color: #fc9;
   background-image: -webkit-linear-gradient(#fff, #fc9 300px, #fc9);
   background-image: -moz-linear-gradient(#fff, #fc9 300px, #fc9);
+  background-image: -o-linear-gradient(#fff, #fc9 300px, #fc9);
   background-image: linear-gradient(#fff, #fc9 300px, #fc9);
   background-repeat: no-repeat;
 }
@@ -103,10 +104,12 @@ header nav {
   background: #210;
   background-image: -webkit-linear-gradient(#210, #630);
   background-image: -moz-linear-gradient(#210, #630);
+  background-image: -o-linear-gradient(#210, #630);
   background-image: linear-gradient(#210, #630);
   width: 100%;
   border-bottom: 1px solid #963;
   box-shadow: 0 0 6px 3px rgba(0,0,0,0.5);
+  z-index: 1;
 }
 
 header h4, header nav ul {
@@ -132,6 +135,9 @@ footer {
   padding-bottom: 20px;
   background-color: #210;
   background-image: -webkit-linear-gradient( #630, #210 100px, #210);
+  background-image: -moz-linear-gradient( #630, #210 100px, #210);
+  background-image: -o-linear-gradient( #630, #210 100px, #210);
+  background-image: linear-gradient( #630, #210 100px, #210);
   color: #963;
 }
 
@@ -236,6 +242,7 @@ input[type=button]:active {
   background-color: #a40;
   background-image: -webkit-linear-gradient(#a40, #830 50%, #720 50%, #610);
   background-image: -moz-linear-gradient(#a40, #830 50%, #720 50%, #610);
+  background-image: -o-linear-gradient(#a40, #830 50%, #720 50%, #610);
   background-image: linear-gradient(#a40, #830 50%, #720 50%, #610);
   text-shadow: 0 -1px #610;
   border-color: #610;
@@ -245,6 +252,7 @@ input[type=button]:active {
   background-color: #19a;
   background-image: -webkit-linear-gradient(#c60, #a50 50%, #940 50%, #830);
   background-image: -moz-linear-gradient(#c60, #a50 50%, #940 50%, #830);
+  background-image: -o-linear-gradient(#c60, #a50 50%, #940 50%, #830);
   background-image: linear-gradient(#c60, #a50 50%, #940 50%, #830);
 }
 
