@@ -73,7 +73,7 @@ var Macchiato = (function(){
     stock: function( p ){
       suites.push( p );
     },
-    check: function( ){
+    taste: function( ){
       var passed = true,
           i = 0,
           l = suites.length,
