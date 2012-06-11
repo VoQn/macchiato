@@ -10,7 +10,8 @@ MIN_JS = macchiato.min.js
 all: $(MIN_JS)
 
 $(JS): $(LIB) Makefile
-	@cat $(LIB) > $(DIST_DIR)$@
+	cat $(LIB) > $(DIST_DIR)$@
 
 $(MIN_JS): $(JS)
-	@uglifyjs -o $(DIST_DIR)$@ $(DIST_DIR)$(JS)
+	uglifyjs -o $(DIST_DIR)$@ $(DIST_DIR)$(JS)
+	@echo "create dist/${JS} and dist/${MIN_JS}"
