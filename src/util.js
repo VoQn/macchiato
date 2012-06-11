@@ -140,3 +140,26 @@ var createSingleton = function( object, methods ){
   object.prototype = methods;
 };
 
+/**
+ * @typedef {{MAX:{string}, MIN:{string}}}
+ */
+var SupplementMode = {
+  MAX: 'max',
+  MIN: 'min'
+};
+
+/**
+ * @param {Object} alt
+ * @param {Object=} opt_arg
+ * @param {Supplement=} opt_mode
+ * @return {(number|Object)}
+ */
+var supplement = function( alt, opt_arg, opt_mode ){
+  if ( opt_arg === undefined ){
+    return alt;
+  } else if ( opt_mode === undefined ) {
+    return opt_arg;
+  }
+  return Math[opt_mode]( alt, opt_arg );
+};
+
