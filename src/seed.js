@@ -9,9 +9,9 @@ var Seed = (function(){
       var mx = Math.pow( 2, ( Math.round( value / 1.5 )) );
       return Math.round( Math.random() * mx );
     },
-    linear: function( _a, _b ){
-      var a = _a || 1,
-          b = _b || 0,
+    linear: function( opt_a, opt_b ){
+      var a = opt_a !== undefined ? Math.max( opt_a, 1 ) : 1,
+          b = opt_b !== undefined ? opt_b : 0,
           mx = a * value + b;
       return Math.round( Math.random() * mx );
     },
