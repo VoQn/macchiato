@@ -63,18 +63,18 @@
     </div>
     <form id="test-control">
       <div>
-        <p class="input-with-label" onclick="document.getElementById('test-count').focus()">
+        <label class="input-with-label" onclick="document.getElementById('test-count').focus()">
           <input id ="test-count" type="text" value="100" onkeyDown="return numOnly()">tests
-        </p>
-        <p class="input-with-label" onclick="checkVerbose()">
+        </label>
+        <label class="input-with-label" onclick="function(){return document.getElementById('verbose').click();}">
           <input id="verbose" type="checkbox" onclick="setVerbose()">verbose
-        </p>
+        </label>
         <input type="button" class="primary" value="Run Test" onclick="Macchiato.check()">
-        <p class="test-result"><span class="message">Let's Try!</span></p>
+        <p class="test-result"><span id="test-message" class="message">Let's Try!</span></p>
       </div>
     </form>
     <div id="logger" class="console">
-      <p class='log-line'></p>
+      <p id="test-log" class='log-line'></p>
     </div>
     </article>
     <footer>

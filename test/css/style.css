@@ -318,12 +318,13 @@ pre.sample-code {
 
 #test-control {
   position: relative;
+  padding: 10px 0;
 }
 
 .test-result {
   margin: 0 0 0 15px;
   padding: 0;
-  top: 20px;
+  top: 18px;
   display: inline-block;
   position: absolute;
 }
@@ -331,33 +332,33 @@ pre.sample-code {
 #test-control .message {
   position: relative;
   background-color: #fff;
-  padding: 8px 12px 10px 10px;
+  padding: 8px 12px 6px 10px;
   border: 1px solid #c96;
   border-radius: 4px;
 }
 
 #test-control .message:before {
   position: absolute;
-  left: -11px;
+  left: -9px;
   content: "";
   display: inline-block;
   width: 0;
   height: 0;
-  border-top: 10px solid transparent;
-  border-right: 11px solid #c96;
-  border-bottom: 10px solid transparent;
+  border-top: 8px solid transparent;
+  border-right: 8px solid #c96;
+  border-bottom: 8px solid transparent;
 }
 
 #test-control .message:after {
   position: absolute;
-  left: -10px;
+  left: -8px;
   content: "";
   display: inline-block;
   width: 0;
   height: 0;
-  border-top: 10px solid transparent;
-  border-right: 10px solid #fff;
-  border-bottom: 10px solid transparent;
+  border-top: 8px solid transparent;
+  border-right: 8px solid #fff;
+  border-bottom: 8px solid transparent;
 }
 
 #logger {

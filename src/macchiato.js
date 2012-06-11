@@ -5,25 +5,29 @@ var TestView = (function(){
       instance;
 
   for_web = {
+    selectors:{
+      counter_id: 'test-count',
+      messenger_id: 'test-message',
+      logger_id: 'test-log'
+    },
     getTestCount: function(){
-      return parseInt( document.getElementById( 'test-count' ).value, 10 );
+      return parseInt( document.getElementById( this.selectors.counter_id ).value, 10 );
     },
     writeMsg: function( msg ){
-      var board = document.querySelector( '#test-control .message' ),
-          textNode = document.createTextNode( msg );
-      board.appendChild( textNode );
+      var board = document.getElementById( this.selectors.messenger_id );
+      board.innerHTML += msg;
     },
     clearMsg: function( ){
-      var board = document.querySelector( '#test-control .message' );
-      clearNode( board );
+      var board = document.getElementById( this.selectors.messenger_id );
+      board.innerHTML = '';
     },
     putLog: function( log, withEscape ){
-      var consoleLine = document.querySelector( '#logger .log-line' ),
+      var consoleLine = document.getElementById( this.selectors.logger_id ),
           str = !withEscape ? log : htmlEscape( log );
       consoleLine.innerHTML += str;
     },
     clearLog: function( ){
-      var consoleLine = document.querySelector( '#logger .log-line' );
+      var consoleLine = document.getElementById( this.selectors.logger_id );
       consoleLine.innerHTML = '';
     },
     highlightMsg: function( isGreen, msg ){
