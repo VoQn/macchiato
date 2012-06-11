@@ -12,7 +12,19 @@
     <!-- example test cases -->
     <script src="../example/test_web.js" type="text/javascript"></script>
     <script type="text/javascript">
-      add_on_load( setInternalAnchorBehavior('header-nav') );
+      add_on_load( function(){
+        setInternalAnchorBehavior('header-nav');
+        Macchiato.setView( htmlView.setSelectors({
+            counter_id: 'test-count',
+            messenger_id: 'test-message',
+            logger_id: 'test-log'
+          }));
+        initTestConstroller({
+          counter_id: 'test-count',
+          verbose_id: 'verbose',
+          runner_id: 'test-runner'
+        });
+      });
     </script>
   </head>
   <body id="top">
@@ -39,7 +51,7 @@
     <section id="about">
       <h2>What's "Macchiato"? What's "QDD"?</h2>
       <p><i>Macchiato</i> is a testing framework for JavaScript, inspired by <i>QuickCheck</i>, a similar library for <i>Haskell</i> programs.</p>
-      <p></p>
+      <p><!-- Under writing --></p>
     </section>
     <h2>Example</h2>
     <div>
@@ -63,13 +75,13 @@
     </div>
     <form id="test-control">
       <div>
-        <label class="input-with-label" onclick="document.getElementById('test-count').focus()">
+        <label class="input-with-label">
           <input id ="test-count" type="text" value="100" onkeyDown="return numOnly()">tests
         </label>
-        <label class="input-with-label" onclick="function(){return document.getElementById('verbose').click();}">
-          <input id="verbose" type="checkbox" onclick="setVerbose()">verbose
+        <label class="input-with-label">
+          <input id="verbose" type="checkbox">verbose
         </label>
-        <input type="button" class="primary" value="Run Test" onclick="Macchiato.taste()">
+        <input id="test-runner" type="button" class="primary" value="Run Test">
         <p class="test-result"><span id="test-message" class="message">Let's Try!</span></p>
       </div>
     </form>

@@ -1,75 +1,37 @@
 
-var TestView = (function(){
-  var TestView = function(){},
-      for_web,
-      instance;
-
-  for_web = {
-    selectors:{
-      counter_id: 'test-count',
-      messenger_id: 'test-message',
-      logger_id: 'test-log'
-    },
-    getTestCount: function(){
-      return parseInt( document.getElementById( this.selectors.counter_id ).value, 10 );
-    },
-    writeMsg: function( msg ){
-      var board = document.getElementById( this.selectors.messenger_id );
-      board.innerHTML += msg;
-    },
-    clearMsg: function( ){
-      var board = document.getElementById( this.selectors.messenger_id );
-      board.innerHTML = '';
-    },
-    putLog: function( log, withEscape ){
-      var consoleLine = document.getElementById( this.selectors.logger_id ),
-          str = !withEscape ? log : htmlEscape( log );
-      consoleLine.innerHTML += str;
-    },
-    clearLog: function( ){
-      var consoleLine = document.getElementById( this.selectors.logger_id );
-      consoleLine.innerHTML = '';
-    },
-    highlightMsg: function( isGreen, msg ){
-      return '<span class="' + ( isGreen ? 'passed' : 'failed' ) + '">' + msg + '</span><br>';
-    }
-  };
-
-  createSingleton( TestView, for_web );
-
-  return new TestView();
-})();
-
 var Macchiato = (function(){
   var Macchiato = function(){},
-      view = TestView,
+      view = consoleView,
       suites = [];
 
   var check = function( label, property ){
     var i = 0,
         l = view.getTestCount(),
         allPassed = true,
-        result,
-        msg = '';
+        result;
     for ( ; i < l; i++ ){
       Checker.run( property, verbose, Score );
-      if( verbose ) {
-        msg += Checker.lastResult() + '<br>';
+      if( view.verbose ) {
+        view.putLog( Checker.lastResult(), true );
       }
       Seed.grow();
     }
     result = Score.evaluate();
-    msg += view.highlightMsg( result.ok, label + ' : ' + result.message );
+    view.putLog( view.highlight( result.ok, label + ' : ' + result.message ));
     allPassed = allPassed && result.ok;
     Score.clear();
     Seed.clear();
-    return {
-      passed: allPassed,
-      message: msg
-    };
+    return allPassed;
   };
 
   createSingleton( Macchiato, {
+    setVerbose: function( verbose ){
+      view.verbose = verbose;
+    },
+    setView: function( _view ){
+      Interface.ensureImplements( _view, ViewInterface );
+      view = _view;
+    },
     stock: function( p ){
       suites.push( p );
     },
@@ -77,27 +39,18 @@ var Macchiato = (function(){
       var passed = true,
           i = 0,
           l = suites.length,
-          log = '',
-          msg = '',
-          test,
-          label,
-          result;
+          label;
 
-      view.clearMsg();
-      view.clearLog();
+      view.clear();
 
       for ( ; i < l; i++){
         for ( label in suites[ i ] ){
-          test = suites[ i ][ label ];
-          result = check( label, test );
-          passed = passed && result.passed;
-          log += result.message;
+          passed = passed && check( label, suites[ i ][ label ] );
         }
       }
 
-      msg = passed ? 'Ok, All tests succeeded!!' : 'Oops! failed test exist...';
-      view.putLog( log );
-      view.writeMsg( msg );
+      view.dump();
+      view.putMsg( passed ? 'Ok, All tests succeeded!!' : 'Oops! failed test exist...' );
     }
   });
 

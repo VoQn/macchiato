@@ -88,22 +88,54 @@ var scrollWithAdjust = function( anchor, header_tool_bar_id ){
 };
 
 var setInternalAnchorBehavior = function( header_tool_bar_id ){
-  var hasInternalLink = function( anchor ){
-    return anchor.getAttribute( 'href' ).match( /^#[a-zA-Z0-9_\-]+$/i );
-  };
+  var anchors = document.getElementsByTagName( 'a' ),
+      hasInternalLink = function( anchor ){
+        return anchor.getAttribute( 'href' ).match( /^#[a-zA-Z0-9_\-]+$/i );
+      },
+      internalLinks = filter( hasInternalLink,  anchors);
+  each( function( anchor ){
+    anchor.onclick = function( ){
+        return scrollWithAdjust( anchor, header_tool_bar_id );
+    };
+  }, internalLinks );
 
-  return function(){
-    var anchors = document.getElementsByTagName( 'a' ),
-        internalLinks = filter( hasInternalLink,  anchors);
+  return this;
+};
 
-    each( function( anchor ){
-      anchor.onclick = function( ){
-          return scrollWithAdjust( anchor, header_tool_bar_id );
-      };
-    }, internalLinks );
+var initTestConstroller = function( identifiers ){
+  /**
+   * identifiers = {
+   *   counter_id: <string>
+   *   verbose_id: <string>
+   *   runner_id: <string>
+   * }
+   */
+  var count_controller = document.getElementById( identifiers.counter_id ),
+      verbose_controller = document.getElementById( identifiers.verbose_id ),
+      runner = document.getElementById( identifiers.runner_id );
 
-    return this;
-  };
+  if ( count_controller.parentNode.tagName === 'label' ){
+    add_event( count_controller.parentNode, 'click', function( evt ){
+      count_controller.focus();
+    });
+  }
+
+  add_event( verbose_controller, 'click', function( evt ){
+     Macchiato.setVerbose( evt.target.checked );
+     return eventEnd();
+  });
+
+  if ( verbose_controller.parentNode.tagName === 'label' ) {
+    add_event( verbose_controller.parentNode, 'click', function( evt ){
+      verbose_controller.click();
+      return eventEnd();
+    });
+  }
+
+  add_event( runner, 'click', function( evt ){
+    Macchiato.taste();
+    return eventEnd();
+  });
 };
 
 /** Not Use
