@@ -11,6 +11,19 @@ var GenerateRefference = (function(){
       method,
       C = Combinator;
 
+  charInt = function(){
+      var g = C.frequency( [
+            [ 400, C.choose( 0x41, 0x7a )],
+            [ 300, C.choose( 0x30, 0x39 )],
+            [ 150, C.choose( 0x1f, 0x2f )],
+            [ 140, C.choose( 0x7b, 0x7f )],
+            [ 7, C.choose( 0x80, 0xd7ff )],
+            [ 2, C.choose( 0xe000, 0xfffd )],
+            [ 1, C.choose( 0x10000, 0x10ffff )]
+          ] );
+      return Math.round( g() );
+  };
+
   method = {
     bool: function( ){
       var b = C.elements([ false, true ])();
@@ -28,20 +41,18 @@ var GenerateRefference = (function(){
         return Math.round( n ) / Math.round( d );
     }),
     charator: function(){
-      var g = C.oneOf( [ C.choose( 0, 127 ), C.choose( 0xe000, 0xfffd ), C.choose( 0x10000, 0x10ffff ) ] )(),
-          c = String.fromCharCode( Math.round( g() ) );
+      var i = charInt(),
+          c = String.fromCharCode( i );
       return c;
+    },
+    string: function(){
+      var cs = C.listOf( charInt )(),
+          str = String.fromCharCode.apply( null, cs );
+      return str;
     }
   };
 
   method.number = method.decimal;
-  method.string = function(){
-    var cs = C.listOf1( method.charator )(), i = 0, l = cs.length, str = '';
-    for ( ; i < l; i++ ) {
-      str += cs[ i ];
-    }
-    return str;
-  };
 
   createSingleton( GenerateRefference, method );
 

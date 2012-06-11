@@ -1,6 +1,9 @@
 
 var Seed = (function(){
-  var Seed = function(){}, value = 1, instance;
+  var Seed = function(){},
+      value = 1,
+      instance;
+
   createSingleton( Seed, {
     getRange: function(){
       var mx = Math.pow( 2, ( Math.round( value / 1.5 )) );
@@ -10,7 +13,7 @@ var Seed = (function(){
       value++;
     },
     clear: function(){
-      value = 0;
+      value = 1;
     }
   });
   return new Seed();
