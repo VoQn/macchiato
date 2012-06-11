@@ -52,7 +52,7 @@ var Combinator = (function(){
       var that = this, generate;
       generate = that.sized(function( n ){
         var log = Math.LOG10E * Math.log( n ),
-            length = Math.ceil( log ) * 10,
+            length = Math.ceil( log ) * 10 + 1,
             list = that.vectorOf( length, generator )();
         return list;
       });
@@ -67,6 +67,34 @@ var Combinator = (function(){
         }
         return list;
       };
+      return generate;
+    },
+    frequency: function( freq ){
+      var that = this,
+          generate,
+          sum = 0,
+          i = 0,
+          n = 1,
+          l = freq.length;
+
+      for ( ; i < l; i++ ){
+          sum += freq[ i ][ 0 ];
+        }
+
+        i = 0;
+
+      generate = function(){
+        n = that.choose( 1, sum )();
+
+        for ( ; i < l; i++ ){
+          if ( n < freq[ i ][ 0 ] ){
+            return freq[ i ][ 1 ]();
+          }
+          n -= freq[ i ][ 0 ];
+        }
+        return freq[ l - 1 ][ 1 ]();
+      };
+
       return generate;
     }
   });
