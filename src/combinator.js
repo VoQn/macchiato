@@ -4,12 +4,13 @@ var Combinator = (function(){
 
   createSingleton( Combinator, {
     sized: function( generateBySize ){
-      var generate = function(){
-        return generateBySize( Seed.getRange() );
+      var generate = function( opt_n ){
+        var n = supplement( opt_n, Seed.exponent( 2, 2 / 3 ) );
+        return generateBySize( n );
       };
       return generate;
     },
-    resize: function( size, generatorBySize ){
+    resize: function( size, generateBySize ){
       var generate = function(){
         return generateBySize( size );
       };
@@ -40,20 +41,16 @@ var Combinator = (function(){
     },
     listOf: function( generator ){
       var that = this, generate;
-      generate = that.sized(function( n ){
-          var log = Math.LOG10E * Math.log( n ),
-              length = Math.round( log ) * 10,
-              list = that.vectorOf( length, generator )();
-          return list;
+      generate = that.resize( Seed.linear( 2 ), function( n ){
+        var list = that.vectorOf( n, generator )();
+        return list;
       });
       return generate;
     },
     listOf1: function( generator ){
       var that = this, generate;
-      generate = that.sized(function( n ){
-        var log = Math.LOG10E * Math.log( n ),
-            length = Math.ceil( log ) * 10 + 1,
-            list = that.vectorOf( length, generator )();
+      generate = that.resize( Seed.linear( 2, 1 ), function( n ){
+        var list = that.vectorOf( n, generator )();
         return list;
       });
       return generate;
