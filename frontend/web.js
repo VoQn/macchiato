@@ -1,22 +1,21 @@
 
 var eventEnd = function(){
-  event.stopPropagation();
-  window.event.cancelBubble = true;
+  if ( event.cancelBubble ){
+    event.cancelBubble = true;
+  }
+  if ( event.stopPropagation ){
+    event.stopPropagation();
+  }
+  return false;
 };
 
 // testing environments
 
 var verbose = false;
 
-var checkVerbose = function(){
-  var checkBox = document.getElementById( 'verbose' ), b = checkBox.checked;
-  checkBox.checked = verbose = !b;
-  eventEnd();
-};
-
 var setVerbose = function(){
   verbose = event.target.checked;
-  eventEnd();
+  return eventEnd();
 };
 
 var numOnly = function(){
@@ -45,17 +44,32 @@ var htmlEscape = (function(){
   };
 })();
 
-var add_on_load = function( callback ){
-  var old = window.onload;
-  if ( typeof old == 'function' ){
-    window.onload = function(){
-      old();
-      callback();
+var add_event = (function(){
+  if ( document.addEventListener ){
+    return function( node, type, handler ){
+      node.addEventListener( type, handler, false );
+    };
+  } else if ( document.attachEvent ) {
+    return function( node, type, handler ){
+      node.attachEvent('on' + type, function( evt ){
+        handler.call( node, evt );
+      });
     };
   } else {
-    window.onload = callback;
+    return function( node, type, handler ){
+      var _handler = node[ 'on' + type ];
+      node[ 'on' + type ] = function( evt ){
+        if (_handler) {
+          _handler.call( node, evt || eindow.evt );
+        }
+        handler.call( node, evt );
+      };
+    };
   }
-  return this;
+})();
+
+var add_on_load = function( callback ){
+  add_event( window, 'load', callback );
 };
 
 var scrollWithAdjust = function( anchor, header_tool_bar_id ){
