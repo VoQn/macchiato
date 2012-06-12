@@ -1,60 +1,120 @@
 
 var Combinator = (function(){
-  var Combinator = function(){}, method, instance;
-
+  /** @constructor */
+  var Combinator = function(){},
+  /** prototype */
   method = {
-    sized: function( generateBySize ){
+      /**
+       * @param {function(number):Object} generator
+       * @return {function(number):Object}
+       */
+    sized: function( generator ){
+      /**
+       * @param {number=} opt_n
+       * @return {Object}
+       */
       var generate = function( opt_n ){
+        /** @type {number} */
         var n = supplement( opt_n, Seed.exponent( 2, 2 / 3 ) );
-        return generateBySize( n );
+        return generator( n );
       };
       return generate;
     },
-    resize: function( size, generateBySize ){
+    /**
+     * @param {number} size
+     * @param {function(number):Object} generator
+     * @return {function():Object}
+     */
+    resize: function( size, generator ){
+      /**
+       * @return {Object}
+       */
       var generate = function(){
-        return generateBySize( size );
+        return generator( size );
       };
       return generate;
     },
+    /**
+     * @param {number} low
+     * @param {number} high
+     * @return {function():number}
+     */
     choose: function( low, high ){
+      /**
+       * @return {number}
+       */
       var generate = function(){
+        /** @type {number} */
         var l = Math.random() * low,
+            /** @type {number} */
             h = Math.random() * high,
+            /** @type {number} */
             i = l + h,
+            /** @type {number} */
             r = Math.min( high, Math.max( low, i ));
         return i;
       };
       return generate;
     },
+    /**
+     * @param {Array.<Object>} list
+     * @return {function():Object}
+     */
     elements: function( list ){
+      /**
+       * @return {Object}
+       */
       var generate = function(){
+        /** @type {number} */
         var index = Math.round( method.choose( 0, list.length - 1 )() ),
+            /** @type {Object} */
             item = list[ index ];
         return item;
       };
       return generate;
     },
+    /**
+     * @param {Array.<function():Object>} generators
+     * @return {function():Object}
+     */
     oneOf: function( generators ){
       var generate = this.elements( generators );
       return generate;
     },
+    /**
+     * @param {function():Object} generator
+     * @return {function():Array.<Object>}
+     */
     listOf: function( generator ){
       var generate = method.resize( Seed.linear( 2 ), function( n ){
+        /** @type {Array.<Object>} */
         var list = method.vectorOf( n, generator )();
         return list;
       });
       return generate;
     },
+    /**
+     * @param {function():Object} generator
+     * @return {function():Array.<Object>
+     */
     listOf1: function( generator ){
       var generate = method.resize( Seed.linear( 2, 1 ), function( n ){
+        /** @type {Array.<Object>} */
         var list = method.vectorOf( n, generator )();
         return list;
       });
       return generate;
     },
+    /**
+     * @param {number} length
+     * @param {function():Object} generator
+     * @return {function():Array.<Object>}
+     */
     vectorOf: function( length, generator ){
       var generate = function(){
+        /** @type {number} */
         var i = 0,
+            /** @type {Array.<Object>} */
             list = [];
         for ( ; i < length; i++ ){
           list[ i ] = generator();
@@ -63,6 +123,10 @@ var Combinator = (function(){
       };
       return generate;
     },
+    /**
+     * @param {Array.<Array.<(number|function():Object)>>} freq
+     * @return {function():Object}
+     */
     frequency: function( freq ){
       var generate,
           sum = 0,
@@ -71,15 +135,13 @@ var Combinator = (function(){
           l = freq.length;
 
       for ( ; i < l; i++ ){
-          sum += freq[ i ][ 0 ];
+        sum += freq[ i ][ 0 ];
       }
-
-      i = 0;
 
       generate = function(){
         n = method.choose( 1, sum )();
 
-        for ( ; i < l; i++ ){
+        for ( i = 0; i < l; i++ ){
           if ( n < freq[ i ][ 0 ] ){
             return freq[ i ][ 1 ]();
           }
