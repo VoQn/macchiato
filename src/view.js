@@ -85,11 +85,6 @@ var htmlView = (function(){
   },
   putLog: function( log, withEscape ){
     _log += ( !withEscape ? log : htmlEscape( log ) ) + '<br>';
-    /*
-    var consoleLine = document.getElementById( this.selectors.logger_id ),
-        str = !withEscape ? log : htmlEscape( log );
-    consoleLine.innerHTML += str + '<br>';
-    */
   },
   dump: function(){
     var consoleLine = document.getElementById( this.selectors.logger_id );
