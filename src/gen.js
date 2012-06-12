@@ -1,45 +1,56 @@
 
 var generateRefference = (function(){
-  var GenerateRefference = function(){},
-      method,
-      C = combinator;
+  var GenerateRefference = function(){};
 
-  method = {
+  var decimalBaseDenom = 9999999999999;
+
+  var charCodeHierarchy = [
+    [ 400,    0x41,     0x7a ], // Alphabet
+    [ 300,    0x30,     0x39 ], // Decimal Number
+    [ 150,    0x1f,     0x2f ], // ASCII Symbol (1)
+    [ 140,    0x7b,     0x7f ], // ASCII Symbol (2)
+    [   7,    0x80,   0xd7ff ], // Unicode (1)
+    [   2,  0xe000,   0xfffd ], // Unicode (2)
+    [   1, 0x10000, 0x10ffff ]  // Unicode (3)
+  ];
+
+  var generatorLow = function( params ){
+    var rate = params[ 0 ];
+    var low  = params[ 1 ];
+    var high = params[ 2 ];
+    return [ rate, combinator.choose( low, high ) ];
+  };
+
+  var charCodeGenerateTable = map( generatorLow, charCodeHierarchy );
+
+  var method = {
     bool: function( ){
-      var b = C.elements([ false, true ])();
+      var b = combinator.elements([ false, true ])();
       return b;
     },
-    integer: C.sized(function( n ){
-        var i = C.choose( (-n), n )();
+    integer: combinator.sized(function( n ){
+        var i = combinator.choose( (-n), n )();
         return Math.round( i );
     }),
-    decimal: C.sized(function( _n ){
-        var prec = 9999999999999,
-            b = C.choose( 0, ( _n ) )(),
-            n = C.choose( (-b) * prec, b * prec )(),
-            d = C.choose( 1, prec )();
+    decimal: combinator.sized(function( _n ){
+        var b = combinator.choose( 0, ( _n ) )();
+        var n = combinator.choose( (-b) * decimalBaseDenom, b * decimalBaseDenom )();
+        var d = combinator.choose( 1, decimalBaseDenom )();
         return Math.round( n ) / Math.round( d );
     }),
     charCode: function(){
-       var g = C.frequency( [
-            [ 400, C.choose( 0x41, 0x7a )],
-            [ 300, C.choose( 0x30, 0x39 )],
-            [ 150, C.choose( 0x1f, 0x2f )],
-            [ 140, C.choose( 0x7b, 0x7f )],
-            [ 7, C.choose( 0x80, 0xd7ff )],
-            [ 2, C.choose( 0xe000, 0xfffd )],
-            [ 1, C.choose( 0x10000, 0x10ffff )]
-          ] );
-      return Math.round( g() );
+      var generator = combinator.frequency( charCodeGenerateTable );
+      var code = Math.round( generator() );
+      return code;
     },
     charator: function(){
-      var i = method.charCode(),
-          c = String.fromCharCode( i );
-      return c;
+      var code = method.charCode();
+      var a_char = String.fromCharCode( code );
+      return a_char;
     },
     string: function(){
-      var cs = C.listOf( method.charCode )(),
-          str = String.fromCharCode.apply( null, cs );
+      var int_arr = combinator.listOf( method.charCode )();
+      var str = String.fromCharCode.apply( null, int_arr );
       return str;
     }
   };
