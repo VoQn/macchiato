@@ -15,7 +15,7 @@ var Combinator = (function(){
        */
       var generate = function( opt_n ){
         /** @type {number} */
-        var n = supplement( opt_n, Seed.exponent( 2, 2 / 3 ) );
+        var n = supplement( Seed.exponent( 2, 2 / 3 ), opt_n );
         return generator( n );
       };
       return generate;
@@ -129,19 +129,17 @@ var Combinator = (function(){
      */
     frequency: function( freq ){
       var generate,
-          sum = 0,
+          sum = foldLeft( 0, function( x, r ){
+            return r + x[ 0 ];
+          }, freq ),
           i = 0,
           n = 1,
           l = freq.length;
 
-      for ( ; i < l; i++ ){
-        sum += freq[ i ][ 0 ];
-      }
-
       generate = function(){
         n = method.choose( 1, sum )();
 
-        for ( i = 0; i < l; i++ ){
+        for ( ; i < l; i++ ){
           if ( n < freq[ i ][ 0 ] ){
             return freq[ i ][ 1 ]();
           }
