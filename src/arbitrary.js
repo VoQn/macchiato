@@ -23,9 +23,9 @@ arbitrary.fn = arbitrary.prototype = (function(){
         /** @type {?Array.<string>} */
         var test = rList.exec( t );
         if ( !!test ){
-          return Combinator.elements( GenerateRefference[ test[ 1 ] ] );
+          return combinator.elements( generateRefference[ test[ 1 ] ] );
         }
-        return GenerateRefference[ t ];
+        return generateRefference[ t ];
       };
   return {
     constructor: arbitrary,

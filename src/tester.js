@@ -1,5 +1,6 @@
-var Checker = (function(){
+var checker = (function(){
   var Checker = function(){},
+      method,
       args = [],
       passed = false,
       skipped = false,
@@ -10,7 +11,7 @@ var Checker = (function(){
     },
       currentLog;
 
-  createSingleton( Checker, {
+  method = {
     getArgs: function(){
       return args;
     },
@@ -21,7 +22,7 @@ var Checker = (function(){
       return skipped;
     },
     run: function( test, onVerbose, score ){
-      var that = this, result = test();
+      var result = test();
       args = result.arguments;
       if ( !!result.wasSkipped ) {
           skipped = result.wasSkipped;
@@ -29,7 +30,7 @@ var Checker = (function(){
         skipped = false;
         passed = result;
       }
-      that.log( onVerbose, score );
+      method.log( onVerbose, score );
     },
     lastResult: function(){
       return currentLog;
@@ -58,7 +59,10 @@ var Checker = (function(){
         if ( console && console.log ) console.log( currentLog );
       }
     }
-  });
+  };
+
+  createSingleton( Checker, method );
+
   return new Checker();
 })();
 

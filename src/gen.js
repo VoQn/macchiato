@@ -1,8 +1,8 @@
 
-var GenerateRefference = (function(){
+var generateRefference = (function(){
   var GenerateRefference = function(){},
       method,
-      C = Combinator;
+      C = combinator;
 
   method = {
     bool: function( ){
@@ -20,7 +20,7 @@ var GenerateRefference = (function(){
             d = C.choose( 1, prec )();
         return Math.round( n ) / Math.round( d );
     }),
-    charcode: function(){
+    charCode: function(){
        var g = C.frequency( [
             [ 400, C.choose( 0x41, 0x7a )],
             [ 300, C.choose( 0x30, 0x39 )],
@@ -33,12 +33,12 @@ var GenerateRefference = (function(){
       return Math.round( g() );
     },
     charator: function(){
-      var i = method.charcode(),
+      var i = method.charCode(),
           c = String.fromCharCode( i );
       return c;
     },
     string: function(){
-      var cs = C.listOf( method.charcode )(),
+      var cs = C.listOf( method.charCode )(),
           str = String.fromCharCode.apply( null, cs );
       return str;
     }

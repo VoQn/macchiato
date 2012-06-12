@@ -7,7 +7,7 @@ var random = function( x ){
   return Math.round( Math.random() * x );
 };
 
-var Seed = (function(){
+var seed = (function(){
   var Seed = function(){},
       value = 1,
       instance;

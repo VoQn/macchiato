@@ -1,4 +1,4 @@
-var Score = (function(){
+var score = (function(){
   var Score = function(){},
       passed  = 0,
       failure = 0,

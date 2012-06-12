@@ -10,17 +10,17 @@ var Macchiato = (function(){
         allPassed = true,
         result;
     for ( ; i < l; i++ ){
-      Checker.run( property, verbose, Score );
+      checker.run( property, verbose, score );
       if( view.verbose ) {
-        view.putLog( Checker.lastResult(), true );
+        view.putLog( checker.lastResult(), true );
       }
-      Seed.grow();
+      seed.grow();
     }
-    result = Score.evaluate();
+    result = score.evaluate();
     view.putLog( view.highlight( result.ok, label + ' : ' + result.message ));
     allPassed = allPassed && result.ok;
-    Score.clear();
-    Seed.clear();
+    score.clear();
+    seed.clear();
     return allPassed;
   };
 

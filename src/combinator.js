@@ -1,5 +1,5 @@
 
-var Combinator = (function(){
+var combinator = (function(){
   /** @constructor */
   var Combinator = function(){},
   /** prototype */
@@ -15,7 +15,7 @@ var Combinator = (function(){
        */
       var generate = function( opt_n ){
         /** @type {number} */
-        var n = supplement( Seed.exponent( 2, 2 / 3 ), opt_n );
+        var n = supplement( seed.exponent( 2, 2 / 3 ), opt_n );
         return generator( n );
       };
       return generate;
@@ -86,7 +86,7 @@ var Combinator = (function(){
      * @return {function():Array.<Object>}
      */
     listOf: function( generator ){
-      var generate = method.resize( Seed.linear( 2 ), function( n ){
+      var generate = method.resize( seed.linear( 2 ), function( n ){
         /** @type {Array.<Object>} */
         var list = method.vectorOf( n, generator )();
         return list;
@@ -98,7 +98,7 @@ var Combinator = (function(){
      * @return {function():Array.<Object>
      */
     listOf1: function( generator ){
-      var generate = method.resize( Seed.linear( 2, 1 ), function( n ){
+      var generate = method.resize( seed.linear( 2, 1 ), function( n ){
         /** @type {Array.<Object>} */
         var list = method.vectorOf( n, generator )();
         return list;
