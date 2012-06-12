@@ -1,8 +1,8 @@
 
 var Combinator = (function(){
-  var Combinator = function(){}, instance;
+  var Combinator = function(){}, method, instance;
 
-  createSingleton( Combinator, {
+  method = {
     sized: function( generateBySize ){
       var generate = function( opt_n ){
         var n = supplement( opt_n, Seed.exponent( 2, 2 / 3 ) );
@@ -27,9 +27,8 @@ var Combinator = (function(){
       return generate;
     },
     elements: function( list ){
-      var that = this, generate;
-      generate = function(){
-        var index = Math.round( that.choose( 0, list.length - 1 )() ),
+      var generate = function(){
+        var index = Math.round( method.choose( 0, list.length - 1 )() ),
             item = list[ index ];
         return item;
       };
@@ -40,17 +39,15 @@ var Combinator = (function(){
       return generate;
     },
     listOf: function( generator ){
-      var that = this, generate;
-      generate = that.resize( Seed.linear( 2 ), function( n ){
-        var list = that.vectorOf( n, generator )();
+      var generate = method.resize( Seed.linear( 2 ), function( n ){
+        var list = method.vectorOf( n, generator )();
         return list;
       });
       return generate;
     },
     listOf1: function( generator ){
-      var that = this, generate;
-      generate = that.resize( Seed.linear( 2, 1 ), function( n ){
-        var list = that.vectorOf( n, generator )();
+      var generate = method.resize( Seed.linear( 2, 1 ), function( n ){
+        var list = method.vectorOf( n, generator )();
         return list;
       });
       return generate;
@@ -67,8 +64,7 @@ var Combinator = (function(){
       return generate;
     },
     frequency: function( freq ){
-      var that = this,
-          generate,
+      var generate,
           sum = 0,
           i = 0,
           n = 1,
@@ -76,12 +72,12 @@ var Combinator = (function(){
 
       for ( ; i < l; i++ ){
           sum += freq[ i ][ 0 ];
-        }
+      }
 
-        i = 0;
+      i = 0;
 
       generate = function(){
-        n = that.choose( 1, sum )();
+        n = method.choose( 1, sum )();
 
         for ( ; i < l; i++ ){
           if ( n < freq[ i ][ 0 ] ){
@@ -94,7 +90,9 @@ var Combinator = (function(){
 
       return generate;
     }
-  });
+  };
+
+  createSingleton( Combinator, method );
 
   return new Combinator();
 })();
