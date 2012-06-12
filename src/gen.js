@@ -1,11 +1,4 @@
 
-var quadratic = function( a, _b, _c ){
-  var b = _b || 1, c = _c || 0;
-  return function( x, r ){
-    return a * Math.pow( x, 2 ) + b * x + c;
-  };
-};
-
 var GenerateRefference = (function(){
   var GenerateRefference = function(){},
       method,
@@ -58,31 +51,4 @@ var GenerateRefference = (function(){
 
   return new GenerateRefference();
 })();
-
-var Generator = function( gs ){
-  this.generators = gs;
-  return this;
-};
-
-Generator.prototype.property = function( property ){
-  return forAll( this.generators, property );
-};
-
-var arbitrary = function(/* */){
-  var types, prepare, instance;
-
-  types = Array.prototype.slice.call( arguments, 0, arguments.length );
-
-  prepare = function( t ){
-    var test = /\[\s+([a-z]+)\s+\]/.exec( t );
-    if ( test ){
-      return elements( Generator[ test[ 1 ] ] );
-    }
-    return GenerateRefference[ t ];
-  };
-
-  instance = new Generator( map( prepare, types ) );
-
-  return instance;
-};
 
