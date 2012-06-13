@@ -93,11 +93,15 @@ var combinator = (function( seed ){
    * @return {function():Array.<Object>}
    */
   Combinator.prototype.listOf = function( generator ){
-    var generate = Combinator.prototype.resize( seed.linear( 2 ), function( n ){
-      /** @type {Array.<Object>} */
-      var list = Combinator.prototype.vectorOf( n, generator )();
-      return list;
-    });
+    var generate = function(){
+      var size = seed.linear( 2 );
+      var generateBySize = function( n ){
+        /** @type {Array.<Object>} */
+        var list = force( Combinator.prototype.vectorOf( n, generator ) );
+        return list;
+      };
+      return force( Combinator.prototype.resize( size, generateBySize ) );
+    };
     return generate;
   };
 
@@ -106,11 +110,15 @@ var combinator = (function( seed ){
    * @return {function():Array.<Object>
    */
   Combinator.prototype.listOf1 = function( generator ){
-    var generate = Combinator.prototype.resize( seed.linear( 2, 1 ), function( n ){
-      /** @type {Array.<Object>} */
-      var list = Combinator.prototype.vectorOf( n, generator )();
-      return list;
-    });
+    var generate = function(){
+      var size = seed.linear( 2, 1 );
+      var generateBySize = function( n ){
+        /** @type {Array.<Object>} */
+        var list = force( Combinator.prototype.vectorOf( n, generator ) );
+        return list;
+      };
+      return force( Combinator.prototype.resize( size, generateBySize ) );
+    };
     return generate;
   };
 
