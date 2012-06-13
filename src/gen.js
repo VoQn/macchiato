@@ -43,7 +43,7 @@ var generateRefference = (function( combinator ){
 
   GenerateRefference.prototype.register = function(/* type, callback */){
     var args = Array.prototype.slice.call( arguments );
-    if ( args.length = 2 && typeof args[ 0 ] === 'string' && typeof args[ 1 ] === 'function' ){
+    if ( args.length === 2 && typeof args[ 0 ] === 'string' && typeof args[ 1 ] === 'function' ){
       // single entry registration
       registration( args[ 0 ], args[ 1 ] );
       return;
