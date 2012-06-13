@@ -12,21 +12,22 @@ var arbitrary = function( type_str, opt_more_types ){
 /**
  * @type {arbitrary}
  */
-arbitrary.fn = arbitrary.prototype = (function(){
+arbitrary.fn = arbitrary.prototype = (function( combinator, reference ){
   /** @type {RegExp} */
-  var rList = /\[\s+([a-z]+)\s+\]/,
-      /**
-       * @param {string} t
-       * @return {function():Object}
-       */
-      selectGenerator = function( t ){
-        /** @type {?Array.<string>} */
-        var test = rList.exec( t );
-        if ( !!test ){
-          return combinator.elements( generateRefference[ test[ 1 ] ] );
-        }
-        return generateRefference[ t ];
-      };
+  var rList = /\[\s?([a-z]+)\s?\]/;
+  /**
+   * @param {string} t
+   * @return {function():Object}
+   */
+  var selectGenerator = function( t ){
+     /** @type {?Array.<string>} */
+     var test = rList.exec( t );
+     if ( !!test ){
+        return combinator.listOf( reference[ test[ 1 ] ] );
+     }
+     return reference[ t ];
+  };
+
   return {
     constructor: arbitrary,
     /**
@@ -70,9 +71,33 @@ arbitrary.fn = arbitrary.prototype = (function(){
         }
       }
       return forAll( generators, property );
+    },
+    sample: function( opt_count ){
+      var count = supplement( 10, opt_count, function( _, o ){ return Math.max( 1, o ); });
+      var index = 0;
+      var generators;
+      var values;
+      var result = [];
+      try {
+        generators = map( selectGenerator, this.types );
+      } catch ( e ){
+        if ( console && console.log ){
+          console.log( e );
+        }
+      }
+      seed.clear();
+      for ( ; index < count; index++ ){
+        values = map( force, generators );
+        if ( console && console.log ){
+          console.log( values.length === 1 ? values[ 0 ] : values );
+        }
+        result.push( values );
+        seed.grow();
+      }
+      return result;
     }
   };
-})();
+})( combinator, generateRefference );
 
 arbitrary.fn.init.prototype = arbitrary.fn;
 
