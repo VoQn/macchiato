@@ -1,6 +1,6 @@
 
-var generateRefference = (function( combinator ){
-  var GenerateRefference = function(){};
+var generateReference = (function( combinator ){
+  var GenerateReference = function(){};
 
   var integerGenerator = function( n ){
     var i = combinator.choose( (-n), n )();
@@ -38,10 +38,10 @@ var generateRefference = (function( combinator ){
       throw new Error('GenerateRefference.' + type + ' should not overwrite');
     }
     // TODO Check type signature
-    GenerateRefference.prototype[ type ] = callback;
+    GenerateReference.prototype[ type ] = callback;
   };
 
-  GenerateRefference.prototype.register = function(/* type, callback */){
+  GenerateReference.prototype.register = function(/* type, callback */){
     var args = Array.prototype.slice.call( arguments );
     if ( args.length === 2 && typeof args[ 0 ] === 'string' && typeof args[ 1 ] === 'function' ){
       // single entry registration
@@ -55,7 +55,7 @@ var generateRefference = (function( combinator ){
     }, args[ 0 ] );
   };
 
-  GenerateRefference.prototype.register({
+  GenerateReference.prototype.register({
     bool: combinator.elements( [ false, true ] ),
     integer: combinator.sized( integerGenerator ),
     number: combinator.sized( numberGenerator ),
@@ -65,17 +65,17 @@ var generateRefference = (function( combinator ){
       return code;
     },
     charactor: function(){
-      var code = GenerateRefference.prototype.charCode();
+      var code = GenerateReference.prototype.charCode();
       var a_char = String.fromCharCode( code );
       return a_char;
     },
     string: function(){
-      var int_arr = combinator.listOf( GenerateRefference.prototype.charCode )();
+      var int_arr = combinator.listOf( GenerateReference.prototype.charCode )();
       var str = String.fromCharCode.apply( null, int_arr );
       return str;
     }
   });
 
-  return new GenerateRefference();
+  return new GenerateReference();
 })( combinator );
 

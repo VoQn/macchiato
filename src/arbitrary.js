@@ -97,7 +97,7 @@ arbitrary.fn = arbitrary.prototype = (function( combinator, reference ){
       return result;
     }
   };
-})( combinator, generateRefference );
+})( combinator, generateReference );
 
 arbitrary.fn.init.prototype = arbitrary.fn;
 
