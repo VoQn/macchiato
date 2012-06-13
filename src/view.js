@@ -1,7 +1,8 @@
 
 var ViewInterface = new Interface('ViewInterface', [
     'getTestCount',
-    'clear',
+    'standby',
+    'clean',
     'putMsg',
     'putLog',
     'dump',
@@ -26,10 +27,13 @@ var consoleView = (function(){
   getTestCount: function(){
     return 100;
   },
-  clear: function(){
+  standby: function(){
     if ( console.clear ){ // for firebug ( Firefox extension )
       console.clear();
     }
+    _log = '';
+  },
+  clean: function(){
     _log = '';
   },
   putMsg: function( msg ){
@@ -72,12 +76,15 @@ var htmlView = (function(){
   getTestCount: function(){
     return parseInt( document.getElementById( this.selectors.counter_id ).value, 10 );
   },
-  clear: function(){
-    var board = document.getElementById( this.selectors.messenger_id ),
-        consoleLine = document.getElementById( this.selectors.logger_id );
+  standby: function(){
+    var board = document.getElementById( this.selectors.messenger_id );
+    var consoleLine = document.getElementById( this.selectors.logger_id );
     _log = '';
     board.innerHTML = '';
     consoleLine.innerHTML = '';
+  },
+  clean: function(){
+    _log = '';
   },
   putMsg: function( msg ){
     var board = document.getElementById( this.selectors.messenger_id );

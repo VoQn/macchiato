@@ -1,5 +1,5 @@
 // user's tests
-Macchiato.stock({
+macchiato.stock({
   'number x, y => x + y == y + x' :
     arbitrary( 'number', 'number' ).property( function( x, y ){
         return x + y == y + x;

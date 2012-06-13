@@ -1,21 +1,44 @@
 
-var Macchiato = (function(){
-  var Macchiato = function(){},
-      view = consoleView,
-      suites = [];
+/** @type {Macchiato} */
+var macchiato = (function(){
+  /** @constructor */
+  var Macchiato = function(){
+    /** @type {View} */
+    this.view = consoleView;
+    /** @type {Array.<Object.<string:function>>} */
+    this.suites = [];
+  };
 
+  /** @type {Macchiato} */
+  var macchiato = new Macchiato();
+
+  /**
+   * @param {string} label
+   * @param {function} property
+   * @return {boolean}
+   */
   var check = function( label, property ){
-    var i = 0,
-        l = view.getTestCount(),
-        allPassed = true,
-        result;
-    for ( ; i < l; i++ ){
+    /** @type {number} */
+    var index = 0;
+    /** @type {View} */
+    var view = macchiato.view;
+    /** @type {boolean} */
+    var verbose = view.verbose;
+    /** @type {number} */
+    var count = view.getTestCount();
+    /** @type {boolean} */
+    var allPassed = true;
+
+    var result;
+
+    for ( ; index < count; index++ ){
       checker.run( property, verbose, score );
       if( view.verbose ) {
         view.putLog( checker.lastResult(), true );
       }
       seed.grow();
     }
+
     result = score.evaluate();
     view.putLog( view.highlight( result.ok, label + ' : ' + result.message ));
     allPassed = allPassed && result.ok;
@@ -24,36 +47,65 @@ var Macchiato = (function(){
     return allPassed;
   };
 
-  createSingleton( Macchiato, {
-    setVerbose: function( verbose ){
-      view.verbose = verbose;
-    },
-    setView: function( _view ){
-      Interface.ensureImplements( _view, ViewInterface );
-      view = _view;
-    },
-    stock: function( p ){
-      suites.push( p );
-    },
-    taste: function( ){
-      var passed = true,
-          i = 0,
-          l = suites.length,
-          label;
+  /**
+   * @param {boolean} verbose
+   * @return {Macchiato}
+   */
+  macchiato.setVerbose = function( verbose ){
+    this.view.verbose = verbose;
+    return this;
+  };
 
-      view.clear();
+  /**
+   * @param {View} view
+   * @return {Macchiato}
+   */
+  macchiato.setView = function( view ){
+    Interface.ensureImplements( view, ViewInterface );
+    this.view = view;
+    return this;
+  };
 
-      for ( ; i < l; i++){
-        for ( label in suites[ i ] ){
-          passed = passed && check( label, suites[ i ][ label ] );
-        }
+  /**
+   * @param {Object.<string, function>} labeledProperties
+   * @return {Macchiato}
+   */
+  macchiato.stock = function( labeledProperties ){
+    this.suites.push( labeledProperties );
+    return this;
+  };
+
+  macchiato.taste = function( ){
+    /** @type {boolean} */
+    var passed = true;
+    /** @type {number} */
+    var index = 0;
+    /** @type {Array.<Object.<string, function>>} */
+    var suites = this.suites;
+    /** @type {number} */
+    var length = suites.length;
+    /** @type {string} */
+    var label = '';
+    /** @type {function} */
+    var property;
+
+    this.view.standby();
+
+    for ( ; index < length; index++){
+      for ( label in suites[ index ] ){
+        property = suites[ index ][ label ];
+        passed = passed && check( label, property );
       }
-
-      view.dump();
-      view.putMsg( passed ? 'Ok, All tests succeeded!!' : 'Oops! failed test exist...' );
     }
-  });
 
-  return new Macchiato();
+    this.view.dump();
+    this.view.putMsg( passed ?
+        'Ok, All tests succeeded!!' :
+        'Oops! failed test exist...' );
 
+    this.view.clean();
+    return this;
+  };
+
+  return macchiato;
 })();

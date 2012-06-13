@@ -121,7 +121,7 @@ var initTestConstroller = function( identifiers ){
   }
 
   add_event( verbose_controller, 'click', function( evt ){
-     Macchiato.setVerbose( evt.target.checked );
+     macchiato.setVerbose( evt.target.checked );
      return eventEnd();
   });
 
@@ -132,10 +132,12 @@ var initTestConstroller = function( identifiers ){
     });
   }
 
-  add_event( runner, 'click', function( evt ){
-    Macchiato.taste();
+  var macchiatoTestRun = function( evt ){
+    macchiato.taste();
     return eventEnd();
-  });
+  };
+
+  add_event( runner, 'click', macchiatoTestRun );
 };
 
 /** Not Use

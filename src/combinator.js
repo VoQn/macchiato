@@ -1,13 +1,17 @@
 
+/** @type {Combinator} */
 var combinator = (function( seed ){
   /** @constructor */
   var Combinator = function(){};
+
+  /** @type Combinator */
+  var combinator = new Combinator();
 
   /**
    * @param {function(number):Object} generator
    * @return {function(number):Object}
    */
-  Combinator.prototype.sized = function( generator ){
+  combinator.sized = function( generator ){
     /**
      * @param {number=} opt_n
      * @return {Object}
@@ -25,7 +29,7 @@ var combinator = (function( seed ){
    * @param {function(number):Object} generator
    * @return {function():Object}
    */
-  Combinator.prototype.resize = function( size, generator ){
+  combinator.resize = function( size, generator ){
     /**
      * @return {Object}
      */
@@ -40,7 +44,7 @@ var combinator = (function( seed ){
    * @param {number} high
    * @return {function():number}
    */
-  Combinator.prototype.choose = function( low, high ){
+  combinator.choose = function( low, high ){
     /**
      * @return {number}
      */
@@ -64,13 +68,13 @@ var combinator = (function( seed ){
    * @param {!Array} list
    * @return {function():Object}
    */
-  Combinator.prototype.elements = function( list ){
+  combinator.elements = function( list ){
     /**
      * @return {Object}
      */
     var generate = function(){
       /** @type {number} */
-      var index = Math.round( Combinator.prototype.choose( 0, list.length - 1 )() );
+      var index = Math.round( combinator.choose( 0, list.length - 1 )() );
       /** @type {Object} */
       var item = list[ index ];
       return item;
@@ -83,7 +87,7 @@ var combinator = (function( seed ){
    * @param {Array.<function():Object>} generators
    * @return {function():Object}
    */
-  Combinator.prototype.oneOf = function( generators ){
+  combinator.oneOf = function( generators ){
     /**
      * @type {function():Object}
      */
@@ -95,21 +99,23 @@ var combinator = (function( seed ){
    * @param {function():Object} generator
    * @return {function():Array}
    */
-  Combinator.prototype.listOf = function( generator ){
+  combinator.listOf = function( generator ){
+    /**
+     * @param {number} n
+     * @return {Array}
+     */
+    var generateBySize = function( n ){
+      /** @type {Array} */
+      var list = combinator.vectorOf( n, generator )();
+      return list;
+    };
+
     var generate = function(){
       /** @type {number} */
       var size = seed.linear( 2 );
-      /**
-       * @param {number} n
-       * @return {Array}
-       */
-      var generateBySize = function( n ){
-        /** @type {Array} */
-        var list = force( Combinator.prototype.vectorOf( n, generator ) );
-        return list;
-      };
-      return force( Combinator.prototype.resize( size, generateBySize ) );
+      return combinator.resize( size, generateBySize )();
     };
+
     return generate;
   };
 
@@ -117,21 +123,23 @@ var combinator = (function( seed ){
    * @param {function():Object} generator
    * @return {function():Array}
    */
-  Combinator.prototype.listOf1 = function( generator ){
+  combinator.listOf1 = function( generator ){
+    /**
+     * @param {number} n
+     * @return {Array}
+     */
+    var generateBySize = function( n ){
+      /** @type {Array.<Object>} */
+      var list = combinator.vectorOf( n, generator )();
+      return list;
+    };
+
     var generate = function(){
       /** @type {number} */
       var size = seed.linear( 2, 1 );
-      /**
-       * @param {number} n
-       * @return {Array}
-       */
-      var generateBySize = function( n ){
-        /** @type {Array.<Object>} */
-        var list = Combinator.prototype.vectorOf( n, generator )();
-        return list;
-      };
-      return Combinator.prototype.resize( size, generateBySize )();
+      return combinator.resize( size, generateBySize )();
     };
+
     return generate;
   };
 
@@ -140,7 +148,7 @@ var combinator = (function( seed ){
    * @param {function():Object} generator
    * @return {function():Array}
    */
-  Combinator.prototype.vectorOf = function( length, generator ){
+  combinator.vectorOf = function( length, generator ){
     var generate = function(){
       /** @type {number} */
       var index = 0;
@@ -160,7 +168,7 @@ var combinator = (function( seed ){
    * @param {Array.<Array.<(number|function():Object)>>} table
    * @return {function():Object}
    */
-  Combinator.prototype.frequency = function( table ){
+  combinator.frequency = function( table ){
     /**
      * @param {Array}
      * @param {number}
@@ -174,7 +182,7 @@ var combinator = (function( seed ){
     /** @type {number} */
     var index = 0;
     /** @type {number} */
-    var threshold;
+    var threshold = 1;
     /** @type {number} */
     var length = table.length;
 
@@ -182,9 +190,9 @@ var combinator = (function( seed ){
      * @return {Object}
      */
     var generate = function(){
-      threshold = Combinator.prototype.choose( 1, sum )();
+      threshold = combinator.choose( 1, sum )();
 
-      for ( ; index < length; index++ ){
+      for ( index = 0; index < length; index++ ){
         if ( threshold < table[ index ][ 0 ] ){
           return table[ index ][ 1 ]();
         }
@@ -196,6 +204,6 @@ var combinator = (function( seed ){
     return generate;
   };
 
-  return new Combinator();
+  return combinator;
 })( seed );
 

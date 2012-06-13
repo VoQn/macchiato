@@ -13,5 +13,5 @@ $(JS): $(LIB) Makefile
 	cat $(LIB) > $(DIST_DIR)$@
 
 $(MIN_JS): $(JS)
-	uglifyjs -b --ascii -o $(DIST_DIR)$@ $(DIST_DIR)$(JS)
+	uglifyjs -b -nm --ascii -o $(DIST_DIR)$@ $(DIST_DIR)$(JS)
 	@echo "create dist/${JS} and dist/$@"

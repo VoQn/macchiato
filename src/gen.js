@@ -2,6 +2,8 @@
 var generateReference = (function( combinator ){
   var GenerateReference = function(){};
 
+  var reference = new GenerateReference();
+
   var integerGenerator = function( n ){
     var i = combinator.choose( (-n), n )();
     return Math.round( i );
@@ -33,15 +35,24 @@ var generateReference = (function( combinator ){
   };
 
   var charCodeGenerateTable = map( generatorLow, charCodeHierarchy );
+
+  var __charCodeGenerate = combinator.frequency( charCodeGenerateTable );
+
+  var charCodeGenerate = function(){
+    return Math.round( __charCodeGenerate() );
+  };
+
+  var charCodeArrayGenerate = combinator.listOf( charCodeGenerate );
+
   var registration = function( type, callback ){
-    if ( type === 'constructor' || type == 'register' ) { // Bad Hacking
+    if ( type == 'prototype' || type == 'register' ) { // Bad Hacking
       throw new Error('GenerateRefference.' + type + ' should not overwrite');
     }
     // TODO Check type signature
-    GenerateReference.prototype[ type ] = callback;
+    reference[ type ] = callback;
   };
 
-  GenerateReference.prototype.register = function(/* type, callback */){
+  reference.register = function(/* type, callback */){
     var args = Array.prototype.slice.call( arguments );
     if ( args.length === 2 && typeof args[ 0 ] === 'string' && typeof args[ 1 ] === 'function' ){
       // single entry registration
@@ -55,27 +66,23 @@ var generateReference = (function( combinator ){
     }, args[ 0 ] );
   };
 
-  GenerateReference.prototype.register({
+  reference.register({
     bool: combinator.elements( [ false, true ] ),
     integer: combinator.sized( integerGenerator ),
     number: combinator.sized( numberGenerator ),
-    charCode: function(){
-      var generator = combinator.frequency( charCodeGenerateTable );
-      var code = Math.round( generator() );
-      return code;
-    },
+    charCode: charCodeGenerate,
     charactor: function(){
-      var code = GenerateReference.prototype.charCode();
+      var code = charCodeGenerate();
       var a_char = String.fromCharCode( code );
       return a_char;
     },
     string: function(){
-      var int_arr = combinator.listOf( GenerateReference.prototype.charCode )();
-      var str = String.fromCharCode.apply( null, int_arr );
+      var code_array = charCodeArrayGenerate();
+      var str = String.fromCharCode.apply( null, code_array );
       return str;
     }
   });
 
-  return new GenerateReference();
+  return reference;
 })( combinator );
 
