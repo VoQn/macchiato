@@ -5,14 +5,14 @@
  */
 var arbitrary = function( type_str, opt_more_types ){
   /** @type {Array.<string>} */
-  var args = Array.prototype.slice.call( arguments, 0, arguments.length );
+  var args = Array.prototype.slice.call( arguments );
   return new arbitrary.fn.init( args );
 };
 
 /**
  * @type {arbitrary}
  */
-arbitrary.fn = arbitrary.prototype = (function( combinator, reference ){
+arbitrary.fn = arbitrary.prototype = (function( combinator, reference, seed ){
   /** @type {RegExp} */
   var rList = /\[\s?([a-z]+)\s?\]/;
   /**
@@ -53,31 +53,48 @@ arbitrary.fn = arbitrary.prototype = (function( combinator, reference ){
      */
     property: function( property ){
       /** @types {Array.<function():Object>}*/
-      var generators = [],
-          /** @type {number} */
-          i = 0,
-          /** @type {Array.<string>} */
-          ts = this.types,
-          /** @type {number} */
-          l = ts.length;
-      for ( ; i < l; i++ ){
-        try {
-          var generator = selectGenerator( ts[ i ] );
-          generators[ i ] = generator;
-        } catch ( e ) {
-          if( console && console.log ){
-            console.log( e );
-          }
+      var generators;
+      /** @type {number} */
+      var index = 0;
+      /** @type {Array.<string>} */
+      var types = this.types;
+      /** @type {number} */
+      var length = types.length;
+
+      try {
+        generators = map( selectGenerator, types );
+      } catch ( e ) {
+        if( console && console.log ){
+          console.log( e );
         }
       }
+
       return forAll( generators, property );
     },
+    /**
+     * @param {number} opt_count
+     * @return {Array}
+     */
     sample: function( opt_count ){
-      var count = supplement( 10, opt_count, function( _, o ){ return Math.max( 1, o ); });
+      /**
+       * @param {number} _
+       * @param {number} o
+       * @return {number}
+       */
+      var fix = function( _, o ){
+        return Math.max( 1, o );
+      };
+      /** @type {number} */
+      var count = supplement( 10, opt_count, fix );
+      /** @type {number} */
       var index = 0;
+      /** @type {Array.<function():Object>} */
       var generators;
+      /** @type {Array} */
       var values;
+      /** @type {Array.<Array>} */
       var result = [];
+
       try {
         generators = map( selectGenerator, this.types );
       } catch ( e ){
@@ -86,6 +103,7 @@ arbitrary.fn = arbitrary.prototype = (function( combinator, reference ){
         }
       }
       seed.clear();
+
       for ( ; index < count; index++ ){
         values = map( force, generators );
         if ( console && console.log ){
@@ -94,10 +112,11 @@ arbitrary.fn = arbitrary.prototype = (function( combinator, reference ){
         result.push( values );
         seed.grow();
       }
+
       return result;
     }
   };
-})( combinator, generateReference );
+})( combinator, generateReference, seed );
 
 arbitrary.fn.init.prototype = arbitrary.fn;
 
