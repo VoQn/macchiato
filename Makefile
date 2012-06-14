@@ -1,7 +1,7 @@
 
 DIST_DIR = dist/
 
-LIB = src/util.js src/interface.js src/check.js src/score.js src/seed.js src/combinator.js src/gen.js src/arbitrary.js src/checker.js src/view.js src/macchiato.js
+LIB = src/util.js src/interface.js src/check.js src/score.js src/seed.js src/combinator.js src/reference.js src/arbitrary.js src/checker.js src/view.js src/macchiato.js
 
 JS = macchiato.js
 
