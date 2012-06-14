@@ -9,6 +9,16 @@ var force = function( promise ){
 };
 
 /**
+ * @param {function(Object, Object):Object}
+ * @return {function(Object, Object):Object}
+ */
+var flip = function( func ){
+  return function( b, a ){
+    return func( a, b );
+  };
+};
+
+/**
  * @param {!Object} object
  * @return {boolean} parameter is kind of list or not
  */
