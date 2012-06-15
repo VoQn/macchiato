@@ -2,6 +2,13 @@
  * @type {GenerateReference}
  */
 var generateReference = (function(){
+  // alias
+  var choose = combinator.choose;
+  var listOf = combinator.listOf;
+  var frequency = combinator.frequency;
+  var sized = combinator.sized;
+  var elements = combinator.elements;
+
   /**
    * @constructor
    */
@@ -17,8 +24,8 @@ var generateReference = (function(){
    * @return {number}
    */
   var integerGenerator = function( n ){
-    var i = combinator.choose( (-n), n )();
-    return ~~i;
+    var i = choose( -n, n )();
+    return Math.round( i );
   };
 
   /**
@@ -26,15 +33,17 @@ var generateReference = (function(){
    * @return {number}
    */
   var numberGenerator = function( l ){
+    /** @const {number} */
     var decimalBaseDenom = 999999999999999;
-    var b = combinator.choose( 0, ( l ) )();
-    var n = combinator.choose( (-b) * decimalBaseDenom, b * decimalBaseDenom )();
-    var d = combinator.choose( 1, decimalBaseDenom )();
+    var b = choose( 0, ( l ) )();
+    var n = choose( (-b) * decimalBaseDenom, b * decimalBaseDenom )();
+    var d = choose( 1, decimalBaseDenom )();
     return n / d;
   };
 
   /**
    * @type {Array.<Array.<number>>}
+   * @const
    */
   var charCodeHierarchy = [
     [ 400,    0x41,     0x7a ], // Alphabet
@@ -54,7 +63,7 @@ var generateReference = (function(){
     var rate = params[ 0 ];
     var low  = params[ 1 ];
     var high = params[ 2 ];
-    return [ rate, combinator.choose( low, high ) ];
+    return [ rate, choose( low, high ) ];
   };
 
   /**
@@ -65,7 +74,7 @@ var generateReference = (function(){
   /**
    * @type {function():number}
    */
-  var __charCodeGenerate = combinator.frequency( charCodeGenerateTable );
+  var __charCodeGenerate = frequency( charCodeGenerateTable );
 
   /**
    * @return {number}
@@ -77,7 +86,7 @@ var generateReference = (function(){
   /**
    * @type {function():Array.<number>}
    */
-  var charCodeArrayGenerate = combinator.listOf( charCodeGenerate );
+  var charCodeArrayGenerate = listOf( charCodeGenerate );
 
   /**
    * @param {string} type
@@ -116,15 +125,15 @@ var generateReference = (function(){
     /**
      * @return {boolean}
      */
-    'boolean': combinator.elements( [ false, true ] ),
+    'boolean': elements( [ false, true ] ),
     /**
      * @return {number}
      */
-    integer: combinator.sized( integerGenerator ),
+    integer: sized( integerGenerator ),
     /**
      * @return {number}
      */
-    number: combinator.sized( numberGenerator ),
+    number: sized( numberGenerator ),
     /**
      * @return {number}
      */

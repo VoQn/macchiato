@@ -12,7 +12,7 @@ var Result = function( stub ){
 
 /**
  * @param {Array.<function(): Object>} generators
- * @param {function(...[Object]): (boolean|Object)} property
+ * @param {function(): (boolean|Object)} property
  * @return {function(): Result} test promise
  */
 var forAll = function( generators, property ){
@@ -54,13 +54,12 @@ var forAll = function( generators, property ){
  */
 var where = function( conditions, callback ){
   /** @type {number} */
-  var i = 0;
+  var index = 0;
+  /** @type {boolean} */
+  var condition;
 
-  /** @type {number} */
-  var l = conditions.length;
-
-  for ( ; i < l; i++ ){
-    if ( !conditions[ i ] ){
+  for ( ; condition = conditions[ index ]; index++ ){
+    if ( !condition ){
       return {
         wasSkipped: true
       };

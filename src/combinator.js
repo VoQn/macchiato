@@ -1,6 +1,6 @@
 
 /** @type {Combinator} */
-var combinator = (function( seed ){
+var combinator = (function(){
   /** @constructor */
   var Combinator = function(){};
 
@@ -12,13 +12,15 @@ var combinator = (function( seed ){
    * @return {function(number):Object}
    */
   combinator.sized = function( generator ){
+    var exponent = seed.exponent;
+
     /**
      * @param {number=} opt_n
      * @return {Object}
      */
     var generate = function( opt_n ){
       /** @type {number} */
-      var n = supplement( seed.exponent( 2, 2 / 3 ), opt_n );
+      var n = supplement( exponent( 2, 2 / 3 ), opt_n );
       return generator( n );
     };
     return generate;
@@ -69,12 +71,15 @@ var combinator = (function( seed ){
    * @return {function():Object}
    */
   combinator.elements = function( list ){
+    var choose = combinator.choose;
+    var max = list.length;
+
     /**
      * @return {Object}
      */
     var generate = function(){
       /** @type {number} */
-      var index = Math.round( combinator.choose( 0, list.length - 1 )() );
+      var index = ~~choose( 0, max )();
       /** @type {Object} */
       var item = list[ index ];
       return item;
@@ -88,10 +93,11 @@ var combinator = (function( seed ){
    * @return {function():Object}
    */
   combinator.oneOf = function( generators ){
+    var elements = combinator.elements;
     /**
      * @type {function():Object}
      */
-    var generate = this.elements( generators );
+    var generate = elements( generators );
     return generate;
   };
 
@@ -100,20 +106,23 @@ var combinator = (function( seed ){
    * @return {function():Array}
    */
   combinator.listOf = function( generator ){
-    /**
-     * @param {number} n
-     * @return {Array}
-     */
-    var generateBySize = function( n ){
-      /** @type {Array} */
-      var list = combinator.vectorOf( n, generator )();
-      return list;
-    };
-
+    var linear = seed.linear;
+    var resize = combinator.resize;
+    var vectorOf = combinator.vectorOf;
     var generate = function(){
+      /**
+       * @param {number} n
+       * @return {Array}
+       */
+      var generateBySize = function( n ){
+        /** @type {Array} */
+        var list = vectorOf( n, generator )();
+        return list;
+      };
+
       /** @type {number} */
-      var size = seed.linear( 2 );
-      return combinator.resize( size, generateBySize )();
+      var size = linear( 2 );
+      return resize( size, generateBySize )();
     };
 
     return generate;
@@ -124,22 +133,24 @@ var combinator = (function( seed ){
    * @return {function():Array}
    */
   combinator.listOf1 = function( generator ){
-    /**
-     * @param {number} n
-     * @return {Array}
-     */
-    var generateBySize = function( n ){
-      /** @type {Array.<Object>} */
-      var list = combinator.vectorOf( n, generator )();
-      return list;
-    };
-
+    var linear = seed.linear;
+    var vectorOf = combinator.vectorOf;
+    var resize = combinator.resize;
     var generate = function(){
-      /** @type {number} */
-      var size = seed.linear( 2, 1 );
-      return combinator.resize( size, generateBySize )();
-    };
+      /**
+       * @param {number} n
+       * @return {Array}
+       */
+      var generateBySize = function( n ){
+        /** @type {Array.<Object>} */
+        var list = vectorOf( n, generator )();
+        return list;
+      };
 
+      /** @type {number} */
+      var size = linear( 2, 1 );
+      return resize( size, generateBySize )();
+    };
     return generate;
   };
 
@@ -179,31 +190,29 @@ var combinator = (function( seed ){
     };
     /** @type {number} */
     var sum = foldLeft( 0, collect, table );
-    /** @type {number} */
-    var index = 0;
-    /** @type {number} */
-    var threshold = 1;
-    /** @type {number} */
-    var length = table.length;
+
+    var choose = combinator.choose;
 
     /**
      * @return {Object}
      */
     var generate = function(){
-      threshold = combinator.choose( 1, sum )();
+      var index = 0;
+      var row;
+      var threshold = choose( 1, sum )();
 
-      for ( index = 0; index < length; index++ ){
-        if ( threshold < table[ index ][ 0 ] ){
-          return table[ index ][ 1 ]();
+      for ( ; row = table[ index ]; index++ ){
+        if ( threshold < row[ 0 ] ){
+          return row[ 1 ]();
         }
-        threshold -= table[ index ][ 0 ];
+        threshold -= row[ 0 ];
       }
-      return table[ length - 1 ][ 1 ]();
+      return table[ index - 1 ][ 1 ]();
     };
 
     return generate;
   };
 
   return combinator;
-})( seed );
+})();
 

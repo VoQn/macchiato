@@ -1,9 +1,9 @@
 /**
  * @param {string} type_str
- * @param {...string} opt_more_types
+ * @param {...string} var_args
  * @constructor
  */
-var arbitrary = function( type_str, opt_more_types ){
+var arbitrary = function( type_str, var_args ){
   /** @type {Array.<string>} */
   var args = Array.prototype.slice.call( arguments );
   return new arbitrary.fn.init( args );
@@ -12,7 +12,7 @@ var arbitrary = function( type_str, opt_more_types ){
 /**
  * @type {arbitrary}
  */
-arbitrary.fn = arbitrary.prototype = (function( combinator, reference, seed ){
+arbitrary.fn = arbitrary.prototype = (function(){
   /** @type {RegExp} */
   var rList = /\[\s?([a-z]+)\s?\]/;
   /**
@@ -23,9 +23,9 @@ arbitrary.fn = arbitrary.prototype = (function( combinator, reference, seed ){
      /** @type {?Array.<string>} */
      var test = rList.exec( t );
      if ( !!test ){
-        return combinator.listOf( reference[ test[ 1 ] ] );
+        return combinator.listOf( generateReference[ test[ 1 ] ] );
      }
-     return reference[ t ];
+     return generateReference[ t ];
   };
 
   return {
@@ -72,7 +72,7 @@ arbitrary.fn = arbitrary.prototype = (function( combinator, reference, seed ){
       return forAll( generators, property );
     },
     /**
-     * @param {number} opt_count
+     * @param {number=} opt_count
      * @return {Array}
      */
     sample: function( opt_count ){
@@ -86,8 +86,6 @@ arbitrary.fn = arbitrary.prototype = (function( combinator, reference, seed ){
       };
       /** @type {number} */
       var count = supplement( 10, opt_count, fix );
-      /** @type {number} */
-      var index = 0;
       /** @type {Array.<function():Object>} */
       var generators;
       /** @type {Array} */
@@ -104,7 +102,7 @@ arbitrary.fn = arbitrary.prototype = (function( combinator, reference, seed ){
       }
       seed.clear();
 
-      for ( ; index < count; index++ ){
+      for ( ; !!count; count-- ){
         values = map( force, generators );
         if ( console && console.log ){
           console.log( values.length === 1 ? values[ 0 ] : values );
@@ -116,7 +114,7 @@ arbitrary.fn = arbitrary.prototype = (function( combinator, reference, seed ){
       return result;
     }
   };
-})( combinator, generateReference, seed );
+})();
 
 arbitrary.fn.init.prototype = arbitrary.fn;
 

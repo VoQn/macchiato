@@ -2,10 +2,9 @@
 /** @type {Seed} */
 var seed = (function(){
   /** @constructor */
-  var Seed = function(){
-    /** @type {number} */
-    this.value = 1;
-  };
+  var Seed = function(){}
+  /** @type {number} */
+  value = 1;
 
   /** @type {Seed} */
   var seed = new Seed();
@@ -19,14 +18,6 @@ var seed = (function(){
   };
 
   /**
-   * @deprecated
-   */
-  seed.getRange = function(){
-    var mx = Math.pow( 2, ( Math.round( this.value / 1.5 )) );
-    return random( mx );
-  };
-
-  /**
    * @param {number=} opt_a
    * @param {number=} opt_b
    * @return {number}
@@ -34,7 +25,7 @@ var seed = (function(){
   seed.linear = function( opt_a, opt_b ){
     var a = supplement( 1, opt_a, Math.max );
     var b = supplement( 0, opt_b );
-    var mx = a * this.value + b;
+    var mx = a * value + b;
     return random( mx );
   };
 
@@ -45,11 +36,10 @@ var seed = (function(){
    * @return {number}
    */
   seed.quadratic = function( opt_a, opt_b, opt_c ){
-    var x = this.value;
     var a = supplement( 1, opt_a );
     var b = supplement( 0, opt_b );
     var c = supplement( 0, opt_c );
-    var mx = a * x * x + b * x + c;
+    var mx = a * value * value + b * value + c;
     return random( mx );
   };
 
@@ -61,7 +51,7 @@ var seed = (function(){
   seed.exponent = function( opt_a, opt_b ){
     var a = supplement( 2, opt_a, Math.max );
     var b = supplement( 1, opt_b );
-    var mx = Math.pow( a, ( Math.round( this.value * b )));
+    var mx = Math.pow( a, ( Math.round( value * b )));
     return random( mx );
   };
 
@@ -75,7 +65,7 @@ var seed = (function(){
     var a = supplement( 1, opt_a );
     var b = supplement( 2, opt_b, Math.max );
     var c = supplement( 0, opt_c );
-    var mx = Math.log( this.value * a ) / Math.log( b ) + c;
+    var mx = Math.log( value * a ) / Math.log( b ) + c;
     return random( mx );
   };
 
@@ -83,12 +73,12 @@ var seed = (function(){
    * @return {number}
    */
   seed.grow = function(){
-    this.value = this.value + 1;
-    return this.value;
+    value++;
+    return value;
   };
 
   seed.clear = function(){
-    this.value = 1;
+    value = 1;
   };
 
   return seed;
