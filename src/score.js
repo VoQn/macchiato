@@ -45,7 +45,7 @@ var score = (function(){
       '\u2718 Failed. after ' + this.passed + this.skipped ) +
       ' tests.' +
       ( this.skipped > 0 ?
-        ' \u2662 skipped test' + this.skipped + ' cases' :
+        ' \u2662 skipped ' + this.skipped + ' cases' :
         '' );
     return {
       ok: isOk,
