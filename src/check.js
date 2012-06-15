@@ -1,10 +1,11 @@
 
 /**
- * @param {{passed: boolean, reason: string, arguments: Array}} stub
+ * @param {{passed: boolean, skipped: boolean, reason: string, arguments: Array}} stub
  * @constructor
  */
 var Result = function( stub ){
   this.passed = stub.passed;
+  this.skipped = stub.skipped;
   this.reason = stub.reason;
   this.arguments = stub.arguments;
   return this;
@@ -23,14 +24,24 @@ var forAll = function( generators, property ){
     var args = map( force, generators );
 
     /** @type {boolean} */
-    var success;
+    var success = false;
 
     /** @type {string} */
     var reason;
 
     try {
-      success = property.apply( property, args );
-      reason = success ? '' : 'Falsible: (' + args.join(', ') + ')';
+      var test = property.apply( property, args );
+      if ( test.wasSkipped ){
+        reason = 'Skipped: (' + args.join(', ') + ')';
+        return new Result({
+          passed: false,
+          skipped: true,
+          reason: reason,
+          arguments: args
+        });
+      }
+      successs = test;
+      reason = test ? '' : 'Falsible: (' + args.join(', ') + ')';
     } catch ( exception ) {
       success = false;
       reason = 'Exception occurred: ' + exception;
@@ -38,6 +49,7 @@ var forAll = function( generators, property ){
 
     return new Result({
         passed: success,
+        skipped: false,
         reason: reason,
         arguments: args
     });
@@ -55,11 +67,14 @@ var forAll = function( generators, property ){
 var where = function( conditions, callback ){
   /** @type {number} */
   var index = 0;
+  /** @type {number} */
+  var length = conditions.length;
   /** @type {boolean} */
-  var condition;
+  var shouldSkip;
 
-  for ( ; condition = conditions[ index ]; index++ ){
-    if ( !condition ){
+  for ( ; index < length; index++ ){
+    shouldSkip = !conditions[ index ];
+    if ( shouldSkip ){
       return {
         wasSkipped: true
       };

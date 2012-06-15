@@ -67,7 +67,7 @@ var macchiato = (function(){
 
       for ( ; count; count-- ){
         checker.run( property, verbose, score );
-        if( verbose ) {
+        if( verbose || checker.shouldView ) {
           view.putLog( checker.lastResult(), true );
         }
         seed.grow();

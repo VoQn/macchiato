@@ -63,8 +63,8 @@ var checker = (function(){
   checker.run = function( test, onVerbose, score ){
     var result = test();
     this.args = result.arguments;
-    if ( !!result.wasSkipped ) {
-        this.skipped = result.wasSkipped;
+    if ( result.skipped ) {
+        this.skipped = true;
     } else {
       this.skipped = false;
       this.passed = result;
@@ -78,7 +78,6 @@ var checker = (function(){
    */
   checker.log = function( verbose, score ){
     var kind;
-    var shouldView = false;
     var wrapQuote = function( a ){
       if ( typeof a === 'string' ){
         return '"' + a + '"';
@@ -95,7 +94,7 @@ var checker = (function(){
     } else {
       kind = 'faild';
       score.failure++;
-      shouldView = true;
+      this.shouldView = true;
     }
 
     this.currentLog = marks[ kind ] +
