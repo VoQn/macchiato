@@ -231,15 +231,6 @@ var sumOf = function( numbers ){
 };
 
 /**
- * @param {!Object} object
- * @param {!Object} methods
- * @return {!Object} class instance
- */
-var createSingleton = function( object, methods ){
-  object.prototype = methods;
-};
-
-/**
  * @param {Object} default_value
  * @param {Object=} opt_arg
  * @param {(function(Object, Object):Object)=} opt_callback

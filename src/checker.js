@@ -88,13 +88,13 @@ var checker = (function(){
 
     if ( this.skipped ) {
       kind = 'skipped';
-      score.countUpSkipped();
+      score.skipped++;
     } else if ( this.passed ){
       kind = 'passed';
-      score.countUpPassed();
+      score.passed++;
     } else {
       kind = 'faild';
-      score.countUpFailure();
+      score.failure++;
       shouldView = true;
     }
 
