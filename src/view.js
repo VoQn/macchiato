@@ -55,52 +55,59 @@ var consoleView = (function(){
 })();
 
 var htmlView = (function(){
-  var _log = '';
+  var logBuffer = [];
+  var i = 0;
+  var byId = function( id ){ return document.getElementById( id ); };
+
   return createView({
-  selectors:{
-    counter_id: 'test-count',
-    messenger_id: 'test-message',
-    logger_id: 'test-log'
-  },
-  setSelectors: function( identifers ){
-    var members = this.selectors,
-        name = '';
-    for ( name in members ){
-      if ( identifers[ name ] === undefined ){
-        throw new Error('html-test-view need selector id :' + name + ', but undefined');
+    selectors:{
+      counter_id: 'test-count',
+      messenger_id: 'test-message',
+      logger_id: 'test-log'
+    },
+    setSelectors: function( identifers ){
+      var members = this.selectors,
+          name = '';
+      for ( name in members ){
+        if ( identifers[ name ] === undefined ){
+          throw new Error('html-test-view need selector id :' + name + ', but undefined');
+        }
+        this.selectors[ name ] = identifers[ name ];
       }
-      this.selectors[ name ] = identifers[ name ];
+      return this;
+    },
+    getTestCount: function(){
+      return parseInt( byId( this.selectors.counter_id ).value, 10 );
+    },
+    standby: function(){
+      //var board = byId( this.selectors.messenger_id );
+      //var consoleLine = byId( this.selectors.logger_id );
+      logBuffer = [];
+      i = 0;
+      //board.innerHTML = '';
+      //consoleLine.innerHTML = '';
+    },
+    clean: function(){
+      logBuffer = [];
+    },
+    putMsg: function( msg ){
+      var board = byId( this.selectors.messenger_id );
+      board.innerHTML = msg;
+    },
+    putLog: function( log, withEscape ){
+      logBuffer[ i ] = !withEscape ? log : htmlEscape( log );
+      i++;
+    },
+    dump: function(){
+      var consoleLine = byId( this.selectors.logger_id );
+      consoleLine.innerHTML = logBuffer.join('<br>');
+      logBuffer = [];
+      i = 0;
+    },
+    highlight: function( isGreen, msg ){
+      return '<span class="' + ( isGreen ? 'passed' : 'failed' ) + '">' + msg + '</span>';
     }
-    return this;
-  },
-  getTestCount: function(){
-    return parseInt( document.getElementById( this.selectors.counter_id ).value, 10 );
-  },
-  standby: function(){
-    var board = document.getElementById( this.selectors.messenger_id );
-    var consoleLine = document.getElementById( this.selectors.logger_id );
-    _log = '';
-    board.innerHTML = '';
-    consoleLine.innerHTML = '';
-  },
-  clean: function(){
-    _log = '';
-  },
-  putMsg: function( msg ){
-    var board = document.getElementById( this.selectors.messenger_id );
-    board.innerHTML += msg;
-  },
-  putLog: function( log, withEscape ){
-    _log += ( !withEscape ? log : htmlEscape( log ) ) + '<br>';
-  },
-  dump: function(){
-    var consoleLine = document.getElementById( this.selectors.logger_id );
-    consoleLine.innerHTML = _log;
-  },
-  highlight: function( isGreen, msg ){
-    return '<span class="' + ( isGreen ? 'passed' : 'failed' ) + '">' + msg + '</span>';
-  }
-});
+  });
 })();
 
 
