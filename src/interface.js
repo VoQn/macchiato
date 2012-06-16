@@ -24,28 +24,25 @@ var Interface = function( name, methods ){
 
 /**
  * @param {Object} obj
- * @param {...Object} a_interface (optional)
+ * @param {Interface} a_interface
+ * @param {...Interface} var_args
  */
-Interface.ensureImplements = function( object, a_interface ){
+Interface.ensureImplements = function( object, a_interface, var_args ){
   if ( arguments.length < 2 ){
     throw new Error('Function Interface.ensureImplements called with ' +
         arguments.length +
         'arguments, but expected at least 2.');
   }
-  var i = 1, l = arguments.length, j, m;
-  for ( ; i < l; i++ ){
-    var _interface = arguments[ i ];
-    if ( _interface.constructor !== Interface ) {
+  var i = 1, j = 0, method, interface_;
+  for ( ; interface_ = arguments[i]; i++ ){
+    if ( interface_.constructor !== Interface ) {
       throw new Error('Function Interface.ensureImplements ' +
           'expects arguments two and above to be instance of Interface.');
     }
-    j = 0;
-    m = _interface.methods.length;
-    for ( ; j < m; j++ ){
-      var method = _interface.methods[ j ];
+    for ( ; method = interface_.methods[ j ]; j++ ){
       if ( !object[ method ] || typeof object[ method ] !== 'function' ) {
         throw new Error('Function Interface.ensureImplements: ' +
-            'object does not implement the ' + _interface.name + ' interface. ' +
+            'object does not implement the ' + interface_.name + ' interface. ' +
             'Method ' + method + ' was not found.');
       }
     }

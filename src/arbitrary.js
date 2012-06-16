@@ -4,7 +4,6 @@
  * @constructor
  */
 var arbitrary = function( type_str, var_args ){
-  /** @type {Array.<string>} */
   var args = Array.prototype.slice.call( arguments );
   return new arbitrary.fn.init( args );
 };
@@ -13,21 +12,20 @@ var arbitrary = function( type_str, var_args ){
  * @type {arbitrary}
  */
 arbitrary.fn = arbitrary.prototype = (function(){
-  /** @type {RegExp} */
-  var rList = /\[\s?([a-z]+)\s?\]/;
-  /**
-   * @param {string} t
-   * @return {function():Object}
-   */
-  var selectGenerator = function( t ){
-     /** @type {?Array.<string>} */
-     var test = rList.exec( t );
-     if ( !!test ){
-        return combinator.listOf( generateReference[ test[ 1 ] ] );
-     }
-     return generateReference[ t ];
-  };
-
+  var rList = /\[\s?([a-z]+)\s?\]/,
+     /**
+      * @param {string} t
+      * @return {function():Object}
+      */
+      selectGenerator = function( t ){
+        /** @type {?Array.<string>} */
+        var test = rList.exec( t ),
+            listOf = combinator.listOf;
+        if ( !!test ){
+          return listOf( generateReference[ test[ 1 ] ] );
+        }
+        return generateReference[ t ];
+      };
   return {
     constructor: arbitrary,
     /**
@@ -41,9 +39,10 @@ arbitrary.fn = arbitrary.prototype = (function(){
     },
     /** @type {Array.<string>} */
     types: [],
-    /** @type {number} */
     length: 0,
-    /** @type {function():number} */
+    /**
+     * @return {number}
+     */
     size: function(){
       return this.length;
     },
@@ -52,15 +51,10 @@ arbitrary.fn = arbitrary.prototype = (function(){
      * @return {function():Result}
      */
     property: function( property ){
-      /** @types {Array.<function():Object>}*/
-      var generators;
-      /** @type {number} */
-      var index = 0;
-      /** @type {Array.<string>} */
-      var types = this.types;
-      /** @type {number} */
-      var length = types.length;
-
+      var generators,
+          index = 0,
+          types = this.types,
+          length = types.length;
       try {
         generators = map( selectGenerator, types );
       } catch ( e ) {
@@ -68,7 +62,6 @@ arbitrary.fn = arbitrary.prototype = (function(){
           console.log( e );
         }
       }
-
       return forAll( generators, property );
     },
     /**
@@ -76,23 +69,13 @@ arbitrary.fn = arbitrary.prototype = (function(){
      * @return {Array}
      */
     sample: function( opt_count ){
-      /**
-       * @param {number} _
-       * @param {number} o
-       * @return {number}
-       */
       var fix = function( _, o ){
-        return Math.max( 1, o );
-      };
-      /** @type {number} */
-      var count = supplement( 10, opt_count, fix );
-      /** @type {Array.<function():Object>} */
-      var generators;
-      /** @type {Array} */
-      var values;
-      /** @type {Array.<Array>} */
-      var result = [];
-
+            return Math.max( 1, o );
+          },
+          count = supplement( 10, opt_count, fix ),
+          generators;
+          values;
+          result = [];
       try {
         generators = map( selectGenerator, this.types );
       } catch ( e ){
@@ -101,7 +84,6 @@ arbitrary.fn = arbitrary.prototype = (function(){
         }
       }
       seed.clear();
-
       for ( ; !!count; count-- ){
         values = map( force, generators );
         if ( console && console.log ){
@@ -110,7 +92,6 @@ arbitrary.fn = arbitrary.prototype = (function(){
         result.push( values );
         seed.grow();
       }
-
       return result;
     }
   };

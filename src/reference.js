@@ -1,23 +1,18 @@
-/**
- * @type {GenerateReference}
- */
+
 var generateReference = (function(){
-  // alias
-  var choose = combinator.choose;
-  var listOf = combinator.listOf;
-  var frequency = combinator.frequency;
-  var sized = combinator.sized;
-  var elements = combinator.elements;
-
-  /**
-   * @constructor
-   */
-  var GenerateReference = function(){};
-
-  /**
-   * @type {GenerateReference}
-   */
-  var reference = new GenerateReference();
+  var choose = combinator.choose,
+      listOf = combinator.listOf,
+      frequency = combinator.frequency,
+      sized = combinator.sized,
+      elements = combinator.elements,
+      /**
+       * @constructor
+       */
+      GenerateReference = function(){},
+      /**
+       * @type {GenerateReference}
+       */
+      reference = new GenerateReference();
 
   /**
    * @param {number} n
@@ -155,7 +150,6 @@ var generateReference = (function(){
       return str;
     }
   });
-
   return reference;
 })();
 

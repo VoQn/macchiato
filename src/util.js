@@ -1,16 +1,16 @@
 // Utilities
 
 /**
- * @param {function() : Object} promise
- * @return {Object}
+ * @param {function() : *} promise
+ * @return {*}
  */
 var force = function( promise ){
   return promise();
 };
 
 /**
- * @param {function(Object, Object):Object}
- * @return {function(Object, Object):Object}
+ * @param {function(*, *):*} func
+ * @return {function(*, *):*}
  */
 var flip = function( func ){
   return function( b, a ){
@@ -23,15 +23,12 @@ var flip = function( func ){
  * @return {boolean} parameter is kind of list or not
  */
 var isList = function( object ) {
-  /** @type {Array} */
-  var classes = [ Array, NodeList, HTMLCollection ];
-  /** @type {number} */
-  var index = 0;
-  /** @type {number} */
-  var length = classes.length;
+  var classes = [ Array, NodeList, HTMLCollection ],
+      klass,
+      index = 0;
 
-  for ( ; index < length; index++ ){
-    if ( object instanceof classes[ index ] ){
+  for ( ; klass = classes[ index ]; index++ ){
+    if ( object instanceof klass ){
       return true;
     }
   }
@@ -43,26 +40,21 @@ var isList = function( object ) {
  * @return {boolean} parameter is empty or not
  */
 var isEmpty = function( object ){
-  /** @type {string} */
-  var _;
-  for ( _ in obj ){
+  for (var _ in obj ){
     return false;
   }
   return true;
 };
 
 /**
- * @param {function(Object, (string|number)=)} callback
+ * @param {function(*, (string|number)=)} callback
  * @param {!Array|!Object} elements
  * @return {!Array|!Object} new array or object
  */
 var map = function( callback, elements ){
-  /** @type {Array|Object} */
-  var result;
-  /** @type {number|string} */
-  var index;
-  /** @type {number} */
-  var length;
+  var result,
+      index,
+      length;
 
   if ( isList( elements ) ){
     result = [];
@@ -86,10 +78,8 @@ var map = function( callback, elements ){
  * @param {!Array|!Object} elements
  */
 var each = function( callback, elements ){
-  /** @type {string|number} */
-  var index;
-  /** @type {number} */
-  var length;
+  var index,
+      length;
 
   if ( isList( elements ) ){
     for ( index = 0, length = elements.length; index < length; index++ ){
@@ -108,24 +98,23 @@ var each = function( callback, elements ){
 /**
  * @param {function(Object, number=): boolean} callback
  * @param {!Array} elements
- * @return {!Array} new array list
+ * @return {Array} new array list
  */
 var filter = function( callback, elements ){
-  /** @type {Array} */
-  var result = [];
-  /** @type {number} */
-  var index = 0;
-  /** @type {number} */
-  var length = elements.length;
-  /** @type {Object} */
-  var element;
+  var result = [],
+      index = 0,
+      newIndex = 0,
+      length = elements.length,
+      element;
 
   for ( ; index < length; index++ ){
     element = elements[ index ];
     if ( callback( element, index ) ){
-      result.push( element );
+      result[ newIndex ] = element;
+      newIndex++;
     }
   }
+
   return result;
 };
 
@@ -135,10 +124,8 @@ var filter = function( callback, elements ){
  * @return {boolean}
  */
 var hasAny = function( test, elements ){
-  /** @type {number} */
-  var index = 0;
-  /** @type {number} */
-  var length = elements.length;
+  var index = 0,
+      length = elements.length;
 
   for ( ; index < length; index++ ){
     if ( test( elements[ index ], index ) ){
@@ -150,14 +137,12 @@ var hasAny = function( test, elements ){
 
 /**
  * @param {function(Object, number=):boolean} test
- * @param {!Array} elemnts
+ * @param {!Array} elements
  * @return {boolean}
  */
 var hasAll = function( test, elements ){
-  /** @type {number} */
-  var index = 0;
-  /** @type {number} */
-  var length = elements.length;
+  var index = 0,
+      length = elements.length;
 
   for ( ; index < length; index++ ){
     if ( !test( elements[ index ], index ) ) {
@@ -168,18 +153,15 @@ var hasAll = function( test, elements ){
 };
 
 /**
- * @param {Object}
- * @param {function(Object, Object):Object} collector
+ * @param {*} init
+ * @param {function(*, *):*} collector
  * @param {!Array} elements
- * @return {Object}
+ * @return {*}
  */
 var foldLeft = function( init, collector, elements ){
-  /** @type {Object} */
-  var result = init;
-  /** @type {number} */
-  var index = 0;
-  /** @type {number} */
-  var length = elements.length;
+  var result = init,
+      index = 0,
+      length = elements.length;
 
   for ( ; index < length; index++ ){
     result = collector( elements[ index ], result );
@@ -188,16 +170,14 @@ var foldLeft = function( init, collector, elements ){
 };
 
 /**
- * @param {Object}
- * @param {function(Object, Object):Object} collector
+ * @param {*} init
+ * @param {function(*, *):*} collector
  * @param {!Array} elements
- * @return {Object}
+ * @return {*}
  */
 var foldRight = function( init, collector, elements ){
-  /** @type {Object} */
-  var result = init;
-  /** @type {number} */
-  var index = elements.length - 1;
+  var result = init,
+      index = elements.length - 1;
 
   for ( ; index > -1; index-- ){
     result = collector( elements[ index ], result );
@@ -217,12 +197,9 @@ var foldRight = function( init, collector, elements ){
  * @return {number}
  */
 var sumOf = function( numbers ){
-  /** @type {number} */
-  var result = 0;
-  /** @type {number} */
-  var index = 0;
-  /** @type {number} */
-  var length = numbers.length;
+  var result = 0,
+      index = 0,
+      length = numbers.length;
 
   for ( ; index < length; index++ ){
     result += numbers[ index ];

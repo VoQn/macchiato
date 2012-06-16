@@ -4,15 +4,10 @@ var checker = (function(){
    * @constructor
    */
   var Checker = function( ){
-    /** @type {Array} */
     this.args = [];
-    /** @type {boolean} */
     this.passed = false;
-    /** @type {boolean} */
     this.skipped = false;
-    /** @type {string} */
     this.currentLog = '';
-
     return this;
   };
 
@@ -25,35 +20,6 @@ var checker = (function(){
 
   /** @type {Checker} */
   var checker = new Checker();
-
-  /**
-   * @return {Array}
-   */
-  checker.getArgs = function(){
-    return this.args;
-  };
-
-  /**
-   * @return {boolean}
-   */
-  checker.isPassed = function(){
-    return this.passed;
-  };
-
-  /**
-   * @return {boolean}
-   */
-  checker.isSkipped = function(){
-    return this.skipped;
-  };
-
-  /**
-   * @return {string}
-   */
-  checker.lastResult = function(){
-    return this.currentLog;
-  };
-
 
   /**
    * @param {function():Result} test

@@ -1,21 +1,16 @@
 
-/** @type {Seed} */
 var seed = (function(){
   /** @constructor */
-  var Seed = function(){}
-  /** @type {number} */
-  value = 1;
-
-  /** @type {Seed} */
-  var seed = new Seed();
-
-  /**
-   * @param {number} x
-   * @return {number}
-   */
-  var random = function( x ){
-    return Math.round( Math.random() * x );
-  };
+  var Seed = function(){},
+      seed = new Seed(),
+      value = 1,
+      /**
+       * @param {number} x
+       * @return {number}
+       */
+      random = function( x ){
+        return Math.round( Math.random() * x );
+      };
 
   /**
    * @param {number=} opt_a
@@ -23,9 +18,9 @@ var seed = (function(){
    * @return {number}
    */
   seed.linear = function( opt_a, opt_b ){
-    var a = supplement( 1, opt_a, Math.max );
-    var b = supplement( 0, opt_b );
-    var mx = a * value + b;
+    var a = supplement( 1, opt_a, Math.max ),
+        b = supplement( 0, opt_b ),
+        mx = a * value + b;
     return random( mx );
   };
 
@@ -36,10 +31,10 @@ var seed = (function(){
    * @return {number}
    */
   seed.quadratic = function( opt_a, opt_b, opt_c ){
-    var a = supplement( 1, opt_a );
-    var b = supplement( 0, opt_b );
-    var c = supplement( 0, opt_c );
-    var mx = a * value * value + b * value + c;
+    var a = supplement( 1, opt_a ),
+        b = supplement( 0, opt_b ),
+        c = supplement( 0, opt_c ),
+        mx = a * value * value + b * value + c;
     return random( mx );
   };
 
@@ -49,9 +44,9 @@ var seed = (function(){
    * @return {number}
    */
   seed.exponent = function( opt_a, opt_b ){
-    var a = supplement( 2, opt_a, Math.max );
-    var b = supplement( 1, opt_b );
-    var mx = Math.pow( a, ( Math.round( value * b )));
+    var a = supplement( 2, opt_a, Math.max ),
+        b = supplement( 1, opt_b ),
+        mx = Math.pow( a, ( Math.round( value * b )));
     return random( mx );
   };
 
@@ -62,10 +57,10 @@ var seed = (function(){
    * @return {number}
    */
   seed.logarithm = function( opt_a, opt_b, opt_c ){
-    var a = supplement( 1, opt_a );
-    var b = supplement( 2, opt_b, Math.max );
-    var c = supplement( 0, opt_c );
-    var mx = Math.log( value * a ) / Math.log( b ) + c;
+    var a = supplement( 1, opt_a ),
+        b = supplement( 2, opt_b, Math.max ),
+        c = supplement( 0, opt_c ),
+        mx = Math.log( value * a ) / Math.log( b ) + c;
     return random( mx );
   };
 

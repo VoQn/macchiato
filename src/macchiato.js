@@ -1,15 +1,13 @@
 
-/** @type {Macchiato} */
 var macchiato = (function(){
   /** @constructor */
-  var Macchiato = function(){};
-  /** @type {View} */
-  var view = consoleView;
-  /** @type {Array.<Object.<string:function>>} */
-  var suites = [];
-
-  /** @type {Macchiato} */
-  var macchiato = new Macchiato();
+  var Macchiato = function(){},
+      /** @type {Macchiato} */
+      macchiato = new Macchiato(),
+      /** @type {View} */
+      view = consoleView,
+      /** @type {Array} */
+      suites = [];
 
   /**
    * @param {boolean} verbose
@@ -39,65 +37,51 @@ var macchiato = (function(){
     return this;
   };
 
-  macchiato.taste = function( ){
-    /** @type {boolean} */
-    var passed = true;
-    /** @type {number} */
-    var index = 0;
-    /** @type {Object.<string, function>} */
-    var suite;
-    /** @type {string} */
-    var label = '';
-    /** @type {function} */
-    var property;
-    /**
-     * @param {string} label
-     * @param {function():(boolean|Object)} property
-     * @return {boolean}
-     */
-    var check = function( label, property ){
-      /** @type {boolean} */
-      var verbose = view.verbose;
-      /** @type {number} */
-      var count = view.getTestCount();
-      /** @type {boolean} */
-      var allPassed = true;
-
-      var result;
-
-      for ( ; count; count-- ){
-        checker.run( property, verbose, score );
-        if( verbose || checker.shouldView ) {
-          view.putLog( checker.lastResult(), true );
-        }
-        seed.grow();
-      }
-
-      result = score.evaluate();
-      view.putLog( view.highlight( result.ok, label + ' : ' + result.message ));
-      allPassed = allPassed && result.ok;
-      score.clear();
-      seed.clear();
-      return allPassed;
-    };
-
+  macchiato.taste = function(){
+    var passed = true,
+        index = 0,
+        suite,
+        label = '',
+        property,
+        /**
+         * @param {string} label
+         * @param {function():(boolean|Object)} property
+         * @return {boolean}
+         */
+        check = function( label, property ){
+          var verbose = view.verbose,
+              count = view.getTestCount(),
+              allPassed = true,
+              msg = '',
+              result;
+          for ( ; count; count-- ){
+            checker.run( property, verbose, score );
+            if( verbose || checker.shouldView ) {
+              view.putLog( checker.currentLog, true );
+            }
+            seed.grow();
+          }
+          result = score.evaluate();
+          msg = label + ' : ' + result.message;
+          view.putLog( view.highlight( result.ok, msg ));
+          allPassed = allPassed && result.ok;
+          score.clear();
+          seed.clear();
+          return allPassed;
+        };
     view.standby();
-
     for ( ; suite = suites[ index ]; index++){
       for ( label in suite ){
         property = suite[ label ];
         passed = passed && check( label, property );
       }
     }
-
     view.dump();
     view.putMsg( passed ?
         'Ok, All tests succeeded!!' :
         'Oops! failed test exist...' );
 
-    // this.view.clean();
     return this;
   };
-
   return macchiato;
 })();

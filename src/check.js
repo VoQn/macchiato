@@ -17,20 +17,13 @@ var Result = function( stub ){
  * @return {function(): Result} test promise
  */
 var forAll = function( generators, property ){
-  /** @return {Result} */
   var testing = function(){
-
-    /** @type {Array} */
-    var args = map( force, generators );
-
-    /** @type {boolean} */
-    var success = false;
-
-    /** @type {string} */
-    var reason;
-
+    var args = map( force, generators ),
+        success = false,
+        reason = '',
+        test;
     try {
-      var test = property.apply( property, args );
+      test = property.apply( property, args );
       if ( test.wasSkipped ){
         reason = 'Skipped: (' + args.join(', ') + ')';
         return new Result({
@@ -46,16 +39,13 @@ var forAll = function( generators, property ){
       success = false;
       reason = 'Exception occurred: ' + exception;
     }
-
     return new Result({
         passed: success,
         skipped: false,
         reason: reason,
         arguments: args
     });
-
   };
-
   return testing;
 };
 
@@ -65,22 +55,15 @@ var forAll = function( generators, property ){
  * @return {{wasSkipped: boolean}|boolean} result of test
  */
 var where = function( conditions, callback ){
-  /** @type {number} */
-  var index = 0;
-  /** @type {number} */
-  var length = conditions.length;
-  /** @type {boolean} */
-  var shouldSkip;
-
+  var index = 0,
+      length = conditions.length,
+      shouldSkip;
   for ( ; index < length; index++ ){
     shouldSkip = !conditions[ index ];
     if ( shouldSkip ){
-      return {
-        wasSkipped: true
-      };
+      return { wasSkipped: true };
     }
   }
-
   return callback();
 };
 

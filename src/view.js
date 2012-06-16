@@ -9,8 +9,13 @@ var ViewInterface = new Interface('ViewInterface', [
     'highlight'
     ]);
 
+/** @constructor */
 var View = function(){};
 
+/**
+ * @param {Object} stub
+ * @return {View}
+ */
 var createView = function( stub ){
   var view = new View(),
       name = '';
@@ -21,6 +26,9 @@ var createView = function( stub ){
   return view;
 };
 
+/**
+ * @type {View}
+ */
 var consoleView = (function(){
   var _log = '';
   return createView({
@@ -41,7 +49,6 @@ var consoleView = (function(){
   },
   putLog: function( msg, withEscape ){
     _log += msg + '\n';
-    // console.log( msg );
   },
   dump: function(){
     if ( _log.length > 0 ){
@@ -54,6 +61,9 @@ var consoleView = (function(){
 });
 })();
 
+/**
+ * @type {View}
+ */
 var htmlView = (function(){
   var logBuffer = [];
   var i = 0;
@@ -80,12 +90,8 @@ var htmlView = (function(){
       return parseInt( byId( this.selectors.counter_id ).value, 10 );
     },
     standby: function(){
-      //var board = byId( this.selectors.messenger_id );
-      //var consoleLine = byId( this.selectors.logger_id );
       logBuffer = [];
       i = 0;
-      //board.innerHTML = '';
-      //consoleLine.innerHTML = '';
     },
     clean: function(){
       logBuffer = [];
@@ -109,5 +115,4 @@ var htmlView = (function(){
     }
   });
 })();
-
 
