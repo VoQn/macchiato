@@ -118,26 +118,34 @@ var combinator = (function(){
     return generate;
   };
   /**
-   * @param {Array.<Array.<(number|function():Object)>>} table
+   * @param {Array.<Tuple>} rate_generators
    * @return {function():Object}
    */
-  combinator.frequency = function( table ){
+  combinator.frequency = function( rate_generators ){
     var choose = combinator.choose,
         collect = function( x, r ){
-          return r + x[ 0 ];
+          return r + x.fst;
         },
-        sum = foldLeft( 0, collect, table ),
+        sum = foldLeft( 0, collect, rate_generators ),
+        rate_list_ = map( function( x ){
+                              return x.fst;
+                          }, rate_generators ),
+        generators_ = map( function( x ){
+                              return x.snd;
+                          }, rate_generators ),
         generate = function(){
           var index = 0,
-              row,
+              rate_list = rate_list_,
+              rate,
+              generators = generators_,
               threshold = choose( 1, sum )();
-          for ( ; row = table[ index ]; index++ ){
-            if ( threshold < row[ 0 ] ){
-              return row[ 1 ]();
+          for ( ; rate = rate_list[ index ]; index++ ){
+            if ( threshold < rate ){
+              return generators[ index ]();
             }
-            threshold -= row[ 0 ];
+            threshold -= rate;
           }
-          return table[ index - 1 ][ 1 ]();
+          return generators[ index - 1 ]();
         };
     return generate;
   };

@@ -18,7 +18,9 @@ var Result = function( stub ){
  */
 var forAll = function( generators, property ){
   var testing = function(){
-    var args = map( force, generators ),
+    var args = isList( generators ) ?
+               map( force, generators ) :
+               [ generators() ],
         success = false,
         reason = '',
         test;

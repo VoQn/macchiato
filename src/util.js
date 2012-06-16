@@ -222,3 +222,22 @@ var supplement = function( default_value, opt_arg, opt_callback ){
   return opt_callback( default_value, opt_arg );
 };
 
+/**
+ * @param {*} fst
+ * @param {*} snd
+ * @constructor
+ */
+var Tuple = function( fst, snd ){
+  this.fst = fst;
+  this.snd = snd;
+};
+
+/**
+ * @param {*} a
+ * @param {*} b
+ * @return {Tuple}
+ */
+var tuple = function( a, b ){
+  return new Tuple( a, b );
+};
+

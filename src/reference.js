@@ -37,45 +37,21 @@ var generateReference = (function(){
   };
 
   /**
-   * @type {Array.<Array.<number>>}
+   * @type {function():number}
    * @const
    */
-  var charCodeHierarchy = [
-    [ 400,    0x41,     0x7a ], // Alphabet
-    [ 300,    0x30,     0x39 ], // Decimal Number
-    [ 150,    0x1f,     0x2f ], // ASCII Symbol (1)
-    [ 140,    0x7b,     0x7f ], // ASCII Symbol (2)
-    [   7,    0x80,   0xd7ff ], // Unicode (1)
-    [   2,  0xe000,   0xfffd ], // Unicode (2)
-    [   1, 0x10000, 0x10ffff ]  // Unicode (3)
-  ];
+  var charCodeGenerate_ = frequency([
+    tuple( 400, choose( 0x41, 0x7a ) ), // Alphabet
+    tuple( 300, choose( 0x30, 0x39 ) ), // Decimal Number
+    tuple( 150, choose( 0x1f, 0x2f ) ), // ASCII Symbol (1)
+    tuple( 140, choose( 0x7b, 0x7f ) ), // ASCII Symbol (2)
+    tuple(   7, choose( 0x80, 0xd7ff ) ), // Unicode (1)
+    tuple(   2, choose( 0xe000, 0xfffd ) ), // Unicode (2)
+    tuple(   1, choose( 0x10000, 0x10ffff ) )  // Unicode (3)
+  ]);
 
-  /**
-   * @param {Array.<number>} params
-   * @return {Array.<(number|function():number)>}
-   */
-  var generatorLow = function( params ){
-    var rate = params[ 0 ],
-        low  = params[ 1 ],
-        high = params[ 2 ];
-    return [ rate, choose( low, high ) ];
-  };
-
-  /**
-   * @type {Array.<Array.<(number|function():number)>>}
-   */
-  var charCodeGenerateTable = map( generatorLow, charCodeHierarchy );
-
-  /**
-   * @type {function():number}
-   */
-  var __charCodeGenerate = frequency( charCodeGenerateTable );
-
-  /**
-   * @return {number}
-   */
   var charCodeGenerate = function(){
-    return Math.round( __charCodeGenerate() );
+    return Math.round( charCodeGenerate_() );
   };
 
   /**
