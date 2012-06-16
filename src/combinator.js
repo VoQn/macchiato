@@ -123,21 +123,14 @@ var combinator = (function(){
    */
   combinator.frequency = function( rate_generators ){
     var choose = combinator.choose,
-        collect = function( x, r ){
-          return r + x.fst;
-        },
-        sum = foldLeft( 0, collect, rate_generators ),
-        rate_list_ = map( function( x ){
-                              return x.fst;
-                          }, rate_generators ),
-        generators_ = map( function( x ){
-                              return x.snd;
-                          }, rate_generators ),
+        rate_list = map( function( x ){ return x.fst; },
+                         rate_generators ),
+        sum = sumOf( rate_list ),
+        generators = map( function( x ){ return x.snd; },
+                          rate_generators ),
         generate = function(){
           var index = 0,
-              rate_list = rate_list_,
-              rate,
-              generators = generators_,
+              rate = 1,
               threshold = choose( 1, sum )();
           for ( ; rate = rate_list[ index ]; index++ ){
             if ( threshold < rate ){
