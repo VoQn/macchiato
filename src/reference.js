@@ -29,10 +29,10 @@ var generateReference = (function(){
    */
   var numberGenerator = function( l ){
     /** @const {number} */
-    var decimalBaseDenom = 999999999999999;
-    var b = choose( 0, ( l ) )();
-    var n = choose( (-b) * decimalBaseDenom, b * decimalBaseDenom )();
-    var d = choose( 1, decimalBaseDenom )();
+    var decimalBaseDenom = 999999999999999,
+        b = choose( 0, ( l ) )(),
+        n = choose( (-b) * decimalBaseDenom, b * decimalBaseDenom )(),
+        d = choose( 1, decimalBaseDenom )();
     return n / d;
   };
 
@@ -55,9 +55,9 @@ var generateReference = (function(){
    * @return {Array.<(number|function():number)>}
    */
   var generatorLow = function( params ){
-    var rate = params[ 0 ];
-    var low  = params[ 1 ];
-    var high = params[ 2 ];
+    var rate = params[ 0 ],
+        low  = params[ 1 ],
+        high = params[ 2 ];
     return [ rate, choose( low, high ) ];
   };
 
@@ -75,7 +75,7 @@ var generateReference = (function(){
    * @return {number}
    */
   var charCodeGenerate = function(){
-    return ~~__charCodeGenerate();
+    return Math.round( __charCodeGenerate() );
   };
 
   /**
@@ -108,45 +108,30 @@ var generateReference = (function(){
          typeof opt_callback === 'function' ){
       // single entry registration
       registration( entry, opt_callback );
-      return this;
+    } else {
+      // bulk registration
+      each( flip( registration ), entry );
     }
-
-    // bulk registration
-    each( flip( registration ), entry );
     return this;
   };
 
   reference.register({
-    /**
-     * @return {boolean}
-     */
+    /** @type {boolean} */
     'boolean': elements( [ false, true ] ),
-    /**
-     * @return {number}
-     */
     integer: sized( integerGenerator ),
-    /**
-     * @return {number}
-     */
     number: sized( numberGenerator ),
-    /**
-     * @return {number}
-     */
+    /** @return {number} */
     charCode: charCodeGenerate,
-    /**
-     * @return {string}
-     */
+    /** @return {string} */
     charactor: function(){
-      var code = charCodeGenerate();
-      var a_char = String.fromCharCode( code );
+      var code = charCodeGenerate(),
+          a_char = String.fromCharCode( code );
       return a_char;
     },
-    /**
-     * @return {string}
-     */
+    /** @return {string} */
     string: function(){
-      var code_array = charCodeArrayGenerate();
-      var str = String.fromCharCode.apply( null, code_array );
+      var code_array = charCodeArrayGenerate(),
+          str = String.fromCharCode.apply( null, code_array );
       return str;
     }
   });
