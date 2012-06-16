@@ -20,12 +20,14 @@ please see [GitHub Milestones](https://github.com/VoQn/macchiato/issues/mileston
 ### Register test suites
 Use `macchiato.stock( labeled_properties )`
 
-    macchiato.stock({ // stock test properties as object
-        'number x, y => x + y === y + x' : // <label>:<callback>
-              arbitrary( 'number', 'number' ).property( function( x, y ){
-                  return x + y === y + x; // boolean
-              }
-    }).taste(); // run all stocked test suites
+``` {.javascript}
+macchiato.stock({ // stock test properties as object
+    'number x, y => x + y === y + x' : // <label>:<callback>
+          arbitrary( 'number', 'number' ).property( function( x, y ){
+              return x + y === y + x; // boolean
+          })
+}).taste(); // run all stocked test suites
+```
 
 in default, macchiato.js generate 100 pattern argument per test-property.
 
