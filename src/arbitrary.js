@@ -73,8 +73,8 @@ arbitrary.fn = arbitrary.prototype = (function(){
             return Math.max( 1, o );
           },
           count = supplement( 10, opt_count, fix ),
-          generators;
-          values;
+          generators,
+          values,
           result = [];
       try {
         generators = map( selectGenerator, this.types );
