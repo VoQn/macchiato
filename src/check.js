@@ -12,18 +12,20 @@ var Result = function( stub ){
 };
 
 /**
- * @param {Array.<function(): Object>} generators
+ * @param {Array.<function(): Object>} generators_
  * @param {function(): (boolean|Object)} property
  * @return {function(): Result} test promise
  */
-var forAll = function( generators, property ){
+var forAll = function( generators_, property ){
+  var generators = isList( generators_ ) ?
+                   generators_ :
+                   [ generators ],
+      args = [],
+      success = false,
+      reason = '',
+      test;
   var testing = function(){
-    var args = isList( generators ) ?
-               map( force, generators ) :
-               [ generators() ],
-        success = false,
-        reason = '',
-        test;
+    args = map( force, generators );
     try {
       test = property.apply( property, args );
       if ( test.wasSkipped ){

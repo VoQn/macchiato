@@ -9,13 +9,12 @@ var combinator = (function(){
    * @return {function(number):*}
    */
   combinator.sized = function( generator ){
-    var exponent = seed.exponent,
-        generate = function( opt_n ){
-          var alt = exponent( 2, 2 / 3 ),
-              n = supplement( alt, opt_n );
-          return generator( n );
-        };
-    return generate;
+    var alt, n;
+    return function( opt_n ){
+      alt = seed.exponent( 2, 2 / 3 );
+      n = supplement( alt, opt_n );
+      return generator( n );
+    };
   };
   /**
    * @param {number} size
@@ -23,10 +22,9 @@ var combinator = (function(){
    * @return {function():*}
    */
   combinator.resize = function( size, generator ){
-    var generate = function(){
+    return function(){
       return generator( size );
     };
-    return generate;
   };
   /**
    * @param {number} low
@@ -34,13 +32,12 @@ var combinator = (function(){
    * @return {function():number}
    */
   combinator.choose = function( low, high ){
-    var generate = function(){
-      var l = Math.random() * low,
-          h = Math.random() * high,
-          r = Math.min( high, Math.max( low, l + h ));
-      return r;
+    var l, h;
+    return function(){
+      l = Math.random() * low;
+      h = Math.random() * high;
+      return Math.min( high, Math.max( low, l + h ));
     };
-    return generate;
   };
   /**
    * @param {!Array} list
@@ -49,21 +46,21 @@ var combinator = (function(){
   combinator.elements = function( list ){
     var choose = combinator.choose,
         max = list.length,
-        generate = function(){
-          var index = ~~choose( 0, max )(),
-              item = list[ index ];
-          return item;
-        };
-    return generate;
+        index = 0;
+    return function(){
+      index = ~~choose( 0, max )();
+      return list[ index ];
+    };
   };
   /**
    * @param {Array.<function():Object>} generators
    * @return {function():Object}
    */
   combinator.oneOf = function( generators ){
-    var elements = combinator.elements,
-        generate = elements( generators );
-    return generate;
+    var generate = combinator.elements( generators );
+    return function(){
+      return generate()();
+    };
   };
   /**
    * @param {function():Object} generator
@@ -73,15 +70,12 @@ var combinator = (function(){
     var linear = seed.linear,
         resize = combinator.resize,
         vectorOf = combinator.vectorOf,
-        generate = function(){
-          var generateBySize = function( n ){
-            var list = vectorOf( n, generator )();
-            return list;
-          };
-          var size = linear( 2 );
-          return resize( size, generateBySize )();
+        generateBySize = function( n ){
+          return vectorOf( n, generator )();
         };
-    return generate;
+    return function(){
+       return resize( linear( 2 ), generateBySize )();
+    };
   };
   /**
    * @param {function():Object} generator
@@ -91,15 +85,12 @@ var combinator = (function(){
     var linear = seed.linear,
         vectorOf = combinator.vectorOf,
         resize = combinator.resize,
-        generate = function(){
-          var generateBySize = function( n ){
-            var list = vectorOf( n, generator )();
-            return list;
-          };
-          var size = linear( 2, 1 );
-          return resize( size, generateBySize )();
+        generateBySize = function( n ){
+          return vectorOf( n, generator )();
         };
-    return generate;
+    return function(){
+      return resize( linear( 2, 1 ), generateBySize )();
+    };
   };
   /**
    * @param {number} length
@@ -107,15 +98,14 @@ var combinator = (function(){
    * @return {function():Array}
    */
   combinator.vectorOf = function( length, generator ){
-    var generate = function(){
-      var index = 0,
-          list = [];
-      for ( ; index < length; index++ ){
+    var index = 0,
+        list = [];
+    return function(){
+      for ( index = 0, list = []; index < length; index++ ){
         list[ index ] = generator();
       }
       return list;
     };
-    return generate;
   };
   /**
    * @param {Array.<Tuple>} rate_generators
@@ -125,22 +115,22 @@ var combinator = (function(){
     var choose = combinator.choose,
         rate_list = map( function( x ){ return x.fst; },
                          rate_generators ),
-        sum = sumOf( rate_list ),
         generators = map( function( x ){ return x.snd; },
                           rate_generators ),
-        generate = function(){
-          var index = 0,
-              rate = 1,
-              threshold = choose( 1, sum )();
-          for ( ; rate = rate_list[ index ]; index++ ){
-            if ( threshold < rate ){
-              return generators[ index ]();
-            }
-            threshold -= rate;
-          }
-          return generators[ index - 1 ]();
-        };
-    return generate;
+        sum = sumOf( rate_list ),
+        index = 0,
+        rate,
+        threshold;
+    return function(){
+      threshold = choose( 1, sum )();
+      for ( index = 0; rate = rate_list[ index ]; index++ ){
+        if ( threshold < rate ){
+          return generators[ index ]();
+        }
+        threshold -= rate;
+      }
+      return generators[ index - 1 ]();
+    };
   };
   return combinator;
 })();

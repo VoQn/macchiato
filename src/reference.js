@@ -19,20 +19,23 @@ var generateReference = (function(){
    * @return {number}
    */
   var integerGenerator = function( n ){
-    var i = choose( -n, n )();
-    return Math.round( i );
+    var num = choose( -n, n )();
+    return Math.round( num );
   };
 
+
+  /** @const {number} */
+  var decimalBase = 9999999999999999;
+
+  var b, n, d;
   /**
    * @param {number} l
    * @return {number}
    */
   var numberGenerator = function( l ){
-    /** @const {number} */
-    var decimalBaseDenom = 999999999999999,
-        b = choose( 0, ( l ) )(),
-        n = choose( (-b) * decimalBaseDenom, b * decimalBaseDenom )(),
-        d = choose( 1, decimalBaseDenom )();
+    b = choose( 0, ( l ) )();
+    n = choose( (-b) * decimalBase, b * decimalBase )();
+    d = choose( 1, decimalBase )();
     return n / d;
   };
 
@@ -50,8 +53,15 @@ var generateReference = (function(){
     tuple(   1, choose( 0x10000, 0x10ffff ) )  // Unicode (3)
   ]);
 
+  /** @type {number} */
+  var charCode = 0x41;
+
+  /**
+   * @return {number}
+   */
   var charCodeGenerate = function(){
-    return Math.round( charCodeGenerate_() );
+    charCode = charCodeGenerate_();
+    return Math.round( charCode );
   };
 
   /**
@@ -94,21 +104,19 @@ var generateReference = (function(){
   reference.register({
     /** @type {boolean} */
     'boolean': elements( [ false, true ] ),
+    /** @type {number} */
     integer: sized( integerGenerator ),
+    /** @type {number} */
     number: sized( numberGenerator ),
     /** @return {number} */
     charCode: charCodeGenerate,
     /** @return {string} */
     charactor: function(){
-      var code = charCodeGenerate(),
-          a_char = String.fromCharCode( code );
-      return a_char;
+      return String.fromCharCode( charCodeGenerate() );
     },
     /** @return {string} */
     string: function(){
-      var code_array = charCodeArrayGenerate(),
-          str = String.fromCharCode.apply( null, code_array );
-      return str;
+      return String.fromCharCode.apply( null, charCodeArrayGenerate() );
     }
   });
   return reference;

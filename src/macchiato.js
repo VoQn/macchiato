@@ -85,3 +85,5 @@ var macchiato = (function(){
   };
   return macchiato;
 })();
+
+window.macchiato = macchiato;
