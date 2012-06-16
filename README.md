@@ -34,22 +34,27 @@ in default, macchiato.js generate 100 pattern argument per test-property.
 ### Run Test Suites
 Use `macchiato.taste()`
 
-    macchiato.taste(); // check all test quite. and display test result
+``` {.javascript}
+macchiato.taste(); // check all test quite. and display test result
+```
 
 ### Register User generator
 Use `arbitrary.register( type_signature, generate_callback )`
 
-    arbitrary.register( 'fizzbuzz', function(){
-        return arbitrary( 'integer' ).fmap( function( n ){
-            var x = Math.max( Math.abs( n ), 1 );
-            return x % 15 == 0 ? 'FizzBuzz' : x % 5 == 0 ? 'Buzz' : x % 3 == 0 ? 'Fizz' : x;
-        });
+``` {.javascript}
+arbitrary.register( 'fizzbuzz', function(){
+    return arbitrary( 'integer' ).fmap( function( n ){
+        var x = Math.max( Math.abs( n ), 1 );
+        return x % 15 == 0 ? 'FizzBuzz' : x % 5 == 0 ? 'Buzz' : x % 3 == 0 ? 'Fizz' : x;
     });
+});
+```
 
 ### How to see generator works
 Use `arbitrary.sample( optional_count )`
 
-    arbitrary( 'boolean' ).sample( 5 ); // [ true, false, false, true, true ]
-    arbitrary( 'boolean' ).sample( 5 ); // [ false, false, true, false, true ]
-    arbitrary( 'number' ).sample(); // in default, return array has 10 elements
-
+``` {.javascript}
+arbitrary( 'boolean' ).sample( 5 ); // [ true, false, false, true, true ]
+arbitrary( 'boolean' ).sample( 5 ); // [ false, false, true, false, true ]
+arbitrary( 'number' ).sample(); // in default, return array has 10 elements
+```
