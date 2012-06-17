@@ -48,8 +48,9 @@ var forAll = function( generators_, property ){
       args = [],
       /** @type {boolean|SkippedTest} */
       result;
-  var testing = function(){
-    args = map( force, generators );
+  var testing = function( progress ){
+    args = map( function( g ){ return g( progress ); },
+                generators );
     try {
       result = property.apply( property, args );
     } catch ( exception ) {

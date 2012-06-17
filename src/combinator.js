@@ -3,27 +3,28 @@ var combinator = (function(){
   /** @constructor */
   var Combinator = function(){},
       /** @type {Combinator} */
-      combinator = new Combinator();
+      combinator = new Combinator(),
+      randomInt = function( x ){
+        return Math.round( Math.random() * x );
+      };
   /**
    * @param {function(number):*} generator
    * @return {function(number):*}
    */
   combinator.sized = function( generator ){
-    var alt, n;
-    return function( opt_n ){
-      alt = seed.exponent( 2, 2 / 3 );
-      n = supplement( alt, opt_n );
-      return generator( n );
+    var grow = seed.exponent( 2, 0.5 );
+    return function( progress ){
+      return generator( grow( progress ) );
     };
   };
   /**
-   * @param {number} size
+   * @param {function(number):number} grow
    * @param {function(number):*} generator
-   * @return {function():*}
+   * @return {function(number):*}
    */
-  combinator.resize = function( size, generator ){
-    return function(){
-      return generator( size );
+  combinator.resize = function( grow, generator ){
+    return function( progress ){
+      return generator( grow( progress ) );
     };
   };
   /**
@@ -48,7 +49,7 @@ var combinator = (function(){
         max = list.length,
         index = 0;
     return function(){
-      index = ~~choose( 0, max )();
+      index = Math.round( choose( 0, max )() );
       return list[ index ];
     };
   };
@@ -64,32 +65,32 @@ var combinator = (function(){
   };
   /**
    * @param {function():Object} generator
-   * @return {function():Array}
+   * @return {function(number):Array}
    */
   combinator.listOf = function( generator ){
-    var linear = seed.linear,
+    var linear = seed.linear( 1 ),
         resize = combinator.resize,
         vectorOf = combinator.vectorOf,
         generateBySize = function( n ){
           return vectorOf( n, generator )();
         };
-    return function(){
-       return resize( linear( 2 ), generateBySize )();
+    return function( progress ){
+       return resize( linear, generateBySize )( randomInt( progress ) );
     };
   };
   /**
    * @param {function():Object} generator
-   * @return {function():Array}
+   * @return {function(number):Array}
    */
   combinator.listOf1 = function( generator ){
-    var linear = seed.linear,
+    var linear = seed.linear( 1, 1 ),
         vectorOf = combinator.vectorOf,
         resize = combinator.resize,
         generateBySize = function( n ){
           return vectorOf( n, generator )();
         };
-    return function(){
-      return resize( linear( 2, 1 ), generateBySize )();
+    return function( progress ){
+      return resize( linear, generateBySize )( randomInt( progress ) );
     };
   };
   /**

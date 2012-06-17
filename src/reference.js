@@ -23,7 +23,6 @@ var generateReference = (function(){
     return Math.round( num );
   };
 
-
   /** @const {number} */
   var decimalBase = 9999999999999999;
 
@@ -65,7 +64,7 @@ var generateReference = (function(){
   };
 
   /**
-   * @type {function():Array.<number>}
+   * @type {function(number):Array.<number>}
    */
   var charCodeArrayGenerate = listOf( charCodeGenerate );
 
@@ -102,21 +101,21 @@ var generateReference = (function(){
   };
 
   reference.register({
-    /** @type {boolean} */
+    /** @type {function():boolean} */
     'boolean': elements( [ false, true ] ),
-    /** @type {number} */
+    /** @type {function(number):number} */
     integer: sized( integerGenerator ),
-    /** @type {number} */
+    /** @type {function(number):number} */
     number: sized( numberGenerator ),
-    /** @return {number} */
+    /** @type {function():number} */
     charCode: charCodeGenerate,
-    /** @return {string} */
-    charactor: function(){
+    /** @type {function():string} */
+    charactor: function( progress ){
       return String.fromCharCode( charCodeGenerate() );
     },
-    /** @return {string} */
-    string: function(){
-      return String.fromCharCode.apply( null, charCodeArrayGenerate() );
+    /** @type {function(number):string} */
+    string: function( progress ){
+      return String.fromCharCode.apply( null, charCodeArrayGenerate( progress ) );
     }
   });
   return reference;

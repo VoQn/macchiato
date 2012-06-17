@@ -3,68 +3,71 @@ var checker = (function(){
   /**
    * @constructor
    */
-  var Checker = function( ){
-    this.args = [];
-    this.passed = false;
-    this.skipped = false;
-    this.currentLog = '';
-    return this;
-  };
-
-  /** @enum {string} */
-  var marks = {
-    skipped: '\u2662',
-    passed: '\u2713',
-    faild: '\u2718'
-  };
-
-  /** @type {Checker} */
-  var checker = new Checker();
+  var Checker = function(){},
+      args = [],
+      passed = false,
+      skipped = false,
+      shouldView = false,
+      currentLog = '',
+      /** @enum {string} */
+      marks = {
+        skipped: '\u2662',
+        passed: '\u2713',
+        faild: '\u2718'
+      },
+      /** @type {Checker} */
+      checker = new Checker();
 
   /**
+   * @param {number} progress
    * @param {function():Result} test
-   * @param {boolean} onVerbose
    * @param {Score} score
    */
-  checker.run = function( test, onVerbose, score ){
-    var result = test();
-    this.args = result.arguments;
+  checker.run = function( progress, test, score ){
+    var result = test( progress );
+    args = result.arguments;
     if ( result.skipped ) {
-        this.skipped = true;
+      skipped = true;
     } else {
-      this.skipped = false;
-      this.passed = result;
+      skipped = false;
+      passed = result;
     }
-    this.log( onVerbose, score );
+    return logging( score );
   };
 
   /**
-   * @param {boolean} verbose
+   * @param {string|Object} a
+   * @return {string}
+   */
+  var wrapQuote = function( a ){
+    if ( typeof a === 'string' ){
+      return '"' + a + '"';
+    }
+    return a + '';
+  };
+
+  /**
    * @param {Score} score
    */
-  checker.log = function( verbose, score ){
+  var logging = function( score ){
     var kind;
-    var wrapQuote = function( a ){
-      if ( typeof a === 'string' ){
-        return '"' + a + '"';
-      }
-      return a + '';
-    };
-
-    if ( this.skipped ) {
+    if ( skipped ) {
       kind = 'skipped';
       score.skipped++;
-    } else if ( this.passed ){
+    } else if ( passed ){
       kind = 'passed';
       score.passed++;
     } else {
       kind = 'faild';
       score.failure++;
-      this.shouldView = true;
+      shouldView = true;
     }
-
-    this.currentLog = marks[ kind ] +
-      " ( " + map( wrapQuote, this.args ).join(', ') + ' )';
+    currentLog = marks[ kind ] +
+      " ( " + map( wrapQuote, args ).join(', ') + ' )';
+    return {
+      shouldView: shouldView,
+      current: currentLog
+    };
   };
 
   return checker;

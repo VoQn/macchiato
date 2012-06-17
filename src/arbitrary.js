@@ -73,6 +73,7 @@ arbitrary.fn = arbitrary.prototype = (function(){
             return Math.max( 1, o );
           },
           count = supplement( 10, opt_count, fix ),
+          index = 0,
           generators,
           values,
           result = [];
@@ -83,14 +84,13 @@ arbitrary.fn = arbitrary.prototype = (function(){
           console.log( e );
         }
       }
-      seed.clear();
-      for ( ; !!count; count-- ){
-        values = map( force, generators );
+      for ( ; index < count; index++ ){
+        values = map( function( g ){ return g( index ); },
+                      generators );
         if ( console && console.log ){
           console.log( values.length === 1 ? values[ 0 ] : values );
         }
         result.push( values );
-        seed.grow();
       }
       return result;
     }
