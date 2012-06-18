@@ -65,9 +65,11 @@ var consoleView = (function(){
  * @type {View}
  */
 var htmlView = (function(){
-  var logBuffer = [];
-  var i = 0;
-  var byId = function( id ){ return document.getElementById( id ); };
+  var logBuffer = [],
+      i = 0,
+      byId = function( id ){
+        return document.getElementById( id );
+      };
 
   return createView({
     selectors:{
