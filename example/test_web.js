@@ -1,18 +1,20 @@
 // user's tests
 macchiato.stock({
-  'number x, y => x + y == y + x' :
+  'number x, y => x + y == y + x':
     arbitrary( 'number', 'number' ).property( function( x, y ){
-        return x + y == y + x;
+        return x + y === y + x;
   }),
-  'string str => str == true' :
+  'string str => str can be regarded as boolean that is empty or not':
     arbitrary( 'string' ).property( function( str ){
-        return !!str;
+        if ( str.length === 0 ){
+          return false === !!str;
+        }
+        return true === !!str;
   }),
-  'integer x, y => div(x, y) * y + (x % y) == x' :
+  'integer x, y (x !== y) => x - y !== y - x' :
     arbitrary( 'integer', 'integer' ).property( function( x, y ){
-        return where( [ y != 0 ], function( x, y ){
-          var n = Math.floor( x / y ), d = Math.floor( x % y );
-          return n * y + d == x;
+        return where( [ x !== y ], function(){
+          return x - y !== y - x;
         });
   })
 });
