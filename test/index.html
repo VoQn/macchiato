@@ -14,11 +14,7 @@
     <script type="text/javascript">
       add_on_load( function(){
         setInternalAnchorBehavior('header-nav');
-        macchiato.setView( htmlView.setSelectors({
-            counter_id: 'test-count',
-            messenger_id: 'test-message',
-            logger_id: 'test-log'
-          }));
+        macchiato.setView( htmlView );
         initTestConstroller({
           counter_id: 'test-count',
           verbose_id: 'verbose',
