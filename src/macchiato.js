@@ -121,4 +121,3 @@ macchiato.taste = function(){
   return macchiato;
 };
 
-window.macchiato = macchiato;

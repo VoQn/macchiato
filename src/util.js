@@ -22,18 +22,25 @@ var flip = function( func ){
  * @param {!Object} object
  * @return {boolean} parameter is kind of list or not
  */
-var isList = function( object ) {
-  var classes = [ Array, NodeList, HTMLCollection ],
-      klass,
-      index = 0;
-
-  for ( ; klass = classes[ index ]; index++ ){
-    if ( object instanceof klass ){
-      return true;
-    }
+var isList = (function(){
+  /** @type {Array.<function()>} */
+  var classes;
+  if ( typeof window !== 'undefined' ){
+    classes = [Array, NodeList, HTMLCollection];
+  } else {
+    classes = [Array];
   }
-  return false;
-};
+  return function( object ) {
+      var klass,
+          index = 0;
+      for ( ; klass = classes[ index ]; index++ ){
+        if ( object instanceof klass ){
+          return true;
+        }
+      }
+      return false;
+  };
+})();
 
 /**
  * @param {!Object} object
