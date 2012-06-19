@@ -92,7 +92,7 @@ var setInternalAnchorBehavior = function( header_tool_bar_id ){
       hasInternalLink = function( anchor ){
         return anchor.getAttribute( 'href' ).match( /^#[a-zA-Z0-9_\-]+$/i );
       },
-      internalLinks = filter( hasInternalLink,  anchors);
+      internalLinks = filter( hasInternalLink,  anchors );
   each( function( anchor ){
     anchor.onclick = function( ){
         return scrollWithAdjust( anchor, header_tool_bar_id );
@@ -140,21 +140,3 @@ var initTestConstroller = function( identifiers ){
   add_event( runner, 'click', macchiatoTestRun );
 };
 
-/** Not Use
-var easing = function( time, from, distance, duration ){
-  return distance * time / duration + from;
-};
-
-var smoothScroll = function( distance, duration ){
-  var begin = new Date() - 0, from = 0, id, time;
-  id = setInterval(function(){
-    time = new Date() - begin;
-    current = easing( time, from, distance, duration );
-    if ( time > duration ){
-      clearInterval( id );
-      current = from + distance;
-    }
-    window.scrollBy( 0, current );
-  }, 10);
-};
-**/
