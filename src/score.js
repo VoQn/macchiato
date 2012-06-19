@@ -1,45 +1,44 @@
 
-var score = (function(){
+/** @constructor */
+var Score = function(){};
+/** @type {Score} */
+var score = new Score();
 
-  /** @constructor */
-  var Score = function(){
-    this.ok = false;
-    this.passed  = 0;
-    this.failure = 0;
-    this.skipped = 0;
-    this.message = 'Test has not run';
-    return this;
-  };
+/** @type {boolean} */
+score.ok = false;
+/** @type {number} */
+score.passed  = 0;
+/** @type {number} */
+score.failure = 0;
+/** @type {number} */
+score.skipped = 0;
+/** @type {string} */
+score.message = 'Test has not run';
 
-  /** @type {Score} */
-  var score = new Score();
-
-  /**
-   * @return {Score}
-   */
-  score.clear = function(){
-    this.ok = false;
-    this.passed  = 0;
-    this.skipped = 0;
-    this.failure = 0;
-    this.message = 'Test has not run';
-    return this;
-  };
-
-  /**
-   * @return {Score}
-   */
-  score.evaluate = function(){
-    this.ok = this.failure === 0;
-    this.message = ( this.ok ?
-      '\u2713 OK, passed ' + this.passed + '' :
-      '\u2718 Failed. after ' + this.passed + this.skipped ) +
-      ' tests.' +
-      ( this.skipped > 0 ?
-        ' \u2662 skipped ' + this.skipped + ' cases' :
-        '' );
-    return this;
-  };
-
+/**
+ * @return {Score}
+ */
+score.clear = function(){
+  score.ok = false;
+  score.passed  = 0;
+  score.skipped = 0;
+  score.failure = 0;
+  score.message = 'Test has not run';
   return score;
-})();
+};
+
+/**
+ * @return {Score}
+ */
+score.evaluate = function(){
+  score.ok = score.failure === 0;
+  score.message = ( score.ok ?
+    '\u2713 OK, passed ' + score.passed + '' :
+    '\u2718 Failed. after ' + ( score.passed + score.skipped ) ) +
+    ' tests.' +
+    ( score.skipped > 0 ?
+      ' \u2662 skipped ' + score.skipped + ' cases' :
+      '' );
+  return score;
+};
+
