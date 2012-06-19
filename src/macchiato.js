@@ -106,7 +106,20 @@ macchiato.taste = function(){
       index = 0,
       suites = macchiato.suites_,
       suite,
-      property;
+      property,
+      msg,
+      now = function(){ return new Date().getTime(); },
+      printTime = function( s, e ){
+        var t = e - s;
+        if ( t > 6e4 ){
+          return t / 6e4 + 'min';
+        } else if ( t > 1e3 ){
+          return t / 1e3 + 's';
+        }
+        return t + 'ms';
+      },
+      start_t = now();
+      
   view.standby();
   for ( ; suite = suites[ index ]; index++){
     for ( label in suite ){
@@ -115,9 +128,10 @@ macchiato.taste = function(){
     }
   }
   view.dump();
-  view.putMsg( passed ?
+  msg = passed ?
         'Ok, All tests succeeded!!' :
-        'Oops! failed test exist...' );
+        'Oops! failed test exist...';
+  view.putMsg( msg + ' ( ' + printTime( start_t, now() ) + ' )' );
   return macchiato;
 };
 
