@@ -46,7 +46,7 @@ arbitrary( 'boolean' ).sample( 5 ); // [ true, false, false, true, true ]
 arbitrary( 'boolean' ).sample( 5 ); // [ false, false, true, false, true ]
 
 // in default, return array has 10 elements
-arbitrary( 'number' ).sample(); // [ 0,0,3.3664272732128677,-0.08306895613589656,8.754622973563311,1.1898821511922015,0.27250861726806175,-1969.388762412214,53.54628693512971,0.8624822175133743 ]
+arbitrary( 'integer' ).sample(); // [ 0,1,1,0,-1,6,6,-12,-2,16 ]
 ```
 
 ### Use adhoc new type generator
