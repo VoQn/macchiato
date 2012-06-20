@@ -13,23 +13,24 @@ var force = function( promise ){
  * @return {function(*, *):*}
  */
 var flip = function( func ){
-  return function( b, a ){
+  return function reversed ( b, a ){
     return func( a, b );
   };
 };
 
 /**
- * @param {!Object} object
+ * @param {!Array|!Object} object
  * @return {boolean} parameter is kind of list or not
  */
 var isList = (function(){
   if ( !!Array.isArray ){
     return Array.isArray;
   }
-  return function( object ){
+  return function isList ( object ){
     return Object.prototype.toString.call( object ) === '[object Array]';
   };
 })();
+
 /**
  * @param {!Object} object
  * @return {boolean} parameter is empty or not
@@ -42,30 +43,48 @@ var isEmpty = function( object ){
 };
 
 /**
+ * @description Object clone
+ * @param {!Object} object
+ * @return {Object}
+ */
+var clone = function( object ) {
+  var copied = Object.create( Object.getPrototypeOf( object ) ),
+      properties = Object.getOwnPropertyNames( object ),
+      index = 0,
+      name;
+  for ( ; name = properties[ index ]; index++ ){
+    Object.defineProperty( copied,
+                           name,
+                           Object.getOwnPropertyDescriptor( object, name ) );
+  }
+  return copied;
+};
+
+/**
  * @param {function(*, (string|number)=)} callback
- * @param {!Array|!Object} elements
- * @return {!Array|!Object} new array or object
+ * @param {!Array|*} elements
+ * @return {Array|*} new array or object
  */
 var map = function( callback, elements ){
-  var result,
-      index,
+  var newArray, newObject,
+      index, name,
       length;
 
   if ( isList( elements ) ){
-    result = [];
+    newArray = [];
     for ( index = 0, length = elements.length; index < length; index++ ){
-      result[ index ] = callback( elements[ index ], index );
+      newArray[ index ] = callback( elements[ index ], index );
     }
-    return result;
+    return newArray;
   }
 
-  result = {};
-  for ( index in elements ){
-    if ( elements.hasOwnProperty( index ) ){
-      result[ index ] = callback( elements[ index ], index );
+  newObject = Object.create( Object.getPrototypeOf( elements ) );
+  for ( name in elements ){
+    if ( elements.hasOwnProperty( name ) ){
+      newObject[ name ] = callback( elements[ name ], name );
     }
   }
-  return result;
+  return newObject;
 };
 
 /**
@@ -220,7 +239,7 @@ var supplement = function( default_value, opt_arg, opt_callback ){
  * @param {*} snd
  * @constructor
  */
-var Tuple = function( fst, snd ){
+var Tuple = function Tuple ( fst, snd ){
   this.fst = fst;
   this.snd = snd;
 };
