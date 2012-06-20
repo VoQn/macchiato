@@ -38,9 +38,10 @@ Use `macchiato.taste()`
 macchiato.taste(); // check all test quite. and display test result
 ```
 
-### Use adhock generation
+### Use adhoc generation
 Use `arbitrary( type_signature ).fmap( modifier_callback )`
 ```javascript
+// Non Negative Integer generator
 arbitrary('integer').fmap( function( n ){
   return Math.abs( n );
 }).property( function( x ){

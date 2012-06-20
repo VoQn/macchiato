@@ -30,8 +30,8 @@ arbitrary.fn = arbitrary.prototype = (function(){
         ref = generateReference[ t ];
         return ref;
       },
-      _register_adhock = function( adhock_type, generator ){
-        return generateReference.register( adhock_type, generator );
+      _register_adhoc = function( adhoc_type, generator ){
+        return generateReference.register( adhoc_type, generator );
       };
 
   return {
@@ -87,7 +87,7 @@ arbitrary.fn = arbitrary.prototype = (function(){
     },
     fmap: function( addtional ){
       var generators = map( selectGenerator, this.types ),
-          adhock = function( progress ){
+          adhoc = function( progress ){
             var values = map( function _apply_progress( generator ){
                                 return generator( progress );
                               },
@@ -97,7 +97,7 @@ arbitrary.fn = arbitrary.prototype = (function(){
           },
           new_type = 'adhock_' + ( addtional.name || whatTimeIsNow() ) +
                       '_(' + this.types.join(', ') + ')';
-      _register_adhock( new_type, adhock );
+      _register_adhoc( new_type, adhoc );
       return arbitrary.call( null, new_type );
     },
     /**
