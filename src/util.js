@@ -23,25 +23,13 @@ var flip = function( func ){
  * @return {boolean} parameter is kind of list or not
  */
 var isList = (function(){
-  /** @type {Array.<function()>} */
-  var classes;
-  if ( typeof window !== 'undefined' ){
-    classes = [Array, NodeList, HTMLCollection];
-  } else {
-    classes = [Array];
+  if ( !!Array.isArray ){
+    return Array.isArray;
   }
-  return function( object ) {
-      var klass,
-          index = 0;
-      for ( ; klass = classes[ index ]; index++ ){
-        if ( object instanceof klass ){
-          return true;
-        }
-      }
-      return false;
+  return function( object ){
+    return Object.prototype.toString.call( object ) === '[object Array]';
   };
 })();
-
 /**
  * @param {!Object} object
  * @return {boolean} parameter is empty or not
