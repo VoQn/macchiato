@@ -1,7 +1,8 @@
 /**
  * @constructor
  */
-var Checker = function(){};
+function Checker(){}
+
 /** @type {Checker} */
 var checker = new Checker();
 

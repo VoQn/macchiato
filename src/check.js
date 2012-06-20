@@ -1,40 +1,35 @@
 
 /**
- * logging temporary test result
+ * @description logging temporary test result
+ * @constructor
  */
-var currentResult = (function(){
-  /** @constructor */
-  var Result = function(){
-        /** @type {boolean} */
-        this.passed = false;
-        /** @type {boolean */
-        this.skipped = false;
-        /** @type {string} */
-        this.reason = 'Test has not run yes';
-        /** @type {Array} */
-        this.arguments = [];
-      },
-      /** @type {Result} */
-      result = new Result();
-  return result;
-})();
+function Result(){
+   /** @type {boolean} */
+   this.passed = false;
+   /** @type {boolean */
+   this.skipped = false;
+   /** @type {string} */
+   this.reason = 'Test has not run yes';
+   /** @type {Array} */
+   this.arguments = [];
+}
 
+/** @type {Result} */
+var currentResult = new Result();
 
 /**
- * mark as "Test was skipped".
+ * @description mark as "Test was skipped"
+ * @constructor
+ */
+function SkippedTest(){
+  /** @const {boolean} */
+  this.wasSkipped = true;
+}
+
+/**
  * @const {SkippedTest}
  */
-var skippedTest = (function(){
-  /** @constructor */
-  var SkippedTest = function(){
-         /** @const {boolean} */
-         this.wasSkipped = true;
-         return this;
-      },
-      /** @const {SkippedTest} */
-      skippedTest = new SkippedTest();
-  return skippedTest;
-})();
+var skippedTest = new SkippedTest();
 
 /**
  * @param {Array.<function(): Object>} generators_
@@ -49,7 +44,7 @@ var forAll = function( generators_, property ){
       /** @type {boolean|SkippedTest} */
       result;
   var testing = function( progress ){
-    args = map( function( g ){ return g( progress ); },
+    args = map( function _apply_progress ( g ){ return g( progress ); },
                 generators );
     try {
       result = property.apply( property, args );

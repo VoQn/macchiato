@@ -13,7 +13,7 @@ var force = function( promise ){
  * @return {function(*, *):*}
  */
 var flip = function( func ){
-  return function reversed ( b, a ){
+  return function _reversed ( b, a ){
     return func( a, b );
   };
 };
@@ -22,7 +22,7 @@ var flip = function( func ){
  * @param {!Array|!Object} object
  * @return {boolean} parameter is kind of list or not
  */
-var isList = (function(){
+var isList = (function _setup_is_list(){
   if ( !!Array.isArray ){
     return Array.isArray;
   }

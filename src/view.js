@@ -1,4 +1,5 @@
 
+/** @type {Interface} */
 var ViewInterface = new Interface('ViewInterface', [
     'getTestCount',
     'standby',
@@ -9,8 +10,11 @@ var ViewInterface = new Interface('ViewInterface', [
     'highlight'
     ]);
 
-/** @constructor */
-var View = function(){};
+/**
+ * @description Tester View
+ * @constructor
+ */
+function View(){}
 
 /**
  * @param {Object} stub
@@ -29,7 +33,7 @@ var createView = function( stub ){
 /**
  * @type {View}
  */
-var consoleView = (function(){
+var consoleView = (function _init_console_view(){
   var _log = '';
   return createView({
   getTestCount: function(){
@@ -64,10 +68,10 @@ var consoleView = (function(){
 /**
  * @type {View}
  */
-var htmlView = (function(){
-  var logBuffer = [],
+var htmlView = (function _init_html_view(){
+  var log_buffer = [],
       i = 0,
-      byId = function( id ){
+      _by_id = function( id ){
         return document.getElementById( id );
       };
 
@@ -89,27 +93,27 @@ var htmlView = (function(){
       return this;
     },
     getTestCount: function(){
-      return parseInt( byId( this.selectors.counter_id ).value, 10 );
+      return parseInt( _by_id( this.selectors.counter_id ).value, 10 );
     },
     standby: function(){
-      logBuffer = [];
+      log_buffer = [];
       i = 0;
     },
     clean: function(){
-      logBuffer = [];
+      log_buffer = [];
     },
     putMsg: function( msg ){
-      var board = byId( this.selectors.messenger_id );
+      var board = _by_id( this.selectors.messenger_id );
       board.innerHTML = msg;
     },
     putLog: function( log, withEscape ){
-      logBuffer[ i ] = !withEscape ? log : htmlEscape( log );
+      log_buffer[ i ] = !withEscape ? log : htmlEscape( log );
       i++;
     },
     dump: function(){
-      var consoleLine = byId( this.selectors.logger_id );
-      consoleLine.innerHTML = logBuffer.join('<br>');
-      logBuffer = [];
+      var consoleLine = _by_id( this.selectors.logger_id );
+      consoleLine.innerHTML = log_buffer.join('<br>');
+      log_buffer = [];
       i = 0;
     },
     highlight: function( isGreen, msg ){

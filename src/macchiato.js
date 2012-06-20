@@ -1,6 +1,7 @@
 
 /** @constructor */
-var Macchiato = function(){};
+function Macchiato(){}
+
 /** @type {Macchiato} */
 var macchiato = new Macchiato();
 
@@ -108,7 +109,8 @@ macchiato.taste = function(){
       suite,
       property,
       start_t = whatTimeIsNow(),
-      end_test_t;
+      end_test_t,
+      end_logging_t;
   view.standby();
   for ( ; suite = suites[ index ]; index++){
     for ( label in suite ){
@@ -118,12 +120,13 @@ macchiato.taste = function(){
   }
   end_test_t = whatTimeIsNow();
   view.dump();
+  end_logging_t = whatTimeIsNow();
   view.putMsg(
         ( passed ?
           'Ok, All tests succeeded!!' :
           'Oops! failed test exist...' ) +
         ' ( testing: ' + printTime( start_t, end_test_t ) +
-        ', log rendering: ' + printTime( end_test_t ) + ' )' );
+        ', log rendering: ' + printTime( end_test_t, end_logging_t ) + ' )' );
   return macchiato;
 };
 

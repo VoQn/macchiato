@@ -2,11 +2,11 @@
 /**
  * @constructor
  */
-var GenerateReference = function(){},
-    /**
-     * @type {GenerateReference}
-     */
-    generateReference = new GenerateReference();
+function GenerateReference(){}
+/**
+ * @type {GenerateReference}
+ */
+var generateReference = new GenerateReference();
 
 /**
  * @param {string|Object} entry
@@ -19,7 +19,7 @@ generateReference.register = function( entry, opt_callback ){
    * @param {function(): Object}
    * @return {GenerateReference}
    */
-  var registration = function( type, callback ){
+  var _registration = function( type, callback ){
     if ( type == 'prototype' || type == 'register' ) { // Bad Hacking
       throw new Error('GenerateRefference.' + type + ' should not overwrite');
     }
@@ -32,10 +32,10 @@ generateReference.register = function( entry, opt_callback ){
        typeof entry === 'string' &&
        typeof opt_callback === 'function' ){
     // single entry registration
-    registration( entry, opt_callback );
+    _registration( entry, opt_callback );
   } else {
     // bulk registration
-    each( flip( registration ), entry );
+    each( flip( _registration ), entry );
   }
   return this;
 };
@@ -57,18 +57,19 @@ generateReference.register({
   /** @type {function(number):boolean} */
   'boolean': combinator.elements( [ false, true ] ),
   /** @type {function(number):number} */
-  integer: combinator.sized(function( progress ){
+  integer: combinator.sized(function _generate_integer_by_progress( progress ){
     var v = combinator.chooseNow( -progress, progress );
     return v;
   }),
   /** @type {function(number):number} */
-  number: combinator.sized(function( progress ){
-    /** @const {number} */
+  number: combinator.sized(function _generate_number_by_progress( progress ){
+    /** alias */
     var choose = combinator.chooseNow,
-        base = 1e10 - 1,
+        /** @const {number} */
+        BASE = 1e10 - 1,
         b = choose( 0, progress ),
-        n = choose( -b * base, b * base ),
-        d = choose( 1, base ),
+        n = choose( -b * BASE, b * BASE ),
+        d = choose( 1, BASE ),
         v = n / d;
     return v;
   }),
@@ -81,7 +82,7 @@ generateReference.register({
   /** @type {function(number):string} */
   string: combinator.listOf(
               charCodeGenerate,
-              function( array ){
+              function _to_string( array ){
                 return String.fromCharCode.apply( null, array );
               })
 });

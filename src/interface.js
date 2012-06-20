@@ -4,7 +4,7 @@
  * @param {Array.<string>} methods
  * @constructor
  */
-var Interface = function( name, methods ){
+function Interface( name, methods ){
   if ( arguments.length != 2 ){
     throw new Error('Interface constructor called with ' +
         arguments.length +
@@ -20,7 +20,7 @@ var Interface = function( name, methods ){
     }
     this.methods.push( methods[ i ]);
   }
-};
+}
 
 /**
  * @param {Object} obj
