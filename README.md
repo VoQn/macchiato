@@ -34,16 +34,25 @@ in default, macchiato.js generate 100 pattern argument per test-property.
 ### Run Test Suites
 Use `macchiato.taste()`
 
-``` {.javascript}
+```javascript
 macchiato.taste(); // check all test quite. and display test result
 ```
 
-### Register User generator
-Use `arbitrary.register( type_signature, generate_callback )`
+### Use adhock generation
+Use `arbitrary( type_signature ).fmap( modifier_callback )`
+```javascript
+arbitrary('integer').fmap( function( n ){
+  return Math.abs( n );
+}).property( function( x ){
+  return x > -1;
+});
+```
 
-``` {.javascript}
-arbitrary.register( 'fizzbuzz', function(){
-    return arbitrary( 'integer' ).fmap( function( n ){
+### Register User generator
+Use `arbitrary( type_signature ).recipe( generator_callback )`
+
+```javascript
+arbitrary('fixxbuzz').recipe( arbitrary( 'integer' ).fmap( function( n ){
         var x = Math.max( Math.abs( n ), 1 );
         return x % 15 == 0 ? 'FizzBuzz' : x % 5 == 0 ? 'Buzz' : x % 3 == 0 ? 'Fizz' : x;
     });

@@ -13,19 +13,27 @@ var arbitrary = function( type_str, var_args ){
  */
 arbitrary.fn = arbitrary.prototype = (function(){
   var rList = /\[\s?([a-z]+)\s?\]/,
-     /**
-      * @param {string} t
-      * @return {function():Object}
-      */
+      /**
+       * @param {string} t
+       * @return {function():Object}
+       */
       selectGenerator = function( t ){
         /** @type {?Array.<string>} */
         var test = rList.exec( t ),
-            listOf = combinator.listOf;
+            listOf = combinator.listOf,
+            type_expr, ref;
         if ( !!test ){
-          return listOf( generateReference[ test[ 1 ] ] );
+          type_expr = test[ 1 ];
+          ref = generateReference[ type_expr ];
+          return listOf( ref );
         }
-        return generateReference[ t ];
+        ref = generateReference[ t ];
+        return ref;
+      },
+      _register_adhock = function( adhock_type, generator ){
+        return generateReference.register( adhock_type, generator );
       };
+
   return {
     constructor: arbitrary,
     /**
@@ -63,6 +71,34 @@ arbitrary.fn = arbitrary.prototype = (function(){
         }
       }
       return forAll( generators, property );
+    },
+    recipe: function( generator ){
+      if ( this.length === 1 && generator.constructor === arbitrary ){
+        generateReference.register( this.types[ 0 ], generateReference[ generator.types ] );
+      }
+      // FIXME adhock implementation
+      if ( this.length === 1 && typeof generator === 'function' ){
+        generateReference.register( this.types[0], generator );
+        return;
+      }
+      if ( arguments.length === 1 && typeof arguments === 'object' ){
+        generateReference.register( arguments[ 0 ] );
+      }
+    },
+    fmap: function( addtional ){
+      var generators = map( selectGenerator, this.types ),
+          adhock = function( progress ){
+            var values = map( function _apply_progress( generator ){
+                                return generator( progress );
+                              },
+                              generators );
+
+            return addtional.apply( null, values );
+          },
+          new_type = 'adhock_' + ( addtional.name || whatTimeIsNow() ) +
+                      '_(' + this.types.join(', ') + ')';
+      _register_adhock( new_type, adhock );
+      return arbitrary.call( null, new_type );
     },
     /**
      * @param {number=} opt_count
