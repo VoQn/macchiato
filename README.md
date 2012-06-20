@@ -35,10 +35,21 @@ in default, macchiato.js generate 100 pattern argument per test-property.
 Use `macchiato.taste()`
 
 ```javascript
-macchiato.taste(); // check all test quite. and display test result
+macchiato.taste(); // check all stocked test quite. and display test result
 ```
 
-### Use adhoc generation
+### How to see generator works
+Use `arbitrary.sample( opt_count )`
+
+``` {.javascript}
+arbitrary( 'boolean' ).sample( 5 ); // [ true, false, false, true, true ]
+arbitrary( 'boolean' ).sample( 5 ); // [ false, false, true, false, true ]
+
+// in default, return array has 10 elements
+arbitrary( 'number' ).sample(); // [ 0,0,3.3664272732128677,-0.08306895613589656,8.754622973563311,1.1898821511922015,0.27250861726806175,-1969.388762412214,53.54628693512971,0.8624822175133743 ]
+```
+
+### Use adhoc new type generator
 Use `arbitrary( type_signature ).fmap( modifier_callback )`
 ```javascript
 // Non Negative Integer generator
@@ -51,20 +62,17 @@ arbitrary('integer').fmap( function( n ){
 
 ### Register User generator
 Use `arbitrary( type_signature ).recipe( generator_callback )`
-
 ```javascript
-arbitrary('fizzbuzz').recipe( arbitrary( 'integer' ).fmap( function( n ){
-        var x = Math.max( Math.abs( n ), 1 );
-        return x % 15 == 0 ? 'FizzBuzz' : x % 5 == 0 ? 'Buzz' : x % 3 == 0 ? 'Fizz' : x;
-    });
-});
+arbitrary( 'hoge' ).recipe(
+  combinrator.elements( ['hoge', 'huga', 'foo', 'bar'] )
+);
 ```
 
-### How to see generator works
-Use `arbitrary.sample( optional_count )`
-
-``` {.javascript}
-arbitrary( 'boolean' ).sample( 5 ); // [ true, false, false, true, true ]
-arbitrary( 'boolean' ).sample( 5 ); // [ false, false, true, false, true ]
-arbitrary( 'number' ).sample(); // in default, return array has 10 elements
+Or, `arbitrary( type_signature ).recipeAs( new_type_signature )`
+```javascript
+arbitrary( 'integer' ).fmap( function( n ){
+  var x = Math.max( Math.abs( n ), 1 );
+  return x % 15 == 0 ? 'FizzBuzz' : x % 5 == 0 ? 'Buzz' : x % 3 == 0 ? 'Fizz' : x;
+}).recipeAs( 'fizzbuzz' );
 ```
+

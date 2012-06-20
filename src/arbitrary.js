@@ -85,6 +85,10 @@ arbitrary.fn = arbitrary.prototype = (function(){
         generateReference.register( arguments[ 0 ] );
       }
     },
+    recipeAs: function( new_type_signature ){
+      generateReference.register( new_type_signature, generateReference[ this.types[ 0 ] ] );
+      return arbitrary( new_type_signature );
+    },
     fmap: function( addtional ){
       var generators = map( selectGenerator, this.types ),
           adhoc = function( progress ){
@@ -95,7 +99,7 @@ arbitrary.fn = arbitrary.prototype = (function(){
 
             return addtional.apply( null, values );
           },
-          new_type = 'adhock_' + ( addtional.name || whatTimeIsNow() ) +
+          new_type = 'adhock_' + addtional.name + whatTimeIsNow() +
                       '_(' + this.types.join(', ') + ')';
       _register_adhoc( new_type, adhoc );
       return arbitrary.call( null, new_type );
