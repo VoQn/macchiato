@@ -53,7 +53,7 @@ arbitrary('integer').fmap( function( n ){
 Use `arbitrary( type_signature ).recipe( generator_callback )`
 
 ```javascript
-arbitrary('fixxbuzz').recipe( arbitrary( 'integer' ).fmap( function( n ){
+arbitrary('fizzbuzz').recipe( arbitrary( 'integer' ).fmap( function( n ){
         var x = Math.max( Math.abs( n ), 1 );
         return x % 15 == 0 ? 'FizzBuzz' : x % 5 == 0 ? 'Buzz' : x % 3 == 0 ? 'Fizz' : x;
     });
