@@ -107,19 +107,8 @@ macchiato.taste = function(){
       suites = macchiato.suites_,
       suite,
       property,
-      msg,
-      now = function(){ return new Date().getTime(); },
-      printTime = function( s, e ){
-        var t = e - s;
-        if ( t > 6e4 ){
-          return t / 6e4 + 'min';
-        } else if ( t > 1e3 ){
-          return t / 1e3 + 's';
-        }
-        return t + 'ms';
-      },
-      start_t = now();
-      
+      start_t = whatTimeIsNow(),
+      end_test_t;
   view.standby();
   for ( ; suite = suites[ index ]; index++){
     for ( label in suite ){
@@ -127,11 +116,14 @@ macchiato.taste = function(){
       passed = check( property, label ) && passed;
     }
   }
+  end_test_t = whatTimeIsNow();
   view.dump();
-  msg = passed ?
-        'Ok, All tests succeeded!!' :
-        'Oops! failed test exist...';
-  view.putMsg( msg + ' ( ' + printTime( start_t, now() ) + ' )' );
+  view.putMsg(
+        ( passed ?
+          'Ok, All tests succeeded!!' :
+          'Oops! failed test exist...' ) +
+        ' ( testing: ' + printTime( start_t, end_test_t ) +
+        ', log rendering: ' + printTime( end_test_t ) + ' )' );
   return macchiato;
 };
 
