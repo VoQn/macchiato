@@ -19,23 +19,24 @@ generateReference.register = function( entry, opt_callback ){
    * @param {function(): Object}
    * @return {GenerateReference}
    */
-  var _registration = function( type, callback ){
+  var _registration_ = function( type, callback ){
     if ( type == 'prototype' || type == 'register' ) { // Bad Hacking
       throw new Error('GenerateRefference.' + type + ' should not overwrite');
     }
     // TODO Check type signature
     generateReference[ type ] = callback;
     return generateReference;
-  };
+  },
+    _flip_regist_ = flip( _registration_ );
 
   if ( arguments.length === 2 &&
        typeof entry === 'string' &&
        typeof opt_callback === 'function' ){
     // single entry registration
-    _registration( entry, opt_callback );
+    _registration_( entry, opt_callback );
   } else {
     // bulk registration
-    each( flip( _registration ), entry );
+    eachKeys( _flip_regist_, entry );
   }
   return this;
 };

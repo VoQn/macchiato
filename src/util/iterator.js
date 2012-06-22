@@ -1,43 +1,41 @@
 // List iteration utilities
 
 /**
+ * @description instead of Array.isArray
  * @param {!Array|!Object} object
  * @return {boolean} parameter is kind of list or not
  */
-var isList = (function _setup_is_list(){
-  if ( !!Array.isArray ){
-    return Array.isArray;
-  }
-  return function isList ( object ){
+var isList;
+if ( !!Array.isArray ){
+  isList = Array.isArray;
+} else {
+  isList = function( object ){
     return Object.prototype.toString.call( object ) === '[object Array]';
   };
-})();
+}
 
 /**
- * @param {function(*, (string|number)=)} callback
- * @param {!Array|*} elements
- * @return {Array|*} new array or object
+ * @param {function(*, number=)} callback
+ * @param {!Array} elements
+ * @return {Array} new array or object
  */
 var map = function( callback, elements ){
-  var newArray, newObject,
-      index, name,
-      length;
+  var new_array_ = [], index_ = 0, length_ = elements.length;
 
-  if ( isList( elements ) ){
-    newArray = [];
-    for ( index = 0, length = elements.length; index < length; index++ ){
-      newArray[ index ] = callback( elements[ index ], index );
-    }
-    return newArray;
+  for ( ; index_ < length_; index_++ ){
+    new_array_[ index_ ] = callback( elements[ index_ ], index_ );
   }
+  return new_array_;
+};
 
-  newObject = Object.create( Object.getPrototypeOf( elements ) );
-  for ( name in elements ){
-    if ( elements.hasOwnProperty( name ) ){
-      newObject[ name ] = callback( elements[ name ], name );
+var modify = function( object ){
+  var name_, new_object_ = clone( object );
+  for ( name_ in object ){
+    if ( object.hasOwnProperty( name_ ) ){
+      new_object[ name_ ] = callback( object[ name_ ], name_ );
     }
   }
-  return newObject;
+  return new_object_;
 };
 
 /**
@@ -45,19 +43,18 @@ var map = function( callback, elements ){
  * @param {!Array|!Object} elements
  */
 var each = function( callback, elements ){
-  var index,
-      length;
+  var index_ = 0, length_ = elements.length;
 
-  if ( isList( elements ) ){
-    for ( index = 0, length = elements.length; index < length; index++ ){
-      callback( elements[ index ], index );
-    }
-    return;
+  for ( ; index_ < length_; index_++ ){
+    callback( elements[ index_ ], index_ );
   }
+};
 
-  for ( index in elements ) {
-    if ( elements.hasOwnProperty( index ) ){
-      callback( elements[ index ], index );
+var eachKeys = function( callback, object ){
+  var name_;
+  for ( name_ in object ) {
+    if ( object.hasOwnProperty( name_ ) ){
+      callback( object[ name_ ], name_ );
     }
   }
 };
@@ -68,21 +65,21 @@ var each = function( callback, elements ){
  * @return {Array} new array list
  */
 var filter = function( callback, elements ){
-  var result = [],
-      index = 0,
-      newIndex = 0,
-      length = elements.length,
-      element;
+  var result_ = [],
+      index_ = 0,
+      new_index_ = 0,
+      length_ = elements.length,
+      element_;
 
-  for ( ; index < length; index++ ){
-    element = elements[ index ];
-    if ( callback( element, index ) ){
-      result[ newIndex ] = element;
-      newIndex++;
+  for ( ; index_ < length_; index_++ ){
+    element_ = elements[ index_ ];
+    if ( callback( element_, index_ ) ){
+      result_[ new_index_ ] = element_;
+      new_index_++;
     }
   }
 
-  return result;
+  return result_;
 };
 
 /**
@@ -91,11 +88,10 @@ var filter = function( callback, elements ){
  * @return {boolean}
  */
 var hasAny = function( test, elements ){
-  var index = 0,
-      length = elements.length;
+  var index_ = 0, length_ = elements.length;
 
-  for ( ; index < length; index++ ){
-    if ( test( elements[ index ], index ) ){
+  for ( ; index_ < length_; index_++ ){
+    if ( test( elements[ index_ ], index_ ) ){
       return true;
     }
   }
@@ -108,11 +104,11 @@ var hasAny = function( test, elements ){
  * @return {boolean}
  */
 var hasAll = function( test, elements ){
-  var index = 0,
-      length = elements.length;
+  var index_ = 0,
+      length_ = elements.length;
 
-  for ( ; index < length; index++ ){
-    if ( !test( elements[ index ], index ) ) {
+  for ( ; index_ < length; index_++ ){
+    if ( !test( elements[ index_ ], index_ ) ) {
       return false;
     }
   }
@@ -126,14 +122,12 @@ var hasAll = function( test, elements ){
  * @return {*}
  */
 var foldLeft = function( init, collector, elements ){
-  var result = init,
-      index = 0,
-      length = elements.length;
+  var result_ = init, index_ = 0, length_ = elements.length;
 
-  for ( ; index < length; index++ ){
-    result = collector( elements[ index ], result );
+  for ( ; index_ < length_; index_++ ){
+    result_ = collector( elements[ index_ ], result_ );
   }
-  return result;
+  return result_;
 };
 
 /**
@@ -143,13 +137,12 @@ var foldLeft = function( init, collector, elements ){
  * @return {*}
  */
 var foldRight = function( init, collector, elements ){
-  var result = init,
-      index = elements.length - 1;
+  var result_ = init, index_ = elements.length - 1;
 
-  for ( ; index > -1; index-- ){
-    result = collector( elements[ index ], result );
+  for ( ; index_ > -1; index_-- ){
+    result_ = collector( elements[ index_ ], result_ );
   }
-  return result;
+  return result_;
 };
 
 /**
@@ -162,13 +155,11 @@ var foldRight = function( init, collector, elements ){
  * @return {number}
  */
 var sumOf = function( numbers ){
-  var result = 0,
-      index = 0,
-      length = numbers.length;
+  var result_ = 0, index_ = 0, length_ = numbers.length;
 
-  for ( ; index < length; index++ ){
-    result += numbers[ index ];
+  for ( ; index_ < length_; index_++ ){
+    result_ += numbers[ index_ ];
   }
-  return result;
+  return result_;
 };
 
