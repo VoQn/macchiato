@@ -7,7 +7,7 @@ JS = macchiato.js
 
 MIN_JS = macchiato.min.js
 
-MINIFIER = minifier.js
+MINIFIER = minify.coffee
 
 all: $(MIN_JS)
 
@@ -15,5 +15,5 @@ $(JS): $(LIB) Makefile
 	cat $(LIB) > $(DIST_DIR)$@
 
 $(MIN_JS): $(JS)
-	node $(MINIFIER)
+	coffee $(MINIFIER)
 	@echo "create dist/${JS} and dist/$@"
