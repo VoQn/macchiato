@@ -14,27 +14,28 @@ var ViewInterface = new Interface('ViewInterface', [
  * @description Tester View
  * @constructor
  */
-function View(){}
+var View = function View(){};
 
 /**
  * @param {Object} stub
  * @return {View}
  */
 var createView = function( stub ){
-  var view = new View(),
-      name = '';
-  for ( name in stub ){
-    view[ name ] = stub[ name ];
+  var view_ = new View(),
+      name_ = '';
+  for ( name_ in stub ){
+    view_[ name_ ] = stub[ name_ ];
   }
-  Interface.ensureImplements( view, ViewInterface );
-  return view;
+  Interface.ensureImplements( view_, ViewInterface );
+  return view_;
 };
 
 /**
  * @type {View}
  */
-var consoleView = (function _init_console_view(){
-  var _log = '';
+var consoleView = (function _init_console_view_(){
+  var log_buffer_ = [],
+      i_ = 0;
   return createView({
   getTestCount: function(){
     return 100;
@@ -43,20 +44,23 @@ var consoleView = (function _init_console_view(){
     if ( console.clear ){ // for firebug ( Firefox extension )
       console.clear();
     }
-    _log = '';
+    log_buffer_ = [];
+    i_ = 0;
   },
   clean: function(){
-    _log = '';
+    log_buffer_ = [];
+    i_ = 0;
   },
   putMsg: function( msg ){
     console.log( msg );
   },
   putLog: function( msg, withEscape ){
-    _log += msg + '\n';
+    log_buffer_[i_] = msg;
+    i_++;
   },
   dump: function(){
-    if ( _log.length > 0 ){
-      console.log( _log );
+    if ( log_buffer_.length > 0 ){
+      console.log( log_buffer_.join('\n') );
     }
   },
   highlight: function( isGreen, msg ){
@@ -68,10 +72,10 @@ var consoleView = (function _init_console_view(){
 /**
  * @type {View}
  */
-var htmlView = (function _init_html_view(){
-  var log_buffer = [],
-      i = 0,
-      _by_id = function( id ){
+var htmlView = (function _init_html_view_(){
+  var log_buffer_ = [],
+      i_ = 0,
+      _by_id_ = function( id ){
         return document.getElementById( id );
       };
 
@@ -82,39 +86,39 @@ var htmlView = (function _init_html_view(){
       logger_id: 'test-log'
     },
     setSelectors: function( identifers ){
-      var members = this.selectors,
-          name = '';
-      for ( name in members ){
-        if ( identifers[ name ] === undefined ){
-          throw new Error('html-test-view need selector id :' + name + ', but undefined');
+      var members_ = this.selectors,
+          name_ = '';
+      for ( name_ in members_ ){
+        if ( identifers[ name_ ] === undefined ){
+          throw new Error('html-test-view need selector id :' + name_ + ', but undefined');
         }
-        this.selectors[ name ] = identifers[ name ];
+        this.selectors[ name_ ] = identifers[ name_ ];
       }
       return this;
     },
     getTestCount: function(){
-      return parseInt( _by_id( this.selectors.counter_id ).value, 10 );
+      return parseInt( _by_id_( this.selectors.counter_id ).value, 10 );
     },
     standby: function(){
-      log_buffer = [];
-      i = 0;
+      log_buffer_ = [];
+      i_ = 0;
     },
     clean: function(){
-      log_buffer = [];
+      log_buffer_ = [];
     },
     putMsg: function( msg ){
-      var board = _by_id( this.selectors.messenger_id );
-      board.innerHTML = msg;
+      var board_ = _by_id_( this.selectors.messenger_id );
+      board_.innerHTML = msg;
     },
     putLog: function( log, withEscape ){
-      log_buffer[ i ] = !withEscape ? log : htmlEscape( log );
-      i++;
+      log_buffer_[ i_ ] = !withEscape ? log : htmlEscape( log );
+      i_++;
     },
     dump: function(){
-      var consoleLine = _by_id( this.selectors.logger_id );
-      consoleLine.innerHTML = log_buffer.join('<br>');
-      log_buffer = [];
-      i = 0;
+      var consoleLine_ = _by_id_( this.selectors.logger_id );
+      consoleLine_.innerHTML = log_buffer_.join('<br>');
+      log_buffer_ = [];
+      i_ = 0;
     },
     highlight: function( isGreen, msg ){
       return '<span class="' + ( isGreen ? 'passed' : 'failed' ) + '">' + msg + '</span>';
