@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Macchiato : BDD + QDD testing framework for JavaScript" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Macchiato</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/VoQn/macchiato">View on GitHub</a>
+
+          <h1 id="project_title">Macchiato</h1>
+          <h2 id="project_tagline">BDD + QDD testing framework for JavaScript</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/VoQn/macchiato/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/VoQn/macchiato/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>Macchiato.js - BDD + QDD testing framework for JavaScript -</h1>
+
+<p><strong>Macchiato</strong> is testing framework for JavaScript, inspired by <a href="http://hackage.haskell.org/package/QuickCheck-2.4.2">QuickCheck</a>, a similar library for <a href="http://www.haskell.org/">Haskell</a> programs.</p>
+
+<h2>About <a href="http://hackage.haskell.org/package/QuickCheck-2.4.2">QuickCheck</a>
+</h2>
+
+<p><em>from <a href="http://hackage.haskell.org/package/QuickCheck-2.4.2">QuickCheck module description</a></em></p>
+
+<blockquote>
+<p>QuickCheck is a library for random testing of program properties.</p>
+
+<p>The programmer provides a specification of the program, in the form of properties which functions should satisfy, and QuickCheck then tests that the properties hold in a large number of randomly generated cases.</p>
+
+<p>Specifications are expressed in Haskell, using combinators defined in the QuickCheck library. QuickCheck provides combinators to define properties, observe the distribution of test data, and define test data generators.</p>
+</blockquote>
+
+<h2>Demo page</h2>
+
+<p>see <a href="http://voqn.github.com/macchiato/">voqn.github.com/macchiato/</a></p>
+
+<h2>Sorry. now Macchiato.js is under development</h2>
+
+<p>please see <a href="https://github.com/VoQn/macchiato/issues/milestones/">GitHub Milestones</a></p>
+
+<h2>Sample code</h2>
+
+<h3>Register test suites</h3>
+
+<p>Use <code>macchiato.stock( labeled_properties )</code></p>
+
+<div class="highlight">
+<pre><span class="nx">macchiato</span><span class="p">.</span><span class="nx">stock</span><span class="p">({</span> <span class="c1">// stock test properties as object</span>
+    <span class="s1">'number x, y =&gt; x + y === y + x'</span> <span class="o">:</span> <span class="c1">// &lt;label&gt;:&lt;callback&gt;</span>
+          <span class="nx">arbitrary</span><span class="p">(</span> <span class="s1">'number'</span><span class="p">,</span> <span class="s1">'number'</span> <span class="p">).</span><span class="nx">property</span><span class="p">(</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span> <span class="p">){</span>
+              <span class="k">return</span> <span class="nx">x</span> <span class="o">+</span> <span class="nx">y</span> <span class="o">===</span> <span class="nx">y</span> <span class="o">+</span> <span class="nx">x</span><span class="p">;</span> <span class="c1">// boolean</span>
+          <span class="p">})</span>
+<span class="p">}).</span><span class="nx">taste</span><span class="p">();</span> <span class="c1">// run all stocked test suites</span>
+</pre>
+</div>
+
+
+<p>in default, macchiato.js generate 100 pattern argument per test-property.</p>
+
+<h3>Run Test Suites</h3>
+
+<p>Use <code>macchiato.taste()</code></p>
+
+<div class="highlight">
+<pre><span class="nx">macchiato</span><span class="p">.</span><span class="nx">taste</span><span class="p">();</span> <span class="c1">// check all stocked test quite. and display test result</span>
+</pre>
+</div>
+
+
+<h3>How to see generator works</h3>
+
+<p>Use <code>arbitrary.sample( opt_count )</code></p>
+
+<div class="highlight">
+<pre><span class="nx">arbitrary</span><span class="p">(</span> <span class="s1">'boolean'</span> <span class="p">).</span><span class="nx">sample</span><span class="p">(</span> <span class="mi">5</span> <span class="p">);</span> <span class="c1">// [ true, false, false, true, true ]</span>
+<span class="nx">arbitrary</span><span class="p">(</span> <span class="s1">'boolean'</span> <span class="p">).</span><span class="nx">sample</span><span class="p">(</span> <span class="mi">5</span> <span class="p">);</span> <span class="c1">// [ false, false, true, false, true ]</span>
+
+<span class="c1">// in default, return array has 10 elements</span>
+<span class="nx">arbitrary</span><span class="p">(</span> <span class="s1">'integer'</span> <span class="p">).</span><span class="nx">sample</span><span class="p">();</span> <span class="c1">// [ 0,1,1,0,-1,6,6,-12,-2,16 ]</span>
+</pre>
+</div>
+
+
+<h3>Use adhoc new type generator</h3>
+
+<p>Use <code>arbitrary( type_signature ).fmap( modifier_callback )</code></p>
+
+<div class="highlight">
+<pre><span class="c1">// Non Negative Integer generator</span>
+<span class="nx">arbitrary</span><span class="p">(</span><span class="s1">'integer'</span><span class="p">).</span><span class="nx">fmap</span><span class="p">(</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">n</span> <span class="p">){</span>
+  <span class="k">return</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span> <span class="nx">n</span> <span class="p">);</span>
+<span class="p">}).</span><span class="nx">property</span><span class="p">(</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">x</span> <span class="p">){</span>
+  <span class="k">return</span> <span class="nx">x</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+<span class="p">});</span>
+</pre>
+</div>
+
+
+<h3>Register User generator</h3>
+
+<p>Use <code>arbitrary( type_signature ).recipe( generator_callback )</code></p>
+
+<div class="highlight">
+<pre><span class="nx">arbitrary</span><span class="p">(</span> <span class="s1">'hoge'</span> <span class="p">).</span><span class="nx">recipe</span><span class="p">(</span>
+  <span class="nx">combinrator</span><span class="p">.</span><span class="nx">elements</span><span class="p">(</span> <span class="p">[</span><span class="s1">'hoge'</span><span class="p">,</span> <span class="s1">'huga'</span><span class="p">,</span> <span class="s1">'foo'</span><span class="p">,</span> <span class="s1">'bar'</span><span class="p">]</span> <span class="p">)</span>
+<span class="p">);</span>
+</pre>
+</div>
+
+
+<p>Or, <code>arbitrary( type_signature ).recipeAs( new_type_signature )</code></p>
+
+<div class="highlight">
+<pre><span class="nx">arbitrary</span><span class="p">(</span> <span class="s1">'integer'</span> <span class="p">).</span><span class="nx">fmap</span><span class="p">(</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">n</span> <span class="p">){</span>
+  <span class="kd">var</span> <span class="nx">x</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">max</span><span class="p">(</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span> <span class="nx">n</span> <span class="p">),</span> <span class="mi">1</span> <span class="p">);</span>
+  <span class="k">return</span> <span class="nx">x</span> <span class="o">%</span> <span class="mi">15</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">?</span> <span class="s1">'FizzBuzz'</span> <span class="o">:</span> <span class="nx">x</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">?</span> <span class="s1">'Buzz'</span> <span class="o">:</span> <span class="nx">x</span> <span class="o">%</span> <span class="mi">3</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">?</span> <span class="s1">'Fizz'</span> <span class="o">:</span> <span class="nx">x</span><span class="p">;</span>
+<span class="p">}).</span><span class="nx">recipeAs</span><span class="p">(</span> <span class="s1">'fizzbuzz'</span> <span class="p">);</span>
+</pre>
+</div>
+
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Macchiato maintained by <a href="https://github.com/VoQn">VoQn</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
