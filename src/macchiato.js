@@ -34,15 +34,16 @@ macchiato.quickcheck = function( property, opt_label, opt_count ){
     checker.run( progress_, property, score );
     // retry and break
     if( checker.shouldRetry ) {
-      macchiato.view_.putLog( checker.current, true );
+      macchiato.view_.putLog( View.LOG_MODE.VERBOSE, checker.current );
       checker.run( progress_ + 1, property, score );
-      macchiato.view_.putLog( checker.current, true );
+      macchiato.view_.putLog( View.LOG_MODE.VERBOSE, checker.current );
       break;
     }
   }
 
   score.evaluate();
   macchiato.view_.putLog(
+      View.LOG_MODE.PROPERTY_RESULT,
       macchiato.view_.highlight( score.ok, label_ + score.message ) );
 
   return score.ok;
@@ -63,17 +64,18 @@ macchiato.verbosecheck = function( property, opt_label, opt_count ){
 
   for ( ; progress_ < count_; progress_++ ){
     checker.run( progress_, property, score );
-    macchiato.view_.putLog( checker.current, true );
+    macchiato.view_.putLog( View.LOG_MODE.VERBOSE, checker.current );
     // retry and break
     if ( checker.shouldRetry ){
       checker.run( progress_ + 1, property, score );
-      macchiato.view_.putLog( checker.current, true );
+      macchiato.view_.putLog( View.LOG_MODE.VERBOSE, checker.current );
       break;
     }
   }
 
   score.evaluate();
   macchiato.view_.putLog(
+      View.LOG_MODE.PROPERTY_RESULT,
       macchiato.view_.highlight( score.ok, label_ + score.message ) );
 
   return score.ok;

@@ -48,7 +48,7 @@ var forAll = function( generators, property ){
         _apply_progress_ = apply( progress );
         args_ = map( _apply_progress_, generators_ );
         try {
-          result_ = property.apply( property, args_ );
+          result_ = property.apply( null, args_ );
         } catch ( exception ) {
           currentResult.passed = false;
           currentResult.skipped = false;

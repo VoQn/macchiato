@@ -17,6 +17,15 @@ var ViewInterface = new Interface('ViewInterface', [
 var View = function View(){};
 
 /**
+ * @enum {string}
+ */
+View.LOG_MODE = {
+  VERBOSE: 'verbose',
+  PROPERTY_RESULT: 'property',
+  TOTAL: 'total'
+};
+
+/**
  * @param {Object} stub
  * @return {View}
  */
@@ -110,18 +119,24 @@ var htmlView = (function _init_html_view_(){
       var board_ = _by_id_( this.selectors.messenger_id );
       board_.innerHTML = msg;
     },
-    putLog: function( log, withEscape ){
-      log_buffer_[ i_ ] = !withEscape ? log : htmlEscape( log );
+    putLog: function( mode, log ){
+      var log_ = '';
+      if ( mode === View.LOG_MODE.VERBOSE ){
+        log_ = '<p>' + htmlEscape( log ) + '</p>';
+      } else {
+        log_ = log;
+      }
+      log_buffer_[ i_ ] =  log_;
       i_++;
     },
     dump: function(){
       var consoleLine_ = _by_id_( this.selectors.logger_id );
-      consoleLine_.innerHTML = log_buffer_.join('<br>');
+      consoleLine_.innerHTML = log_buffer_.join('');
       log_buffer_ = [];
       i_ = 0;
     },
     highlight: function( isGreen, msg ){
-      return '<span class="' + ( isGreen ? 'passed' : 'failed' ) + '">' + msg + '</span>';
+      return '<p class="' + ( isGreen ? 'passed' : 'failed' ) + '">' + msg + '</p>';
     }
   });
 })();
