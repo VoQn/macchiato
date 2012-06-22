@@ -5,7 +5,7 @@
  * @return {boolean} parameter is empty or not
  */
 var isEmpty = function( object ){
-  for (var _ in obj ){
+  for ( var _ in object ){
     return false;
   }
   return true;
@@ -17,18 +17,17 @@ var isEmpty = function( object ){
  * @return {Object}
  */
 var clone = function( object ) {
-  var copied = Object.create( Object.getPrototypeOf( object ) ),
-      properties = Object.getOwnPropertyNames( object ),
-      index = 0,
-      name;
-  for ( ; name = properties[ index ]; index++ ){
-    Object.defineProperty( copied,
-                           name,
-                           Object.getOwnPropertyDescriptor( object, name ) );
+  var copied_ = Object.create( Object.getPrototypeOf( object ) ),
+      properties_ = Object.getOwnPropertyNames( object ),
+      index_ = 0,
+      name_;
+  for ( ; name_ = properties_[ index_ ]; index_++ ){
+    Object.defineProperty( copied_,
+                           name_,
+                           Object.getOwnPropertyDescriptor( object, name_ ) );
   }
-  return copied;
+  return copied_;
 };
-
 
 /**
  * @param {Object} default_value
@@ -44,4 +43,21 @@ var supplement = function( default_value, opt_arg, opt_callback ){
   }
   return opt_callback( default_value, opt_arg );
 };
+
+/**
+ * @param {*} args has "length" property
+ * @param {number=} opt_from
+ * @param {number=} opt_to
+ * @return {Array}
+ */
+var asArray = function( args, opt_sub, opt_to ){
+  var from_ = supplement( 0, opt_sub ),
+      to_   = supplement( args.length ? args.length : 1,
+                          opt_to );
+  if ( args.length === undefined ){
+    return [ args ];
+  }
+  return Array.prototype.slice.call( args, from_, to_ );
+};
+
 
