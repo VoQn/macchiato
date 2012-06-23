@@ -37,28 +37,28 @@ compile = (code, next, option = {}) ->
   return
 
 createResponse = (next) ->
-  parseResponse = createParseResponse(next)
-  _on_response = (res) ->
+  _parse_json_       = createParseResponse(next)
+  _receive_response_ = (res) ->
     if res.statusCode isnt 200
       next new Error("Unexpected HTTP response: #{res.statusCode}")
     else
-      capture res, "utf-8", parseResponse
+      capture res, "utf-8", _parse_json_
 
 capture = (input, encoding, next) ->
   buffer = []
-  index = 0
-  input.on "data", _get_data = (chunk) ->
+  index  = 0
+  input.on "data", _receive_data_ = (chunk) ->
     buffer[index] = chunk.toString(encoding)
     index++
 
-  input.on "end", _receive_all = ->
+  input.on "end", _after_receive_all_data_ = ->
     next null, buffer.join("")
 
   input.on "error", next
   return
 
 createParseResponse = (next) ->
-  _json_loaded = (err, obj) ->
+  _json_loaded_ = (err, obj) ->
     e = undefined
     if err
       next err
@@ -68,15 +68,15 @@ createParseResponse = (next) ->
       next null, obj.compiledCode
     return
 
-  _parse_response = (error, data) ->
+  _parse_response_ = (error, data) ->
     if error
       next error
     else
-      loadJSON data, _json_loaded
+      loadJSON data, _json_loaded_
     return
 
 loadJSON = (data, next) ->
-  error = undefined
+  error  = undefined
   object = undefined
   try
     object = JSON.parse(data)
@@ -88,8 +88,8 @@ writeJsFile = (error, compiled) ->
   if error
     sys.puts sys.inspect(error)
     return
-  fs.writeFile dist, compiled, _after_write = (e) ->
-    throw e  if e
+  fs.writeFile dist, compiled, _after_write_ = (err) ->
+    throw err  if err
     console.log "saved #{dist}"
 
 writeMinJS = (err, data) ->
