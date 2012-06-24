@@ -1,6 +1,6 @@
 
 /** @constructor */
-var Score = function Score(){};
+var Score = function Score () {};
 
 /** @type {Score} */
 var score = new Score();
@@ -19,7 +19,7 @@ score.message = 'Test has not run';
 /**
  * @return {Score}
  */
-score.clear = function(){
+score.clear = function () {
   score.ok = false;
   score.passed  = 0;
   score.skipped = 0;
@@ -31,15 +31,15 @@ score.clear = function(){
 /**
  * @return {Score}
  */
-score.evaluate = function(){
+score.evaluate = function () {
   score.ok = score.failure === 0;
-  score.message = ( score.ok ?
-    '\u2713 OK, passed ' + score.passed + '' :
-    '\u2718 Failed. after ' + ( score.passed + score.skipped ) ) +
+  score.message = (score.ok ?
+    '\u2713 OK, passed ' + score.passed :
+    '\u2718 Failed. after ' + (score.passed + score.skipped)) +
     ' tests.' +
-    ( score.skipped > 0 ?
+    (score.skipped > 0 ?
       ' \u2662 skipped ' + score.skipped + ' cases' :
-      '' );
+      '');
   return score;
 };
 
