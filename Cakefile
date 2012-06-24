@@ -33,6 +33,9 @@ deps = [
 task 'all', "All Distrbution", (options) ->
   invoke 'web'
 
+task 'clean', "Clean distribution directory", (option) ->
+  exec "rm -rf #{dist_dir}"
+
 task 'web', "Distribution js file for web front end", (options) ->
   libs = for lib in deps
     "#{src_dir}/#{lib}.js"
