@@ -36,14 +36,14 @@ Interface.ensureImplements = function (object, an_interface, var_args) {
   }
   for (i = 1, l = arguments.length; i < l; i++) {
     the_interface = arguments[i];
-    if ( the_interface.constructor !== Interface ) {
+    if (the_interface.constructor !== Interface) {
       throw new Error('Function Interface.ensureImplements ' +
           'expects arguments two and ' +
           'above to be instance of Interface.');
     }
     for (j = 0, m = the_interface.methods.length; j < m; j++) {
-      method = the_interface.methods[ j ];
-      if ( !object[ method ] || typeof object[ method ] !== 'function' ) {
+      method = the_interface.methods[j];
+      if (!object[method] || typeof object[method] !== 'function') {
         throw new Error('Function Interface.ensureImplements: ' +
             'object does not implement ' +
             'the ' + the_interface.name + ' interface. ' +

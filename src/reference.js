@@ -60,8 +60,7 @@ generateReference.register({
   'boolean': combinator.elements([false, true]),
   /** @type {function(number):number} */
   integer: combinator.sized(function generate_integer(progress) {
-    var num = combinator.chooseNow(-progress, progress);
-    return num;
+    return combinator.chooseNow(-progress, progress);
   }),
   /** @type {function(number):number} */
   number: combinator.sized(function generate_number(progress) {
@@ -69,9 +68,8 @@ generateReference.register({
     var BASE = 1e10 - 1,
         b = combinator.chooseNow(0, progress),
         n = combinator.chooseNow(-b * BASE, b * BASE),
-        d = combinator.chooseNow(1, BASE),
-        v = n / d;
-    return v;
+        d = combinator.chooseNow(1, BASE);
+    return n / d;
   }),
   /** @type {function(number):number} */
   charCode: charCodeGenerate,
