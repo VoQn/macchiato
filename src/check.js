@@ -3,7 +3,7 @@
  * @description logging temporary test result
  * @constructor
  */
-function Result(){
+var Result = function Result () {
    /** @type {boolean} */
    this.passed = false;
    /** @type {boolean */
@@ -12,7 +12,7 @@ function Result(){
    this.reason = 'Test has not run yes';
    /** @type {Array} */
    this.arguments = [];
-}
+};
 
 /** @type {Result} */
 var currentResult = new Result();
@@ -21,10 +21,10 @@ var currentResult = new Result();
  * @description mark as "Test was skipped"
  * @constructor
  */
-function SkippedTest(){
+var SkippedTest = function SkippedTest() {
   /** @const {boolean} */
   this.wasSkipped = true;
-}
+};
 
 /**
  * @const {SkippedTest}
@@ -32,45 +32,45 @@ function SkippedTest(){
 var skippedTest = new SkippedTest();
 
 /**
- * @param {Array.<function(): Object>} generators_
+ * @param {Array.<function(): Object>} generator
  * @param {function(): (boolean|Object)} property
  * @return {function(): Result} test promise
  */
-var forAll = function( generators, property ){
-  var generators_ = isList( generators ) ?
-                      generators :
-                      [ generators ],
-      args_ = [],
+var forAll = function (generator, property) {
+  var generators = isList(generator) ? generator : [generator],
+      args = [],
       /** @type {boolean|SkippedTest} */
-      result_,
-      _apply_progress_,
-      _testing_ = function( progress ){
-        _apply_progress_ = apply( progress );
-        args_ = map( _apply_progress_, generators_ );
+      result,
+      apply_progress,
+      testing = function (progress) {
+        apply_progress = apply(progress);
+        args = map(apply_progress, generators);
+
         try {
-          result_ = property.apply( null, args_ );
-        } catch ( exception ) {
+          result = property.apply(null, args);
+        } catch (exception) {
           currentResult.passed = false;
           currentResult.skipped = false;
           currentResult.reason = 'Exception occurred: ' + exception;
-          currentResult.arguments = args_;
+          currentResult.arguments = args;
           return currentResult;
         }
-        if ( result_.wasSkipped ){
+
+        if ( result.wasSkipped ){
           currentResult.passed = false;
           currentResult.skipped = true;
-          currentResult.reason = 'Skipped: (' + args_.join(', ') + ')';
+          currentResult.reason = 'Skipped: (' + args.join(', ') + ')';
         } else {
-          currentResult.passed = result_;
+          currentResult.passed = result;
           currentResult.skipped = false;
-          currentResult.reason = result_ ?
+          currentResult.reason = result ?
                                    '' :
-                                   'Falsible: (' + args_.join(', ') + ')';
+                                   'Falsible: (' + args.join(', ') + ')';
         }
-        currentResult.arguments = args_;
+        currentResult.arguments = args;
         return currentResult;
       };
-  return _testing_;
+  return testing;
 };
 
 /**
@@ -78,11 +78,11 @@ var forAll = function( generators, property ){
  * @param {function(): boolean} callback
  * @return {{wasSkipped: boolean}|boolean} result of test
  */
-var where = function( conditions, callback ){
-  var index_ = 0, length_ = conditions.length;
+var where = function (conditions, callback) {
+  var i, l;
 
-  for ( ; index_ < length_; index_++ ){
-    if ( !conditions[ index_ ] ){
+  for (i = 0, l = conditions.length; i < l; i++) {
+    if (!conditions[i]) {
       return skippedTest;
     }
   }

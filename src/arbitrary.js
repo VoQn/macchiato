@@ -3,35 +3,34 @@
  * @param {...string} var_args
  * @constructor
  */
-var arbitrary = function( type_str, var_args ){
-  var args_ = asArray( arguments );
-  return new arbitrary.fn.init( args_ );
+var arbitrary = function (type_str, var_args) {
+  var args = asArray(arguments);
+  return new arbitrary.fn.init(args);
 };
 
 /**
  * @type {arbitrary}
  */
-arbitrary.fn = arbitrary.prototype = (function(){
-  var r_list_ = /\[\s?([a-z]+)\s?\]/,
+arbitrary.fn = arbitrary.prototype = (function () {
+  var r_list = /\[\s?([a-z]+)\s?\]/,
       /**
        * @param {string} t
        * @return {function():Object}
        */
-      _select_generator_ = function( type_expr ){
+      select_generator = function (type_expr) {
         /** @type {?Array.<string>} */
-        var test_ = r_list_.exec( type_expr ),
-            _listOf_ = combinator.listOf,
-            type_expr_, generator_;
-        if ( !!test_ ){
-          type_expr_ = test_[ 1 ];
-          generator_ = generateReference[ type_expr_ ];
-          return _listOf_( generator_ );
+        var test = r_list.exec(type_expr),
+            listOf = combinator.listOf,
+            generator;
+        if (!!test) {
+          generator = generateReference[test[1]];
+          return listOf(generator);
         }
-        generator_ = generateReference[ type_expr ];
-        return generator_;
+        generator = generateReference[type_expr];
+        return generator;
       },
-      _register_adhoc_ = function( adhoc_type, generator ){
-        return generateReference.register( adhoc_type, generator );
+      register_adhoc = function (adhoc_type, generator) {
+        return generateReference.register(adhoc_type, generator);
       };
 
   return {
@@ -40,7 +39,7 @@ arbitrary.fn = arbitrary.prototype = (function(){
      * @param {!Array.<string>} types
      * @constructor
      */
-    init: function( types ){
+    init: function (types) {
       this.length = types.length;
       this.types = types;
       return this;
@@ -51,91 +50,91 @@ arbitrary.fn = arbitrary.prototype = (function(){
     /**
      * @return {number}
      */
-    size: function(){
+    size: function () {
       return this.length;
     },
     /**
      * @param {function(Object, ...Object):(boolean|{wasSkipped:boolean})}
      * @return {function():Result}
      */
-    property: function( property ){
-      var generators_,
-          index_ = 0,
-          types_ = this.types,
-          length_ = types_.length;
+    property: function (property) {
+      var generators,
+          index = 0,
+          types = this.types,
+          length = types.length;
       try {
-        generators_ = map( _select_generator_, types_ );
-      } catch ( e ) {
-        if( console && console.log ){
-          console.log( e );
+        generators = map(select_generator, types);
+      } catch (error) {
+        if (console && console.log) {
+          console.log(error);
         }
       }
-      return forAll( generators_, property );
+      return forAll(generators, property);
     },
-    recipe: function( generator ){
-      if ( this.length === 1 && generator.constructor === arbitrary ){
-        generateReference.register( this.types[ 0 ],
-                                    generateReference[ generator.types ] );
+    recipe: function (generator) {
+      if (this.length === 1 && generator.constructor === arbitrary) {
+        generateReference.register(
+          this.types[0],
+          generateReference[generator.types]);
       }
       // FIXME adhock implementation
-      if ( this.length === 1 && typeof generator === 'function' ){
-        generateReference.register( this.types[0], generator );
+      if (this.length === 1 && typeof generator === 'function') {
+        generateReference.register(this.types[0], generator);
         return;
       }
-      if ( arguments.length === 1 && typeof arguments === 'object' ){
-        generateReference.register( arguments[ 0 ] );
+      if (arguments.length === 1 && typeof arguments === 'object') {
+        generateReference.register(generator);
       }
     },
-    recipeAs: function( new_type_signature ){
-      generateReference.register( new_type_signature,
-                                  generateReference[ this.types[ 0 ] ] );
-      return arbitrary( new_type_signature );
+    recipeAs: function(new_type_signature){
+      generateReference.register(
+        new_type_signature,
+        generateReference[this.types[0]]);
+      return arbitrary(new_type_signature);
     },
-    fmap: function( addtional ){
-      var types_ = this.types,
-          generators_ = map( _select_generator_, types_ ),
-          _apply_progress_,
-          _adhoc_ = function( progress ){
-            _apply_progress_ = apply( progress );
-            var values_ = map( _apply_progress_, generators_ );
-            return addtional.apply( null, values_ );
+    fmap: function (addtional) {
+      var types = this.types,
+          generators = map(select_generator, types),
+          apply_progress,
+          adhoc = function (progress) {
+            apply_progress = apply(progress);
+            var values = map(apply_progress, generators);
+            return addtional.apply(null, values);
           },
-          new_type_ = 'adhock_' + addtional.name + whatTimeIsNow() +
-                      '_(' + types_.join(', ') + ')';
-      _register_adhoc_( new_type_, _adhoc_ );
-      return arbitrary.call( null, new_type_ );
+          new_type = 'adhock_' + addtional.name + whatTimeIsNow() +
+                      '_(' + types.join(', ') + ')';
+      register_adhoc(new_type, adhoc);
+      return arbitrary.call(null, new_type);
     },
     /**
      * @param {number=} opt_count
      * @return {Array}
      */
-    sample: function( opt_count ){
-      var fix_ = function( _, o ){
-            return Math.max( 1, o );
+    sample: function (opt_count) {
+      var i, generators, values, apply_progress,
+          fix = function (x, o) {
+            return Math.max(1, o);
           },
-          count_ = supplement( 10, opt_count, fix_ ),
-          types_ = this.types,
-          index_ = 0,
-          generators_,
-          values_,
-          result_ = [],
-          _apply_progress_;
+          count = supplement(10, opt_count, fix),
+          types = this.types,
+          result = [];
+
       try {
-        generators_ = map( _select_generator_, types_ );
-      } catch ( e ){
-        if ( console && console.log ){
-          console.log( e );
+        generators = map(select_generator, types);
+      } catch (e) {
+        if (console && console.log){
+          console.log(e);
         }
       }
-      for ( ; index_ < count_; index_++ ){
-        _apply_progress_ = apply( index_ );
-        values_ = map( _apply_progress_, generators_ );
-        if ( console && console.log ){
-          console.log( values_.length === 1 ? values_[ 0 ] : values_ );
+      for (i = 0; i < count; i++) {
+        apply_progress = apply(i);
+        values = map(apply_progress, generators);
+        if (console && console.log){
+          console.log(values.length === 1 ? values[0] : values);
         }
-        result_.push( values_ );
+        result.push(values);
       }
-      return result_;
+      return result;
     }
   };
 })();

@@ -1,7 +1,7 @@
 /**
  * @constructor
  */
-function Checker(){}
+var Checker = function Checker() {};
 
 /** @type {Checker} */
 var checker = new Checker();
@@ -23,24 +23,24 @@ checker.marks = {
  * @param {string|Object} a
  * @return {string}
  */
-checker.wrapQuote = function( a ){
-  if ( typeof a === 'string' ){
+checker.wrapQuote = function (a) {
+  if (typeof a === 'string') {
     return '"' + a + '"';
   }
-  return a + '';
+  return a;
 };
 
 /**
  * @param {Result} result
  * @param {Score} score
  */
-checker.logging = function( result, score ){
+checker.logging = function (result, score) {
   var mark;
   checker.shouldRetry = false;
-  if ( result.skipped ) {
+  if (result.skipped) {
     mark = checker.marks.skipped;
     score.skipped++;
-  } else if ( result.passed ){
+  } else if (result.passed) {
     mark = checker.marks.passed;
     score.passed++;
   } else {
@@ -48,9 +48,9 @@ checker.logging = function( result, score ){
     score.failure++;
     checker.shouldRetry = true;
   }
-  checker.current = mark + " ( " +
-                    map( checker.wrapQuote,
-                         result.arguments ).join(', ') +
+  checker.current = mark + ' ( ' +
+                    map(checker.wrapQuote,
+                        result.arguments).join(', ') +
                     ' )';
   checker.why = result.reason;
   return checker;
@@ -62,8 +62,8 @@ checker.logging = function( result, score ){
  * @param {Score} score
  * @return {Checker}
  */
-checker.run = function( progress, test, score ){
-  var result = test( progress );
-  return checker.logging( result, score );
+checker.run = function (progress, test, score) {
+  var result = test(progress);
+  return checker.logging(result, score);
 };
 
