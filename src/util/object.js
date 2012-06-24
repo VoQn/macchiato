@@ -16,12 +16,12 @@ var isEmpty = function (object) {
  * @return {Object}
  */
 var clone = function (object) {
-  var copied = Object.create(Object.getPrototypeOf(object)),
-      properties = Object.getOwnPropertyNames(object),
-      index, length,
-      name;
-  for (index = 0, length = properties.length; index < length; index++) {
-    name = properties[index];
+  var i, l, name,
+      copied = Object.create(Object.getPrototypeOf(object)),
+      properties = Object.getOwnPropertyNames(object);
+
+  for (i = 0, l = properties.length; i < l; i++) {
+    name = properties[i];
     Object.defineProperty(copied,
                           name,
                           Object.getOwnPropertyDescriptor(object, name));
@@ -36,15 +36,13 @@ var clone = function (object) {
  * @return {Object}
  */
 var supplement = function (default_value, opt_arg, opt_callback) {
-  var result;
   if (opt_arg === undefined) {
-    result = default_value;
-  } else if (opt_callback === undefined) {
-    result = opt_arg;
-  } else {
-    result = opt_callback(default_value, opt_arg);
+    return default_value;
   }
-  return result;
+  if (opt_callback === undefined) {
+    return opt_arg;
+  }
+  return opt_callback(default_value, opt_arg);
 };
 
 /**
@@ -55,13 +53,11 @@ var supplement = function (default_value, opt_arg, opt_callback) {
  */
 var asArray = function (args, opt_sub, opt_to) {
   var from = supplement(0, opt_sub),
-      to   = supplement(args.length || 1, opt_to),
-      result;
+      to   = supplement(args.length || 1, opt_to);
+
   if (args.length === undefined) {
-    result = [args];
-  } else {
-    result = Array.prototype.slice.call(args, from, to);
+    return [args];
   }
-  return result;
+  return Array.prototype.slice.call(args, from, to);
 };
 

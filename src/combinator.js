@@ -9,12 +9,9 @@ var combinator = new Combinator();
  * @return {function(number):*}
  */
 combinator.sized = function (generator) {
-  var p, v,
-      grow = seed.exponent(2, 0.5),
+  var grow = seed.exponent(2, 0.5),
       generate_by_size = function (progress) {
-        p = grow(progress);
-        v = generator(p);
-        return v;
+        return generator(grow(progress));
       };
   return generate_by_size;
 };
@@ -25,31 +22,26 @@ combinator.sized = function (generator) {
  * @return {function(number):*}
  */
 combinator.resize = function (grow, generator) {
-  var p, v,
-      generate_with_resize = function(progress){
-        p = grow(progress);
-        v = generator(p);
-        return v;
+  var generate_with_resize = function(progress){
+        return generator(grow(progress));
       };
   return generate_with_resize;
 };
+
 /**
  * @param {number} n1
  * @param {number} n2
  * @return {function():number}
  */
 combinator.choose = function (n1, n2) {
-  var value,
-      n_min = Math.min(n1, n2),
+  var n_min = Math.min(n1, n2),
       n_max = Math.max(n1, n2),
       n = n_max - n_min + 1,
       generate_num = function(){
-        value = Math.random() * n + n_min;
-        return value;
+        return Math.random() * n + n_min;
       },
       generate_int = function(){
-        value = Math.floor(Math.random() * n) + n_min;
-        return value;
+        return Math.floor(Math.random() * n) + n_min;
       };
   if (Math.floor(n1) === n1 &&  Math.floor(n2) === n2) { // arguments is Integer
     return generate_int;
@@ -63,16 +55,13 @@ combinator.choose = function (n1, n2) {
  * @return {function():number}
  */
 combinator.chooseNow = function (n1, n2) {
-  var value,
-      n_min = Math.min(n1, n2),
+  var n_min = Math.min(n1, n2),
       n_max = Math.max(n1, n2),
       n = n_max - n_min + 1;
   if (Math.floor(n1) === n1 && Math.floor(n2) === n2) {
-    value = Math.floor(Math.random() * n) + n_min;
-    return value;
+    return Math.floor(Math.random() * n) + n_min;
   }
-  value = Math.random() * n + n_min;
-  return value;
+  return Math.random() * n + n_min;
 };
 
 /**
@@ -80,12 +69,9 @@ combinator.chooseNow = function (n1, n2) {
  * @return {function():*}
  */
 combinator.elements = function (list) {
-  var index,
-      max = list.length - 1,
-      select = combinator.choose(0, max),
+  var select = combinator.choose(0, list.length - 1),
       generate_by_list = function () {
-        index = select();
-        return list[index];
+        return list[select()];
       };
   return generate_by_list;
 };
@@ -95,13 +81,9 @@ combinator.elements = function (list) {
  * @return {function():*}
  */
 combinator.oneOf = function (generators) {
-  var index, value,
-      max = generators.length - 1,
-      select = combinator.choose(0, max),
+  var select = combinator.choose(0, generators.length - 1),
       generate_by_one_of_generators = function (progress) {
-        index = select();
-        value = generators[index](progress);
-        return value;
+        return generators[select()](progress);
       };
   return generate_by_one_of_generators;
 };
@@ -155,9 +137,9 @@ combinator.listOf1 = function (generator) {
  */
 combinator.vectorOf = function( length, generator ){
   var i, list,
-      generate_fixed_length_array = function(){
+      generate_fixed_length_array = function(progress) {
         for (i = 0, list = []; i < length; i++) {
-          list[i] = generator();
+          list[i] = generator(progress);
         }
         return list;
       };
@@ -170,7 +152,7 @@ combinator.vectorOf = function( length, generator ){
  * @return {function(number=):*}
  */
 combinator.frequency = function (rated_generators, opt_callback) {
-  var i, rate, value, threshold,
+  var i, rate, threshold,
       rate_list  = heads(rated_generators),
       l = rate_list.length,
       generators = tails(rated_generators),
@@ -183,13 +165,11 @@ combinator.frequency = function (rated_generators, opt_callback) {
         for (i = 0; i < l; i++) {
           rate = rate_list[i];
           if (threshold < rate) {
-            value = generators[i](progress);
-            return value;
+            return generators[i](progress);
           }
           threshold -= rate;
         }
-        value = generators[l - 1](progress);
-        return value;
+        return generators[l - 1](progress);
       },
       generate_by_frequency_with_option = function (progress) {
         return opt_callback(generate_by_frequency(progress));

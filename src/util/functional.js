@@ -14,8 +14,8 @@ var force = function (promise) {
  */
 var flip = function (func) {
   var reversed = function (b, a) {
-    return func(a, b);
-  };
+        return func(a, b);
+      };
   return reversed;
 };
 

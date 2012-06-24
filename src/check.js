@@ -56,7 +56,7 @@ var forAll = function (generator, property) {
           return currentResult;
         }
 
-        if ( result.wasSkipped ){
+        if (result.wasSkipped) {
           currentResult.passed = false;
           currentResult.skipped = true;
           currentResult.reason = 'Skipped: (' + args.join(', ') + ')';
