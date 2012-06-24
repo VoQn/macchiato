@@ -4,9 +4,9 @@
  * @param {*} snd
  * @constructor
  */
-var Tuple = function Tuple ( _fst, _snd ){
-  this.fst = _fst;
-  this.snd = _snd;
+var Tuple = function Tuple(fst, snd) {
+  this.fst = fst;
+  this.snd = snd;
 };
 
 /**
@@ -14,15 +14,15 @@ var Tuple = function Tuple ( _fst, _snd ){
  * @param {*} b
  * @return {Tuple}
  */
-var tuple = function( a, b ){
-  return new Tuple( a, b );
+var tuple = function (a, b) {
+  return new Tuple(a, b);
 };
 
 /**
  * @param {Tuple} tpl
  * @return {*}
  */
-var first = function( tpl ){
+var first = function (tpl) {
   return tpl.fst;
 };
 
@@ -30,7 +30,7 @@ var first = function( tpl ){
  * @param {Tuple} tpl
  * @return {*}
  */
-var second = function( tpl ){
+var second = function (tpl) {
   return tpl.snd;
 };
 
@@ -38,15 +38,15 @@ var second = function( tpl ){
  * @param {Array.<Tuple>} tpls
  * @return {Array}
  */
-var heads = function( tpls ){
-  return map( first, tpls );
+var heads = function (tpls) {
+  return map(first, tpls);
 };
 
 /**
  * @param {Array.<Tuple>} tpls
  * @return {Array}
  */
-var tails = function( tpls ){
-  return map( second, tpls );
+var tails = function (tpls) {
+  return map(second, tpls);
 };
 

@@ -1,6 +1,6 @@
 
 /** @constructor */
-var Combinator = function Combinator(){};
+var Combinator = function Combinator () {};
 
 /** @type {Combinator} */
 var combinator = new Combinator();
@@ -8,183 +8,195 @@ var combinator = new Combinator();
  * @param {function(number):*} generator
  * @return {function(number):*}
  */
-combinator.sized = function( generator ){
-  var _grow_ = seed.exponent( 2, 0.5 ),
-      _generate_by_size_ = function( progress ){
-        var v_ = _grow_( progress ),
-            v__ = generator( v_ );
-        return v__;
+combinator.sized = function (generator) {
+  var p, v,
+      grow = seed.exponent(2, 0.5),
+      generate_by_size = function (progress) {
+        p = grow(progress);
+        v = generator(p);
+        return v;
       };
-  return _generate_by_size_;
+  return generate_by_size;
 };
+
 /**
  * @param {function(number):number} grow
  * @param {function(number):*} generator
  * @return {function(number):*}
  */
-combinator.resize = function( grow, generator ){
-  var _generate_with_resize_ = function( progress ){
-        var v_ = grow( progress ),
-            v__ = generator( v_ );
-        return v__;
+combinator.resize = function (grow, generator) {
+  var p, v,
+      generate_with_resize = function(progress){
+        p = grow(progress);
+        v = generator(p);
+        return v;
       };
-  return _generate_with_resize_;
+  return generate_with_resize;
 };
 /**
  * @param {number} n1
  * @param {number} n2
  * @return {function():number}
  */
-combinator.choose = function( n1, n2 ){
-  var n_min_ = Math.min( n1, n2 ),
-      n_max_ = Math.max( n1, n2 ),
-      n_ = n_max_ - n_min_ + 1,
-      value_,
-      _generate_num_ = function(){
-        value_ = Math.random() * n_ + n_min_;
-        return value_;
+combinator.choose = function (n1, n2) {
+  var value,
+      n_min = Math.min(n1, n2),
+      n_max = Math.max(n1, n2),
+      n = n_max - n_min + 1,
+      generate_num = function(){
+        value = Math.random() * n + n_min;
+        return value;
       },
-      _generate_int_ = function(){
-        value_ = Math.floor( Math.random() * n_ ) + n_min_;
-        return value_;
+      generate_int = function(){
+        value = Math.floor(Math.random() * n) + n_min;
+        return value;
       };
-  if ( Math.floor( n1 ) === n1 &&  Math.floor( n2 ) === n2 ) { // arguments is Integer
-    return _generate_int_;
+  if (Math.floor(n1) === n1 &&  Math.floor(n2) === n2) { // arguments is Integer
+    return generate_int;
   }
-  return _generate_num_;
+  return generate_num;
 };
+
 /**
  * @param {number} n1
  * @param {number} n2
  * @return {function():number}
  */
-combinator.chooseNow = function( n1, n2 ){
-  var n_min_ = Math.min( n1, n2 ),
-      n_max_ = Math.max( n1, n2 ),
-      n_ = n_max_ - n_min_ + 1,
-      value_;
-  if ( Math.floor( n1 ) === n1 && Math.floor( n2 ) === n2 ){
-    value_ = Math.floor( Math.random() * n_ ) + n_min_;
-    return value_;
+combinator.chooseNow = function (n1, n2) {
+  var value,
+      n_min = Math.min(n1, n2),
+      n_max = Math.max(n1, n2),
+      n = n_max - n_min + 1;
+  if (Math.floor(n1) === n1 && Math.floor(n2) === n2) {
+    value = Math.floor(Math.random() * n) + n_min;
+    return value;
   }
-  value_ = Math.random() * n_ + n_min_;
-  return value_;
+  value = Math.random() * n + n_min;
+  return value;
 };
+
 /**
  * @param {!Array} list
  * @return {function():*}
  */
-combinator.elements = function( list ){
-  var max_ = list.length - 1,
-      _select_ = combinator.choose( 0, max_ ),
-      _generate_by_list_ = function(){
-        var index_ = _select_();
-        return list[ index_ ];
+combinator.elements = function (list) {
+  var index,
+      max = list.length - 1,
+      select = combinator.choose(0, max),
+      generate_by_list = function () {
+        index = select();
+        return list[index];
       };
-  return _generate_by_list_;
+  return generate_by_list;
 };
+
 /**
  * @param {Array.<function():*>} generators
  * @return {function():*}
  */
-combinator.oneOf = function( generators ){
-  var max_ = generators.length - 1,
-      _select_ = combinator.choose( 0, max_ ),
-      _generate_by_one_of_generators_ = function( progress ){
-        var index_ = _select_(),
-            value_ = generators[ index_ ]( progress );
-        return value_;
+combinator.oneOf = function (generators) {
+  var index, value,
+      max = generators.length - 1,
+      select = combinator.choose(0, max),
+      generate_by_one_of_generators = function (progress) {
+        index = select();
+        value = generators[index](progress);
+        return value;
       };
-  return _generate_by_one_of_generators_;
+  return generate_by_one_of_generators;
 };
+
 /**
  * @param {function():*} generator
  * @param {(function(Array):*)=} opt_callback
  * @return {function(number):Array}
  */
-combinator.listOf = function( generator, opt_callback ){
-  var _generate_array_ = function( progress ){
-        var index_ = 0,
-            length_ = Math.random() * progress,
-            result_ = [];
-        for ( ; index_ < length_; index_++ ){
-          result_[ index_ ] = generator( progress );
+combinator.listOf = function (generator, opt_callback) {
+  var i, l, result,
+      generate_array = function (progress) {
+        l = Math.random() * progress;
+        result = [];
+        for (i = 0; i < l; i++ ){
+          result[i] = generator(progress);
         }
-        return result_;
+        return result;
       },
-      _generate_array_with_option_ = function( progress ){
-        return opt_callback( _generate_array_( progress ) );
+      generate_array_with_option = function (progress) {
+        return opt_callback(generate_array(progress));
       };
-  if ( opt_callback === undefined ){
-    return _generate_array_;
+  if (opt_callback === undefined) {
+    return generate_array;
   }
-  return _generate_array_with_option_;
+  return generate_array_with_option;
 };
+
 /**
  * @param {function():*} generator
  * @return {function(number):Array}
  */
-combinator.listOf1 = function( generator ){
-  var _generate_non_empty_array_ = function( progress ){
-    var index_ = 0;
-        l_ = Math.random() * progress;
-        length_ = l_ < 1 ? 1 : l_;
-        result_ = [];
-    for ( ; index_ < length_; index_++ ){
-      result_[ index_ ] = generator( progress );
-    }
-    return result_;
-  };
-  return _generate_non_empty_array_;
+combinator.listOf1 = function (generator) {
+  var i, l, length, result,
+      generate_non_empty_array = function (progress) {
+        l = Math.random() * progress;
+        length = l < 1 ? 1 : l;
+        result = [];
+        for (i = 0; i < length; i++) {
+          result[i] = generator(progress);
+        }
+        return result;
+      };
+  return generate_non_empty_array;
 };
+
 /**
  * @param {number} length
  * @param {function():*} generator
  * @return {function():Array}
  */
 combinator.vectorOf = function( length, generator ){
-  var _generate_fixed_length_array_ = function(){
-    var index_ = 0,
-        list_ = [];
-    for ( ; index_ < length; index_++ ){
-      list_[ index_ ] = generator();
-    }
-    return list_;
-  };
-  return _generate_fixed_length_array_;
+  var i, list,
+      generate_fixed_length_array = function(){
+        for (i = 0, list = []; i < length; i++) {
+          list[i] = generator();
+        }
+        return list;
+      };
+  return generate_fixed_length_array;
 };
+
 /**
  * @param {Array.<Tuple>} rate_generators
  * @param {(function(*):*)=} opt_callback
  * @return {function(number=):*}
  */
-combinator.frequency = function( rated_generators, opt_callback ){
-  var rate_list_  = heads( rated_generators ),
-      generators_ = tails( rated_generators ),
-      sum_        = sumOf( rate_list_ ),
-      _select_    = combinator.choose( 1, sum_ ),
+combinator.frequency = function (rated_generators, opt_callback) {
+  var i, rate, value, threshold,
+      rate_list  = heads(rated_generators),
+      l = rate_list.length,
+      generators = tails(rated_generators),
+      sum        = sumOf(rate_list),
+      select     = combinator.choose(1, sum),
 
-      _generate_by_frequency_ = function( progress ){
-        var index_ = 0,
-            threshold_ = _select_(),
-            rate_ = 1,
-            value_;
-        for ( ; rate_ = rate_list_[ index_ ]; index_++ ){
-          if ( threshold_ < rate_ ){
-            value_ = generators_[ index_ ]( progress );
-            return value_;
+      generate_by_frequency = function (progress) {
+        threshold = select();
+
+        for (i = 0; i < l; i++) {
+          rate = rate_list[i];
+          if (threshold < rate) {
+            value = generators[i](progress);
+            return value;
           }
-          threshold_ -= rate_;
+          threshold -= rate;
         }
-        value_ = generators_[ index_ - 1 ]( progress );
-        return value_;
+        value = generators[l - 1](progress);
+        return value;
       },
-      _generate_by_frequency_with_option_ = function( progress ){
-        return opt_callback( _generate_by_frequency_( progress ) );
+      generate_by_frequency_with_option = function (progress) {
+        return opt_callback(generate_by_frequency(progress));
       };
-  if ( opt_callback === undefined ){
-    return _generate_by_frequency_;
+  if (opt_callback === undefined) {
+    return generate_by_frequency;
   }
-  return _generate_by_frequency_with_option_;
+  return generate_by_frequency_with_option;
 };
 
