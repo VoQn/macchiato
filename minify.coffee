@@ -1,25 +1,22 @@
-
+# Requirements
 fs = require('fs')
 util = require('util')
-googleClosureCompiler = require('./lib/closure-compiler')
+compiler = require('./lib/closure-compiler').compiler
 
-compiler = googleClosureCompiler.client
+# ---------------------------------------------------
+# Variables
+utf8 = 'utf-8'
+dist_dir  = './dist'
+app_name  = 'macchiato'
+js_file   = "#{dist_dir}/#{app_name}.js"
+dist_file = "#{dist_dir}/#{app_name}.min.js"
 
-source = "./dist/macchiato.js"
-dist = "./dist/macchiato.min.js"
+# ---------------------------------------------------
+# Compile js file
+source_code = fs.readFileSync js_file, utf8
 
-writeJsFile = (error, data) ->
-  if error
-    util.puts util.inspect(error)
-    return
-  compiled = data.compiledCode
-  fs.writeFile dist, compiled, _after_write_ = (err) ->
-    throw err  if err
-    console.log "saved #{dist}"
+compiler.compile source_code, ( error, data ) ->
+  fs.writeFileSync dist_file, data.compiledCode, utf8
+  console.log "compiled #{js_file} to #{dist_file}"
 
-writeMinJS = (err, data) ->
-  code = undefined
-  console.log err  if err
-  compiler.compile data, writeJsFile
-
-fs.readFile source, "utf-8", writeMinJS
+#EOF
