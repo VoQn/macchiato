@@ -14,11 +14,11 @@ min_js_file = "#{dist_dir}/#{app_name}.min.js"
 
 deps = [
   'util/object'
+  'util/interface'
   'util/functional'
   'util/iterator'
   'util/tuple'
   'util/time'
-  'util/interface'
   'check'
   'score'
   'seed'
