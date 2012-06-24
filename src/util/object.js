@@ -4,11 +4,10 @@
  * @param {!Object} object
  * @return {boolean} parameter is empty or not
  */
-var isEmpty = function( object ){
-  for ( var _ in object ){
-    return false;
-  }
-  return true;
+var isEmpty = function (object) {
+  return object === null ||
+         object === undefined ||
+         Object.keys(object).length === 0;
 };
 
 /**
@@ -16,17 +15,18 @@ var isEmpty = function( object ){
  * @param {!Object} object
  * @return {Object}
  */
-var clone = function( object ) {
-  var copied_ = Object.create( Object.getPrototypeOf( object ) ),
-      properties_ = Object.getOwnPropertyNames( object ),
-      index_ = 0,
-      name_;
-  for ( ; name_ = properties_[ index_ ]; index_++ ){
-    Object.defineProperty( copied_,
-                           name_,
-                           Object.getOwnPropertyDescriptor( object, name_ ) );
+var clone = function (object) {
+  var copied = Object.create(Object.getPrototypeOf(object)),
+      properties = Object.getOwnPropertyNames(object),
+      index, length,
+      name;
+  for (index = 0, length = properties.length; index < length; index++) {
+    name = properties[index];
+    Object.defineProperty(copied,
+                          name,
+                          Object.getOwnPropertyDescriptor(object, name));
   }
-  return copied_;
+  return copied;
 };
 
 /**
@@ -35,13 +35,16 @@ var clone = function( object ) {
  * @param {(function(Object, Object):Object)=} opt_callback
  * @return {Object}
  */
-var supplement = function( default_value, opt_arg, opt_callback ){
-  if ( opt_arg === undefined ){
-    return default_value;
-  } else if ( opt_callback === undefined ) {
-    return opt_arg;
+var supplement = function (default_value, opt_arg, opt_callback) {
+  var result;
+  if (opt_arg === undefined) {
+    result = default_value;
+  } else if (opt_callback === undefined) {
+    result = opt_arg;
+  } else {
+    result = opt_callback(default_value, opt_arg);
   }
-  return opt_callback( default_value, opt_arg );
+  return result;
 };
 
 /**
@@ -50,14 +53,15 @@ var supplement = function( default_value, opt_arg, opt_callback ){
  * @param {number=} opt_to
  * @return {Array}
  */
-var asArray = function( args, opt_sub, opt_to ){
-  var from_ = supplement( 0, opt_sub ),
-      to_   = supplement( args.length ? args.length : 1,
-                          opt_to );
-  if ( args.length === undefined ){
-    return [ args ];
+var asArray = function (args, opt_sub, opt_to) {
+  var from = supplement(0, opt_sub),
+      to   = supplement(args.length || 1, opt_to),
+      result;
+  if (args.length === undefined) {
+    result = [args];
+  } else {
+    result = Array.prototype.slice.call(args, from, to);
   }
-  return Array.prototype.slice.call( args, from_, to_ );
+  return result;
 };
-
 
