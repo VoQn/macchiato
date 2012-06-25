@@ -1,4 +1,6 @@
 
+// require('../util/interface')
+
 /** @type {Interface} */
 var ViewInterface = new Interface('ViewInterface', [
     'getTestCount',
