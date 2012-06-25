@@ -52,7 +52,7 @@ task 'all', "All Distrbution", (options) ->
   invoke 'web'
 
 task 'clean', "Clean distribution directory", (option) ->
-  exec "rm -rf #{dist_dir}"
+  exec "rm #{dist_dir}/*.js"
 
 task 'web', "Distribution js file for web front end", (options) ->
   libs = getLib()
