@@ -27,6 +27,8 @@ deps = [
   'arbitrary'
   'checker'
   'view'
+  'views/console'
+  'views/html'
   'macchiato'
   ]
 
