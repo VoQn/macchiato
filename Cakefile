@@ -9,25 +9,19 @@ app_name = "macchiato"
 src_dir = "./src"
 dist_dir = "./dist"
 
-js_file = "#{dist_dir}/#{app_name}.js"
-min_js_file = "#{dist_dir}/#{app_name}.min.js"
+js_file = "#{dist_dir}/web/#{app_name}.js"
+min_js_file = "#{dist_dir}/web/#{app_name}.min.js"
+lib_js_file = "#{dist_dir}/lib/#{app_name}.js"
 
-deps =
-  util: [
-    'object'
-    'interface'
-    'functional'
-    'iterator'
-    'tuple'
-    'time'
-    'dom'
-  ]
-  views: [
-    'view'
-    'console'
-    'html'
-  ]
-  core: [
+base_deps = [
+    'util/object'
+    'util/interface'
+    'util/functional'
+    'util/iterator'
+    'util/tuple'
+    'util/time'
+    'views/view'
+    'views/console'
     'check'
     'score'
     'seed'
@@ -38,36 +32,79 @@ deps =
     'macchiato'
   ]
 
-getLib = () ->
+web_deps = [
+    'util/object'
+    'util/interface'
+    'util/functional'
+    'util/iterator'
+    'util/tuple'
+    'util/time'
+    'util/dom'
+    'views/view'
+    'views/console'
+    'views/html'
+    'check'
+    'score'
+    'seed'
+    'combinator'
+    'reference'
+    'arbitrary'
+    'checker'
+    'macchiato'
+  ]
+
+node_deps = [
+    'util/object'
+    'util/interface'
+    'util/functional'
+    'util/iterator'
+    'util/tuple'
+    'util/time'
+    'views/view'
+    'views/console'
+    'check'
+    'score'
+    'seed'
+    'combinator'
+    'reference'
+    'arbitrary'
+    'checker'
+    'macchiato'
+    'footer'
+  ]
+
+getLib = (deps) ->
   str = []
-  for sub, names of deps
-    for name in names
-      if sub is "core"
-        str.push "#{src_dir}/#{name}.js"
-      else
-        str.push "#{src_dir}/#{sub}/#{name}.js"
+  for name in deps
+    str.push "#{src_dir}/#{name}.js"
   str.join(' ')
 
 task 'all', "All Distrbution", (options) ->
-  invoke 'web'
+  fs.mkdir "dist", null, (err, stdout, stderr) ->
+    invoke 'web'
+    invoke 'node'
 
 task 'clean', "Clean distribution directory", (option) ->
-  exec "rm #{dist_dir}/*.js"
+  exec "rm -rf #{dist_dir}"
 
 task 'web', "Distribution js file for web front end", (options) ->
-  libs = getLib()
+  libs = getLib web_deps
   util.puts libs
 
-  exec "cat #{libs} > #{js_file}", (err, stdout, stderr) ->
+  fs.mkdir "dist/web", null, (err, stdout, stderr) ->
+    exec "cat #{libs} > #{js_file}", (err, stdout, stderr) ->
+      source_code = fs.readFileSync js_file, utf8
+      compiler.compile source_code, (error, data) ->
+        util.puts(util.inspect(error)) if error
+        fs.writeFileSync min_js_file, data.compiledCode, utf8
+    util.puts "distribute #{js_file} and #{min_js_file}"
 
-    source_code = fs.readFileSync js_file, utf8
+task 'node', "Node.js module", (option) ->
+  libs = getLib node_deps
+  util.puts libs
 
-    compiler.compile source_code, (error, data) ->
-
-      util.puts(util.inspect(error)) if error
-
-      fs.writeFileSync min_js_file, data.compiledCode, utf8
-
-  util.puts "distribute #{js_file} and #{min_js_file}"
+  fs.mkdir "dist/lib", null, (err, stdout, stderr) ->
+    exec "cat #{libs} > #{lib_js_file}", (err, stdout, stderr) ->
+      util.puts "distribute #{lib_js_file}"
 
 #EOF
