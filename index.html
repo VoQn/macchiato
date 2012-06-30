@@ -1,153 +1,193 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en" prefix="og: http://ogp.me/ns#">
   <head>
-    <meta charset='utf-8' />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="Macchiato : BDD + QDD testing framework for JavaScript" />
-
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-
-    <title>Macchiato</title>
+    <title>Macchiato.js - QDD for JavaScript -</title>
+    <meta property="og:title" content="Macchiato - QDD test framwork for JavaScript">
+    <meta property="og:description" content="Macchiato is test framwork for JavaScript, inspired by QuickCheck, a similar library for Haskell programs">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="http://voqn.github.com/macchiato">
+    <meta property="og:image" content="http://voqn.github.com/macchiato/img/macchiato.png">
+    <link href="img/favicon.ico" rel="shortcut icon" type="image/x-icon">
+    <link href='http://fonts.googleapis.com/css?family=Artifika|Meddon' rel='stylesheet' type='text/css'>
+    <link href="css/style.css" rel="stylesheet" type="text/css">
+    <link href="css/syntax.css" rel="stylesheet" type="text/css">
+    <script src="js/rainbow-custom.min.js" type="text/javascript"></script>
+    <script src="js/macchiato.min.js" type="text/javascript"></script>
+    <script src="js/macchiato-web-util.js" type="text/javascript"></script>
+    <!-- example test cases -->
+    <script src="js/example-test.js" type="text/javascript"></script>
+    <script type="text/javascript">
+      add_on_load( function(){
+        setInternalAnchorBehavior('header-nav');
+        macchiato.setView( htmlView.setSelectors({
+            counter_id: 'test-count',
+            messenger_id: 'test-message',
+            logger_id: 'test-log'
+          }));
+        initTestConstroller({
+          counter_id: 'test-count',
+          verbose_id: 'verbose',
+          runner_id: 'test-runner'
+        });
+      });
+    </script>
   </head>
-
-  <body>
-
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/VoQn/macchiato">View on GitHub</a>
-
-          <h1 id="project_title">Macchiato</h1>
-          <h2 id="project_tagline">BDD + QDD testing framework for JavaScript</h2>
-
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/VoQn/macchiato/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/VoQn/macchiato/tarball/master">Download this project as a tar.gz file</a>
-            </section>
-        </header>
+  <body id="top">
+    <header>
+     <nav id="header-nav">
+      <h4>Macchiato.js</h4>
+      <ul>
+        <li><a href="#top">Top</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#demo">Demo</a></li>
+        <li><a href="#usage">Usage</a></li>
+        <li><a href="http://github.com/VoQn/Macchiato">Repository</a></li>
+      </ul>
+     </nav>
+     <hgroup>
+       <h1>Macchiato.js</h1>
+       <h3>Qualitative Driven Development for JavaScript</h3>
+     </hgroup>
+    </header>
+    <a href="https://github.com/VoQn/macchiato">
+       <img id="fork-me-ribbon" src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png" alt="Fork me on GitHub">
+    </a>
+    <article>
+    <section>
+    <div class="caution">
+      <h2>CAUTION</h2>
+      <p>This project is under development now.<br>Sorry to keep you waiting.</p>
+      <p>Please see <a href="https://github.com/VoQn/macchiato/issues/milestones">GitHub Milestones</a></p>
     </div>
+    </section>
+    <section id="about">
+      <div>
+        <h2>What's "Macchiato.js" ?</h2>
+        <h3>Inspired by QuickCheck</h3>
+        <p><i>Macchiato</i> is a testing framework for JavaScript, inspired by <a href="http://hackage.haskell.org/package/QuickCheck-2.4.2">QuickCheck</a>, a similar library for <a href="http://www.haskell.org/">Haskell</a> programs.</p>
+        <blockquote>
+          <p>QuickCheck is a library for random testing of program properties.</p>
+          <p>The programmer provides a specification of the program, in the form of properties which functions should satisfy, and QuickCheck then tests that the properties hold in a large number of randomly generated cases.</p>
+          <p>Specifications are expressed in Haskell, using combinators defined in the QuickCheck library. QuickCheck provides combinators to define properties, observe the distribution of test data, and define test data generators.</p>
+        </blockquote>
+        <p><em>from <a href="http://hackage.haskell.org/package/QuickCheck-2.4.2">QuickCheck module description</a></em></p>
+      </div>
+    </section>
+    <section id="demo">
+      <div>
+        <h2>Demo</h2>
+        <div>
+          <pre class="sample-code"><code data-language="javascript">macchiato.stock({
+  'number x, y =&gt; x + y == y + x':
+    arbitrary( 'number', 'number' ).property( function( x, y ){
+        return x + y === y + x;
+  }),
+  'string str =&gt; str can be regarded as boolean that is empty or not':
+    arbitrary( 'string' ).property( function( str ){
+        if ( str.length === 0 ){
+          return false === !!str;
+        }
+        return true === !!str;
+  }),
+  'integer x, y (x !== y) =&gt; x - y !== y - x' :
+    arbitrary( 'integer', 'integer' ).property( function( x, y ){
+        return where( [ x !== y ], function(){
+          return x - y !== y - x;
+        });
+  })
+});</code></pre>
+        </div>
+      <form id="test-control">
+      <div>
+        <label class="input-with-label">
+          <input id ="test-count" type="text" value="100" onkeyDown="return numOnly()">tests
+        </label>
+        <label class="input-with-label">
+          <input id="verbose" type="checkbox">verbose
+        </label>
+        <input id="test-runner" type="button" class="primary" value="Run Test">
+        <p class="test-result"><span id="test-message" class="message">Let's Try!</span></p>
+      </div>
+    </form>
+      <div id="logger" class="console">
+        <p id="test-log" class='log-line'><!-- dump test log --></p>
+      </div>
+    </div>
+    </section>
+      <section id="usage">
+        <div>
+          <h2>Usage</h2>
+          <h3>Register Test Suites</h3>
+            <p><code class="inline" data-language="javascript">macchiato.stock( labeled_properties )</code></p>
+            <pre class="sample-code"><code data-language="javascript">macchiato.stock({ // stock test properties as object
+    'number x, y =&gt; x + y === y + x' : // &lt;label&gt;:&lt;callback&gt;
+        arbitrary( 'number', 'number' ).property( function( x, y ){
+            return x + y === y + x, // boolean
+        })
+    });</code></pre>
+          <h3>Run Test Suites</h3>
+            <p><code class="inline" data-language="javascript">macchiato.taste()</code></p>
+            <pre class="sample-code"><code data-language="javascript">macchiato.taste(); // check all stocked test suites</code></pre>
+            <p>in default, macchiato.js generate 100 pattern arguments per test-property.</p>
+          <h3>See sample Generator works</h3>
+            <p><code class="inline" data-language="javascript">arbitrary( type ).sample( [ opt_count ] )</code></p>
+            <pre class="sample-code"><code data-language="javascript">arbitrary( 'boolean' ).sample() // [ true, false, false, true, true ]
+arbitrary( 'boolean' ).sample( 5 ); // [ false, false, true, false, true ]
 
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <h1>Macchiato.js - BDD + QDD testing framework for JavaScript -</h1>
+// in default, return array has 10 elements
+arbitrary( 'integer' ).sample(); // [ 0, 1, 1, 0, -1, 6, 6, -12, -2, 16 ]</code></pre>
+          <h3>Use adhoc new type generator</h3>
+            <p><code class="inline" data-language="javascript">arbitrary( type ).fmap( modifier )</code></p>
+            <pre class="sample-code"><code data-language="javascript">// Non Negative Integer Generator
+var nonNegativeNumberProperty = arbitrary( 'integer' ).fmap( Math.abs ).property( function( x ){
+  return x &gt; -1;
+});</code></pre>
+          <h3>Register User generator</h3>
+            <p><code class="inline" data-language="javascript">arbitrary( new_type ).recipe( generator )</code></p>
+            <pre class="sample-code"><code data-language="javascript">arbitrary.( 'hoge' ).recipe(
+    combinator.elements( [ 'hoge', 'huga', 'piyo', 'foo', 'bar', 'baz' ] )
 
-<p><strong>Macchiato</strong> is testing framework for JavaScript, inspired by <a href="http://hackage.haskell.org/package/QuickCheck-2.4.2">QuickCheck</a>, a similar library for <a href="http://www.haskell.org/">Haskell</a> programs.</p>
+arbitrary.sample(); // "foo", "bar", "bar", "hoge", "piyo", "baz", "hoge", "foo", "huga", "foo"
+);</code></pre>
+            <p><code class="inline" data-language="javascript">arbitrary( type ).fmap( modifier ).recipeAs( new_type )</code></p>
+            <pre class="sample-code"><code data-language="javascript">arbitrary( 'integer' ).fmap( function( n ){
+    var x = Math.max( Math.abs( n ), 1 );
+    return tuple( x, x % 15 ? x % 5 ? x % 3 ? '' + x : 'Fizz' : 'Buzz' : 'FizzBuzz' );
+}).recipeAs( 'fizzbuzz' );
 
-<h2>About <a href="http://hackage.haskell.org/package/QuickCheck-2.4.2">QuickCheck</a>
-</h2>
-
-<p><em>from <a href="http://hackage.haskell.org/package/QuickCheck-2.4.2">QuickCheck module description</a></em></p>
-
-<blockquote>
-<p>QuickCheck is a library for random testing of program properties.</p>
-
-<p>The programmer provides a specification of the program, in the form of properties which functions should satisfy, and QuickCheck then tests that the properties hold in a large number of randomly generated cases.</p>
-
-<p>Specifications are expressed in Haskell, using combinators defined in the QuickCheck library. QuickCheck provides combinators to define properties, observe the distribution of test data, and define test data generators.</p>
-</blockquote>
-
-<h2>Demo page</h2>
-
-<p>see <a href="http://voqn.github.com/macchiato/">voqn.github.com/macchiato/</a></p>
-
-<h2>Sorry. now Macchiato.js is under development</h2>
-
-<p>please see <a href="https://github.com/VoQn/macchiato/issues/milestones/">GitHub Milestones</a></p>
-
-<h2>Sample code</h2>
-
-<h3>Register test suites</h3>
-
-<p>Use <code>macchiato.stock( labeled_properties )</code></p>
-
-<div class="highlight">
-<pre><span class="nx">macchiato</span><span class="p">.</span><span class="nx">stock</span><span class="p">({</span> <span class="c1">// stock test properties as object</span>
-    <span class="s1">'number x, y =&gt; x + y === y + x'</span> <span class="o">:</span> <span class="c1">// &lt;label&gt;:&lt;callback&gt;</span>
-          <span class="nx">arbitrary</span><span class="p">(</span> <span class="s1">'number'</span><span class="p">,</span> <span class="s1">'number'</span> <span class="p">).</span><span class="nx">property</span><span class="p">(</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">x</span><span class="p">,</span> <span class="nx">y</span> <span class="p">){</span>
-              <span class="k">return</span> <span class="nx">x</span> <span class="o">+</span> <span class="nx">y</span> <span class="o">===</span> <span class="nx">y</span> <span class="o">+</span> <span class="nx">x</span><span class="p">;</span> <span class="c1">// boolean</span>
-          <span class="p">})</span>
-<span class="p">}).</span><span class="nx">taste</span><span class="p">();</span> <span class="c1">// run all stocked test suites</span>
-</pre>
-</div>
-
-
-<p>in default, macchiato.js generate 100 pattern argument per test-property.</p>
-
-<h3>Run Test Suites</h3>
-
-<p>Use <code>macchiato.taste()</code></p>
-
-<div class="highlight">
-<pre><span class="nx">macchiato</span><span class="p">.</span><span class="nx">taste</span><span class="p">();</span> <span class="c1">// check all stocked test quite. and display test result</span>
-</pre>
-</div>
-
-
-<h3>How to see generator works</h3>
-
-<p>Use <code>arbitrary.sample( opt_count )</code></p>
-
-<div class="highlight">
-<pre><span class="nx">arbitrary</span><span class="p">(</span> <span class="s1">'boolean'</span> <span class="p">).</span><span class="nx">sample</span><span class="p">(</span> <span class="mi">5</span> <span class="p">);</span> <span class="c1">// [ true, false, false, true, true ]</span>
-<span class="nx">arbitrary</span><span class="p">(</span> <span class="s1">'boolean'</span> <span class="p">).</span><span class="nx">sample</span><span class="p">(</span> <span class="mi">5</span> <span class="p">);</span> <span class="c1">// [ false, false, true, false, true ]</span>
-
-<span class="c1">// in default, return array has 10 elements</span>
-<span class="nx">arbitrary</span><span class="p">(</span> <span class="s1">'integer'</span> <span class="p">).</span><span class="nx">sample</span><span class="p">();</span> <span class="c1">// [ 0,1,1,0,-1,6,6,-12,-2,16 ]</span>
-</pre>
-</div>
-
-
-<h3>Use adhoc new type generator</h3>
-
-<p>Use <code>arbitrary( type_signature ).fmap( modifier_callback )</code></p>
-
-<div class="highlight">
-<pre><span class="c1">// Non Negative Integer generator</span>
-<span class="nx">arbitrary</span><span class="p">(</span><span class="s1">'integer'</span><span class="p">).</span><span class="nx">fmap</span><span class="p">(</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">n</span> <span class="p">){</span>
-  <span class="k">return</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span> <span class="nx">n</span> <span class="p">);</span>
-<span class="p">}).</span><span class="nx">property</span><span class="p">(</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">x</span> <span class="p">){</span>
-  <span class="k">return</span> <span class="nx">x</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
-<span class="p">});</span>
-</pre>
-</div>
-
-
-<h3>Register User generator</h3>
-
-<p>Use <code>arbitrary( type_signature ).recipe( generator_callback )</code></p>
-
-<div class="highlight">
-<pre><span class="nx">arbitrary</span><span class="p">(</span> <span class="s1">'hoge'</span> <span class="p">).</span><span class="nx">recipe</span><span class="p">(</span>
-  <span class="nx">combinrator</span><span class="p">.</span><span class="nx">elements</span><span class="p">(</span> <span class="p">[</span><span class="s1">'hoge'</span><span class="p">,</span> <span class="s1">'huga'</span><span class="p">,</span> <span class="s1">'foo'</span><span class="p">,</span> <span class="s1">'bar'</span><span class="p">]</span> <span class="p">)</span>
-<span class="p">);</span>
-</pre>
-</div>
-
-
-<p>Or, <code>arbitrary( type_signature ).recipeAs( new_type_signature )</code></p>
-
-<div class="highlight">
-<pre><span class="nx">arbitrary</span><span class="p">(</span> <span class="s1">'integer'</span> <span class="p">).</span><span class="nx">fmap</span><span class="p">(</span> <span class="kd">function</span><span class="p">(</span> <span class="nx">n</span> <span class="p">){</span>
-  <span class="kd">var</span> <span class="nx">x</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">max</span><span class="p">(</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">abs</span><span class="p">(</span> <span class="nx">n</span> <span class="p">),</span> <span class="mi">1</span> <span class="p">);</span>
-  <span class="k">return</span> <span class="nx">x</span> <span class="o">%</span> <span class="mi">15</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">?</span> <span class="s1">'FizzBuzz'</span> <span class="o">:</span> <span class="nx">x</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">?</span> <span class="s1">'Buzz'</span> <span class="o">:</span> <span class="nx">x</span> <span class="o">%</span> <span class="mi">3</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">?</span> <span class="s1">'Fizz'</span> <span class="o">:</span> <span class="nx">x</span><span class="p">;</span>
-<span class="p">}).</span><span class="nx">recipeAs</span><span class="p">(</span> <span class="s1">'fizzbuzz'</span> <span class="p">);</span>
-</pre>
-</div>
-
+arbitrary( 'fizzbuzz' ).sample(); // (1,"1"),  (2,"2"), (1,"1"), (2,"2"), (3,"Fizz"), (4,"4"), (5,"Buzz"), (15,"FizzBuzz"), (7,"7"), (27,"Fizz")</code></pre>
+        </div>
       </section>
-    </div>
-
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Macchiato maintained by <a href="https://github.com/VoQn">VoQn</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
-      </footer>
-    </div>
-
-    
-
+    </article>
+    <footer>
+      <div id="footer-high">
+        <nav>
+          <h4>Macchiato.js</h4>
+          <ul>
+            <li>About</li>
+            <li>Sample</li>
+            <li>API Refference</li>
+            <li><a href="http://github.com/VoQn/Macchiato">Repository</a></li>
+          </ul>
+        </nav>
+        <nav>
+          <h4>Other Projects</h4>
+          <ul>
+            <li><a href="http://github.com/yaakaito/NLTQuickCheck">yaakaito/NLTQuickCheck</a></li>
+            <li><a href="http://github.com/VoQn/ZeroFixFramework">VoQn/ZeroFixFramework</a></li>
+            <li><a href="http://rosylilly.github.com/QueenCheck">rosililly/QueenCheck</a>
+          </ul>
+        </nav>
+        <nav>
+          <h4>Powered by</h4>
+          <ul>
+            <li><a href="http://craig.is/making/rainbows">Rainbow</a> - Code Syntax Highlight</li>
+          </ul>
+        </nav>
+      </div>
+      <div id="footer-low">
+        <p>&copy;2012 VoQn all rights reseaved<p>
+      </div>
+    </footer>
   </body>
 </html>
