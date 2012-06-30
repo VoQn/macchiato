@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Macchiato.js - QDD for JavaScript -</title>
+    <link href="img/favicon.ico" rel="shortcut icon" type="image/x-icon">
+    <link href='http://fonts.googleapis.com/css?family=Artifika|Meddon' rel='stylesheet' type='text/css'>
+    <link href="css/style.css" rel="stylesheet" type="text/css">
+    <link href="css/syntax.css" rel="stylesheet" type="text/css">
+    <script src="script/rainbow-custom.min.js"></script>
+    <script src="../dist/web/macchiato.js"></script>
+    <script src="../frontend/web.js"></script>
+    <!-- example test cases -->
+    <script src="../example/test_web.js"></script>
+    <script>
+      'use strict';
+      add_on_load(function () {
+        setInternalAnchorBehavior('header-nav');
+        macchiato.setView(htmlView);
+        initTestConstroller({
+          counter_id: 'test-count',
+          verbose_id: 'verbose',
+          runner_id: 'test-runner'
+        });
+      });
+    </script>
+  </head>
+  <body id="top">
+    <header>
+     <nav id="header-nav">
+      <h4>Macchiato.js</h4>
+      <ul>
+        <li><a href="#top">Top</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="http://github.com/VoQn/Macchiato">Repository</a></li>
+      </ul>
+     </nav>
+     <hgroup>
+       <h1>Macchiato.js</h1>
+       <h3>Qualitative Driven Development for JavaScript</h3>
+     </hgroup>
+    </header>
+    <article>
+    <div class="caution">
+      <h2>CAUTION</h2>
+      <p>This project is under development now.<br>Sorry to keep you waiting.</p>
+      <p>Please see <a href="https://github.com/VoQn/macchiato/issues/milestones">GitHub Milestones</a></p>
+    </div>
+    <section id="about">
+      <h2>What's "Macchiato"? What's "QDD"?</h2>
+      <p><i>Macchiato</i> is a testing framework for JavaScript, inspired by <i>QuickCheck</i>, a similar library for <i>Haskell</i> programs.</p>
+      <p><!-- Under writing --></p>
+    </section>
+    <h2>Example</h2>
+    <div>
+        <pre class="sample-code"><code data-language="javascript">macchiato.stock({
+  'number x, y =&gt; x + y == y + x':
+    arbitrary( 'number', 'number' ).property( function( x, y ){ 
+      return x + y == y + x;
+    }),
+  'string str =&gt; str can be regarded as boolean that is empty or not':
+    arbitrary( 'string' ).property( function( str ){
+      if ( str.length === 0 ){
+        return false === !!str;
+      }
+      return true === !!str;
+    }),
+  'integer x, y (x !== y) =&gt; x - y !== y - x':
+    arbitrary( 'integer', 'integer' ).property( function( x, y ){
+      return where( [ x !== y ], function(){
+        return x - y !== y - x;
+      });
+    })
+});</code></pre>
+    </div>
+    <form id="test-control">
+      <div>
+        <label class="input-with-label">
+          <input id ="test-count" type="text" value="100" onKeyDown="return numOnly()">tests
+        </label>
+        <label class="input-with-label">
+          <input id="verbose" type="checkbox">verbose
+        </label>
+        <input id="test-runner" type="button" class="primary" value="Run Test">
+        <p class="test-result"><span id="test-message" class="message">Let's Try!</span></p>
+      </div>
+    </form>
+    <div id="logger" class="console">
+      <p id="test-log" class='log-line'></p>
+    </div>
+    </article>
+    <footer>
+      <div id="footer-high">
+        <nav>
+          <h4>Macchiato.js</h4>
+          <ul>
+            <li>About</li>
+            <li>Sample</li>
+            <li>API Refference</li>
+            <li><a href="http://github.com/VoQn/Macchiato">Repository</a></li>
+          </ul>
+        </nav>
+        <nav>
+          <h4>Other Projects</h4>
+          <ul>
+            <li><a href="http://github.com/yaakaito/NLTQuickCheck">yaakaito/NLTQuickCheck</a></li>
+            <li><a href="http://github.com/VoQn/ZeroFixFramework">VoQn/ZeroFixFramework</a></li>
+            <li><a href="http://rosylilly.github.com/QueenCheck">rosililly/QueenCheck</a>
+          </ul>
+        </nav>
+      </div>
+      <div id="footer-low">
+        <p>&copy;2012 VoQn all rights reseaved<p>
+      </div>
+    </footer>
+  </body>
+</html>
