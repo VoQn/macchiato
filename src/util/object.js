@@ -4,11 +4,10 @@
  * @param {!Object} object
  * @return {boolean} parameter is empty or not
  */
-var isEmpty = function( object ){
-  for ( var _ in object ){
-    return false;
-  }
-  return true;
+var isEmpty = function (object) {
+  return object === null ||
+         object === undefined ||
+         Object.keys(object).length === 0;
 };
 
 /**
@@ -16,17 +15,18 @@ var isEmpty = function( object ){
  * @param {!Object} object
  * @return {Object}
  */
-var clone = function( object ) {
-  var copied_ = Object.create( Object.getPrototypeOf( object ) ),
-      properties_ = Object.getOwnPropertyNames( object ),
-      index_ = 0,
-      name_;
-  for ( ; name_ = properties_[ index_ ]; index_++ ){
-    Object.defineProperty( copied_,
-                           name_,
-                           Object.getOwnPropertyDescriptor( object, name_ ) );
+var clone = function (object) {
+  var i, l, name,
+      copied = Object.create(Object.getPrototypeOf(object)),
+      properties = Object.getOwnPropertyNames(object);
+
+  for (i = 0, l = properties.length; i < l; i++) {
+    name = properties[i];
+    Object.defineProperty(copied,
+                          name,
+                          Object.getOwnPropertyDescriptor(object, name));
   }
-  return copied_;
+  return copied;
 };
 
 /**
@@ -35,13 +35,14 @@ var clone = function( object ) {
  * @param {(function(Object, Object):Object)=} opt_callback
  * @return {Object}
  */
-var supplement = function( default_value, opt_arg, opt_callback ){
-  if ( opt_arg === undefined ){
+var supplement = function (default_value, opt_arg, opt_callback) {
+  if (opt_arg === undefined) {
     return default_value;
-  } else if ( opt_callback === undefined ) {
+  }
+  if (opt_callback === undefined) {
     return opt_arg;
   }
-  return opt_callback( default_value, opt_arg );
+  return opt_callback(default_value, opt_arg);
 };
 
 /**
@@ -50,14 +51,13 @@ var supplement = function( default_value, opt_arg, opt_callback ){
  * @param {number=} opt_to
  * @return {Array}
  */
-var asArray = function( args, opt_sub, opt_to ){
-  var from_ = supplement( 0, opt_sub ),
-      to_   = supplement( args.length ? args.length : 1,
-                          opt_to );
-  if ( args.length === undefined ){
-    return [ args ];
-  }
-  return Array.prototype.slice.call( args, from_, to_ );
-};
+var asArray = function (args, opt_sub, opt_to) {
+  var from = supplement(0, opt_sub),
+      to   = supplement(args.length || 1, opt_to);
 
+  if (args.length === undefined) {
+    return [args];
+  }
+  return Array.prototype.slice.call(args, from, to);
+};
 

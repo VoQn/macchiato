@@ -19,79 +19,89 @@ if ( !!Array.isArray ){
  * @param {!Array} elements
  * @return {Array} new array or object
  */
-var map = function( callback, elements ){
-  var new_array_ = [], index_ = 0, length_ = elements.length;
+var map = function (callback, elements) {
+  var i, l,
+      new_array = [];
 
-  for ( ; index_ < length_; index_++ ){
-    new_array_[ index_ ] = callback( elements[ index_ ], index_ );
+  for (i = 0, l = elements.length; i < l; i++) {
+    new_array[i] = callback(elements[i], i);
   }
-  return new_array_;
-};
-
-var modify = function( object ){
-  var name_, new_object_ = clone( object );
-  for ( name_ in object ){
-    if ( object.hasOwnProperty( name_ ) ){
-      new_object[ name_ ] = callback( object[ name_ ], name_ );
-    }
-  }
-  return new_object_;
+  return new_array;
 };
 
 /**
- * @param {function(Object, (string|number)=)} callback
- * @param {!Array|!Object} elements
+ * @param {function(*, string=):*} callback
+ * @param {!Object} object
+ * @return {Object}
  */
-var each = function( callback, elements ){
-  var index_ = 0, length_ = elements.length;
+var modify = function (callback, object) {
+  var i, l, key,
+      new_object = clone(object),
+      keys = Object.getOwnPropertyNames(new_object);
 
-  for ( ; index_ < length_; index_++ ){
-    callback( elements[ index_ ], index_ );
+  for (i = 0, l = keys.length; i < l; i++) {
+    key = keys[i];
+    new_object[key] = callback(new_object[key], key);
   }
+  return new_object;
 };
 
-var eachKeys = function( callback, object ){
-  var name_;
-  for ( name_ in object ) {
-    if ( object.hasOwnProperty( name_ ) ){
-      callback( object[ name_ ], name_ );
-    }
+/**
+ * @param {function(*, number=)} callback
+ * @param {!Array} elements
+ */
+var each = function (callback, elements) {
+  var i, l;
+
+  for (i = 0, l = elements.length; i < l; i++) {
+    callback(elements[i], i);
   }
 };
 
 /**
- * @param {function(Object, number=): boolean} callback
+ * @param {function(*, string=)} callback
+ * @param {!Object} object
+ */
+var eachKeys = function (callback, object) {
+  var i, l, key,
+      keys = Object.getOwnPropertyNames(object);
+
+  for (i = 0, l = keys.length; i < l; i++) {
+    key = keys[i];
+    callback(object[key], key);
+  }
+};
+
+/**
+ * @param {function(*, number=): boolean} callback
  * @param {!Array} elements
  * @return {Array} new array list
  */
-var filter = function( callback, elements ){
-  var result_ = [],
-      index_ = 0,
-      new_index_ = 0,
-      length_ = elements.length,
-      element_;
+var filter = function (callback, elements) {
+  var i, j, l, e,
+      result = [];
 
-  for ( ; index_ < length_; index_++ ){
-    element_ = elements[ index_ ];
-    if ( callback( element_, index_ ) ){
-      result_[ new_index_ ] = element_;
-      new_index_++;
+  for (i = 0, j = 0, l = elements.length; i < l; i++) {
+    e = elements[i];
+    if (callback(e, i)) {
+      result[j] = e;
+      j++;
     }
   }
 
-  return result_;
+  return result;
 };
 
 /**
- * @param {function(Object, number=):boolean} test
+ * @param {function(*, number=):boolean} test
  * @param {!Array} elements
  * @return {boolean}
  */
-var hasAny = function( test, elements ){
-  var index_ = 0, length_ = elements.length;
+var hasAny = function (test, elements) {
+  var i, l;
 
-  for ( ; index_ < length_; index_++ ){
-    if ( test( elements[ index_ ], index_ ) ){
+  for (i = 0, l = elements.length; i < l; i++) {
+    if (test(elements[i], i)) {
       return true;
     }
   }
@@ -99,16 +109,15 @@ var hasAny = function( test, elements ){
 };
 
 /**
- * @param {function(Object, number=):boolean} test
+ * @param {function(*, number=):boolean} test
  * @param {!Array} elements
  * @return {boolean}
  */
-var hasAll = function( test, elements ){
-  var index_ = 0,
-      length_ = elements.length;
+var hasAll = function (test, elements) {
+  var i, l;
 
-  for ( ; index_ < length; index_++ ){
-    if ( !test( elements[ index_ ], index_ ) ) {
+  for (i = 0, l = elements.length; i < l; i++) {
+    if (!test(elements[i], i)) {
       return false;
     }
   }
@@ -121,13 +130,14 @@ var hasAll = function( test, elements ){
  * @param {!Array} elements
  * @return {*}
  */
-var foldLeft = function( init, collector, elements ){
-  var result_ = init, index_ = 0, length_ = elements.length;
+var foldLeft = function (init, collector, elements) {
+  var i, l,
+      result = init;
 
-  for ( ; index_ < length_; index_++ ){
-    result_ = collector( elements[ index_ ], result_ );
+  for (i = 0, l = elements.length; i < l; i++) {
+    result = collector(elements[i], result);
   }
-  return result_;
+  return result;
 };
 
 /**
@@ -136,13 +146,14 @@ var foldLeft = function( init, collector, elements ){
  * @param {!Array} elements
  * @return {*}
  */
-var foldRight = function( init, collector, elements ){
-  var result_ = init, index_ = elements.length - 1;
+var foldRight = function (init, collector, elements) {
+  var i, l,
+      result = init;
 
-  for ( ; index_ > -1; index_-- ){
-    result_ = collector( elements[ index_ ], result_ );
+  for (i = elements.length - 1, l = -1; i > l; i--) {
+    result = collector(elements[i], result);
   }
-  return result_;
+  return result;
 };
 
 /**
@@ -154,12 +165,13 @@ var foldRight = function( init, collector, elements ){
  * @param {!Array.<number>} numbers
  * @return {number}
  */
-var sumOf = function( numbers ){
-  var result_ = 0, index_ = 0, length_ = numbers.length;
+var sumOf = function (numbers) {
+  var i, l,
+      result = 0;
 
-  for ( ; index_ < length_; index_++ ){
-    result_ += numbers[ index_ ];
+  for (i = 0, l = numbers.length; i < l; i++) {
+    result += numbers[i];
   }
-  return result_;
+  return result;
 };
 
