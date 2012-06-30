@@ -1,75 +1,7 @@
 
-var eventEnd = function(){
-  if ( event.cancelBubble ){
-    event.cancelBubble = true;
-  }
-  if ( event.stopPropagation ){
-    event.stopPropagation();
-  }
-  return false;
-};
-
 // testing environments
-
-var verbose = false;
-
-var setVerbose = function(){
-  verbose = event.target.checked;
-  return eventEnd();
-};
-
 var numOnly = function(){
   return true;
-};
-
-var clearNode = function( node ){
-  while( node.firstChild ){
-    node.removeChild( node.firstChild );
-  }
-  return node;
-};
-
-var htmlEscape = (function(){
-  var map = {
-    "<":"&lt;",
-    ">":"&gt;",
-    "&":"&amp;",
-    "'":"&#39;",
-    "\"": "&quot;"
-  };
-  return function( str ){
-    return str.replace( /<|>|&|'|"/g, function( s ){
-      return map[ s ];
-    } );
-  };
-})();
-
-var add_event = (function(){
-  if ( document.addEventListener ){
-    return function( node, type, handler ){
-      node.addEventListener( type, handler, false );
-    };
-  } else if ( document.attachEvent ) {
-    return function( node, type, handler ){
-      node.attachEvent('on' + type, function( evt ){
-        handler.call( node, evt );
-      });
-    };
-  } else {
-    return function( node, type, handler ){
-      var _handler = node[ 'on' + type ];
-      node[ 'on' + type ] = function( evt ){
-        if (_handler) {
-          _handler.call( node, evt || eindow.evt );
-        }
-        handler.call( node, evt );
-      };
-    };
-  }
-})();
-
-var add_on_load = function( callback ){
-  add_event( window, 'load', callback );
 };
 
 var scrollWithAdjust = function( anchor, header_tool_bar_id ){
