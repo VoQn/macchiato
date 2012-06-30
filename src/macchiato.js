@@ -1,6 +1,6 @@
 
 /** @constructor */
-function Macchiato(){}
+var Macchiato = function Macchiato(){};
 
 /** @type {Macchiato} */
 var macchiato = new Macchiato();
@@ -10,68 +10,77 @@ var macchiato = new Macchiato();
  * @type {View}
  */
 macchiato.view_ = consoleView;
+
 /**
  * @private
  * @type {Array}
  */
 macchiato.suites_ = [];
+
 /**
  * @param {function():(boolean|SkippedTest)} property
  * @param {string=} opt_label
+ * @param {number=} opt_count
  * @return {boolean}
  */
-macchiato.quickcheck = function( property, opt_label ){
-  var view = macchiato.view_,
-      count = view.getTestCount(),
-      progress = 0,
-      msg,
-      ok = false;
-  for ( progress = 0; progress < count; progress++ ){
-    checker.run( progress, property, score );
+macchiato.quickcheck = function( property, opt_label, opt_count ){
+  var count_    = !opt_count ? 100 : opt_count,
+      label_    = !opt_label ?  '' : opt_label + ' : ',
+      progress_ = 0;
+
+  score.clear();
+
+  for ( ; progress_ < count_; progress_++ ){
+    checker.run( progress_, property, score );
     // retry and break
     if( checker.shouldRetry ) {
-      view.putLog( checker.current, true );
-      checker.run( progress + 1, property, score );
-      view.putLog( checker.current, true );
+      macchiato.view_.putLog( View.LOG_MODE.VERBOSE, checker.current );
+      checker.run( progress_ + 1, property, score );
+      macchiato.view_.putLog( View.LOG_MODE.VERBOSE, checker.current );
       break;
     }
   }
+
   score.evaluate();
-  ok = score.ok;
-  msg = ( opt_label ? opt_label + ' : ' : '' ) + score.message;
-  view.putLog( view.highlight( ok, msg ) );
-  score.clear();
-  return ok;
+  macchiato.view_.putLog(
+      View.LOG_MODE.PROPERTY_RESULT,
+      macchiato.view_.highlight( score.ok, label_ + score.message ) );
+
+  return score.ok;
 };
+
 /**
  * @param {function():(boolean|SkippedTest)} property
  * @param {string=} opt_label
+ * @param {number=} opt_count
  * @return {boolean}
  */
-macchiato.verbosecheck = function( property, opt_label ){
-  var view = macchiato.view_,
-      count = view.getTestCount(),
-      progress = 0,
-      msg,
-      result,
-      ok = false;
-  for ( progress = 0; progress < count; progress++ ){
-    checker.run( progress, property, score );
-    view.putLog( checker.current, true );
+macchiato.verbosecheck = function( property, opt_label, opt_count ){
+  var count_    = !opt_count ? 100 : opt_count,
+      label_    = !opt_label ?  '' : opt_label + ' : ',
+      progress_ = 0;
+
+  score.clear();
+
+  for ( ; progress_ < count_; progress_++ ){
+    checker.run( progress_, property, score );
+    macchiato.view_.putLog( View.LOG_MODE.VERBOSE, checker.current );
     // retry and break
     if ( checker.shouldRetry ){
-      checker.run( progress + 1, property, score );
-      view.putLog( checker.current, true );
+      checker.run( progress_ + 1, property, score );
+      macchiato.view_.putLog( View.LOG_MODE.VERBOSE, checker.current );
       break;
     }
   }
-  result = score.evaluate();
-  ok = result.ok;
-  msg = ( opt_label ? opt_label + ' : ' : '' ) + result.message;
-  view.putLog( view.highlight( ok, msg ) );
-  score.clear();
-  return ok;
+
+  score.evaluate();
+  macchiato.view_.putLog(
+      View.LOG_MODE.PROPERTY_RESULT,
+      macchiato.view_.highlight( score.ok, label_ + score.message ) );
+
+  return score.ok;
 };
+
 /**
  * @param {boolean} verbose
  * @return {Macchiato}
@@ -80,6 +89,7 @@ macchiato.setVerbose = function( verbose ){
   macchiato.view_.verbose = verbose;
   return macchiato;
 };
+
 /**
  * @param {View} view
  * @return {Macchiato}
@@ -89,6 +99,7 @@ macchiato.setView = function( view ){
   macchiato.view_ = view;
   return macchiato;
 };
+
 /**
  * @param {Object.<string, function():(boolean|SkippedTest)>} labeledProperties
  * @return {Macchiato}
@@ -97,36 +108,41 @@ macchiato.stock = function( labeledProperties ){
   macchiato.suites_.push( labeledProperties );
   return macchiato;
 };
+
 /**
  * @return {Macchiato}
  */
 macchiato.taste = function(){
-  var view = macchiato.view_,
-      check = view.verbose ? macchiato.verbosecheck : macchiato.quickcheck,
-      passed = true,
-      index = 0,
-      suites = macchiato.suites_,
-      suite,
-      property,
-      start_t = whatTimeIsNow(),
-      end_test_t,
-      end_logging_t;
-  view.standby();
-  for ( ; suite = suites[ index ]; index++){
-    for ( label in suite ){
-      property = suite[ label ];
-      passed = check( property, label ) && passed;
+  var _check_     = macchiato.view_.verbose ?
+                      macchiato.verbosecheck :
+                      macchiato.quickcheck,
+      passed_     = true,
+      index_      = 0,
+      label_      = '',
+      count_      = macchiato.view_.getTestCount(),
+      length_     = macchiato.suites_.length,
+
+      start_t_    = whatTimeIsNow(),
+      end_test_t_ = 0,
+      end_log_t_  = 0;
+
+  macchiato.view_.standby();
+  for ( ; index_ < length_; index_++){
+    for ( label_ in macchiato.suites_[ index_ ] ){
+      passed_ = _check_( macchiato.suites_[ index_ ][ label_ ],
+                         label_,
+                         count_ ) && passed_;
     }
   }
-  end_test_t = whatTimeIsNow();
-  view.dump();
-  end_logging_t = whatTimeIsNow();
-  view.putMsg(
-        ( passed ?
+  end_test_t_ = whatTimeIsNow();
+  macchiato.view_.dump();
+  end_log_t_ = whatTimeIsNow();
+  macchiato.view_.putMsg(
+        ( passed_ ?
           'Ok, All tests succeeded!!' :
           'Oops! failed test exist...' ) +
-        ' ( testing: ' + printTime( start_t, end_test_t ) +
-        ', log rendering: ' + printTime( end_test_t, end_logging_t ) + ' )' );
+        ' ( testing: ' + printTime( start_t_, end_test_t_ ) +
+        ', log rendering: ' + printTime( end_test_t_, end_log_t_ ) + ' )' );
   return macchiato;
 };
 

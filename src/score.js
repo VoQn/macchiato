@@ -1,6 +1,6 @@
 
 /** @constructor */
-function Score(){}
+var Score = function Score(){};
 
 /** @type {Score} */
 var score = new Score();

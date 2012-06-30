@@ -2,7 +2,7 @@
 /**
  * @constructor
  */
-function GenerateReference(){}
+var GenerateReference = function GenerateReference(){};
 /**
  * @type {GenerateReference}
  */
@@ -19,23 +19,24 @@ generateReference.register = function( entry, opt_callback ){
    * @param {function(): Object}
    * @return {GenerateReference}
    */
-  var _registration = function( type, callback ){
+  var _registration_ = function( type, callback ){
     if ( type == 'prototype' || type == 'register' ) { // Bad Hacking
       throw new Error('GenerateRefference.' + type + ' should not overwrite');
     }
     // TODO Check type signature
     generateReference[ type ] = callback;
     return generateReference;
-  };
+  },
+    _flip_regist_ = flip( _registration_ );
 
   if ( arguments.length === 2 &&
        typeof entry === 'string' &&
        typeof opt_callback === 'function' ){
     // single entry registration
-    _registration( entry, opt_callback );
+    _registration_( entry, opt_callback );
   } else {
     // bulk registration
-    each( flip( _registration ), entry );
+    eachKeys( _flip_regist_, entry );
   }
   return this;
 };
@@ -57,21 +58,21 @@ generateReference.register({
   /** @type {function(number):boolean} */
   'boolean': combinator.elements( [ false, true ] ),
   /** @type {function(number):number} */
-  integer: combinator.sized(function _generate_integer_by_progress( progress ){
-    var v = combinator.chooseNow( -progress, progress );
-    return v;
+  integer: combinator.sized(function _generate_integer_by_progress_( progress ){
+    var num_ = combinator.chooseNow( -progress, progress );
+    return num_;
   }),
   /** @type {function(number):number} */
-  number: combinator.sized(function _generate_number_by_progress( progress ){
+  number: combinator.sized(function _generate_number_by_progress_( progress ){
     /** alias */
-    var choose = combinator.chooseNow,
+    var _choose_ = combinator.chooseNow,
         /** @const {number} */
         BASE = 1e10 - 1,
-        b = choose( 0, progress ),
-        n = choose( -b * BASE, b * BASE ),
-        d = choose( 1, BASE ),
-        v = n / d;
-    return v;
+        b_ = _choose_( 0, progress ),
+        n_ = _choose_( -b_ * BASE, b_ * BASE ),
+        d_ = _choose_( 1, BASE ),
+        v_ = n_ / d_;
+    return v_;
   }),
   /** @type {function(number):number} */
   charCode: charCodeGenerate,
@@ -82,7 +83,7 @@ generateReference.register({
   /** @type {function(number):string} */
   string: combinator.listOf(
               charCodeGenerate,
-              function _to_string( array ){
+              function _to_string_( array ){
                 return String.fromCharCode.apply( null, array );
               })
 });

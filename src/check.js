@@ -36,38 +36,41 @@ var skippedTest = new SkippedTest();
  * @param {function(): (boolean|Object)} property
  * @return {function(): Result} test promise
  */
-var forAll = function( generators_, property ){
-  var generators = isList( generators_ ) ?
-                   generators_ :
-                   [ generators ],
-      args = [],
+var forAll = function( generators, property ){
+  var generators_ = isList( generators ) ?
+                      generators :
+                      [ generators ],
+      args_ = [],
       /** @type {boolean|SkippedTest} */
-      result;
-  var testing = function( progress ){
-    args = map( function _apply_progress ( g ){ return g( progress ); },
-                generators );
-    try {
-      result = property.apply( property, args );
-    } catch ( exception ) {
-      currentResult.passed = false;
-      currentResult.skipped = false;
-      currentResult.reason = 'Exception occurred: ' + exception;
-      currentResult.arguments = args;
-      return currentResult;
-    }
-    if ( result.wasSkipped ){
-      currentResult.passed = false;
-      currentResult.skipped = true;
-      currentResult.reason = 'Skipped: (' + args.join(', ') + ')';
-    } else {
-      currentResult.passed = result;
-      currentResult.skipped = false;
-      currentResult.reason = result ? '' : 'Falsible: (' + args.join(', ') + ')';
-    }
-    currentResult.arguments = args;
-    return currentResult;
-  };
-  return testing;
+      result_,
+      _apply_progress_,
+      _testing_ = function( progress ){
+        _apply_progress_ = apply( progress );
+        args_ = map( _apply_progress_, generators_ );
+        try {
+          result_ = property.apply( null, args_ );
+        } catch ( exception ) {
+          currentResult.passed = false;
+          currentResult.skipped = false;
+          currentResult.reason = 'Exception occurred: ' + exception;
+          currentResult.arguments = args_;
+          return currentResult;
+        }
+        if ( result_.wasSkipped ){
+          currentResult.passed = false;
+          currentResult.skipped = true;
+          currentResult.reason = 'Skipped: (' + args_.join(', ') + ')';
+        } else {
+          currentResult.passed = result_;
+          currentResult.skipped = false;
+          currentResult.reason = result_ ?
+                                   '' :
+                                   'Falsible: (' + args_.join(', ') + ')';
+        }
+        currentResult.arguments = args_;
+        return currentResult;
+      };
+  return _testing_;
 };
 
 /**
@@ -76,10 +79,10 @@ var forAll = function( generators_, property ){
  * @return {{wasSkipped: boolean}|boolean} result of test
  */
 var where = function( conditions, callback ){
-  var index = 0,
-      length = conditions.length;
-  for ( ; index < length; index++ ){
-    if ( !conditions[ index ] ){
+  var index_ = 0, length_ = conditions.length;
+
+  for ( ; index_ < length_; index_++ ){
+    if ( !conditions[ index_ ] ){
       return skippedTest;
     }
   }
